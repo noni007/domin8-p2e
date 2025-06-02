@@ -1,37 +1,102 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Gamepad, Trophy, Users, Star, Infinity } from "lucide-react";
+import { Gamepad, Trophy, Users, Star, Infinity, Target, Zap, BarChart3, Heart, Briefcase } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
 const Index = () => {
-  const [selectedTab, setSelectedTab] = useState("rankings");
+  const [selectedTab, setSelectedTab] = useState("home");
 
-  const topPlayers = [
-    { rank: 1, name: "ShadowStrike", score: 2850, earnings: "$12,450", game: "Valorant" },
-    { rank: 2, name: "CyberNinja", score: 2780, earnings: "$9,200", game: "CS2" },
-    { rank: 3, name: "QuantumAce", score: 2720, earnings: "$8,100", game: "League" },
-    { rank: 4, name: "NeonFury", score: 2680, earnings: "$7,500", game: "Valorant" },
-    { rank: 5, name: "IRQHandler", score: 2640, earnings: "$6,900", game: "Apex" },
+  // Platform verticals data
+  const verticals = [
+    {
+      name: "AER",
+      fullName: "African Esports Rising",
+      description: "Competitive grassroots vertical for Tier 2 & 3 players",
+      tagline: "Grassroots Today. Greatness Tomorrow.",
+      features: ["Tournament Opportunities", "Talent Development", "Performance Tracking", "Rising Player Network"],
+      color: "from-orange-500 to-red-600"
+    },
+    {
+      name: "Tournament Hub",
+      fullName: "Tournament Infrastructure",
+      description: "Complete tournament management and organization platform",
+      tagline: "Seamless Competition Management",
+      features: ["Bracket Systems", "Sign-up Management", "Live Statistics", "Prize Distribution"],
+      color: "from-blue-500 to-teal-600"
+    },
+    {
+      name: "Creator Connect",
+      fullName: "Creator Network",
+      description: "Platform for content creators, streamers, and influencers",
+      tagline: "Where Creators Thrive",
+      features: ["Creator Portfolios", "Brand Collaborations", "Content Tools", "Monetization"],
+      color: "from-purple-500 to-pink-600"
+    }
   ];
 
-  const tournaments = [
-    { name: "Summer Championship", prize: "$50,000", date: "Jul 15-20", status: "Live" },
-    { name: "Winter Series", prize: "$25,000", date: "Aug 1-5", status: "Upcoming" },
-    { name: "Pro League Finals", prize: "$100,000", date: "Aug 20-25", status: "Registration" },
+  // User benefits by type
+  const userBenefits = [
+    {
+      type: "Players",
+      icon: Gamepad,
+      benefits: ["Competitive opportunities", "Skill development", "Performance tracking", "Community connection"],
+      color: "text-blue-400"
+    },
+    {
+      type: "Creators",
+      icon: Star,
+      benefits: ["Content tools", "Brand partnerships", "Audience growth", "Revenue streams"],
+      color: "text-purple-400"
+    },
+    {
+      type: "Tournament Organizers",
+      icon: Trophy,
+      benefits: ["Infrastructure tools", "Management systems", "Analytics dashboard", "Streamlined operations"],
+      color: "text-yellow-400"
+    },
+    {
+      type: "Brands & Partners",
+      icon: Briefcase,
+      benefits: ["Audience engagement", "Talent partnerships", "Data insights", "Community access"],
+      color: "text-green-400"
+    }
   ];
 
-  const earnOpportunities = [
-    { title: "Diverse Challenges", reward: "Transform gameplay", difficulty: "All Levels", description: "Gaming adventures without constraints" },
-    { title: "Compete and Win", reward: "Face opponents", difficulty: "Competitive", description: "Win prizes through skill-based competition" },
-    { title: "Challenge Opponents", reward: "Friendly competition", difficulty: "Social", description: "Fair matchmaking and transparent gameplay" },
+  // Ecosystem modules
+  const ecosystemModules = [
+    {
+      name: "Competitive",
+      description: "Tournament infrastructure and player development",
+      icon: Target,
+      features: ["AER Tournaments", "Ranking Systems", "Match Analytics"]
+    },
+    {
+      name: "Social",
+      description: "Community building and creator connections",
+      icon: Users,
+      features: ["Player Profiles", "Creator Network", "Community Hubs"]
+    },
+    {
+      name: "Analytics",
+      description: "Performance tracking and data insights",
+      icon: BarChart3,
+      features: ["Player Stats", "Tournament Data", "Platform Metrics"]
+    },
+    {
+      name: "Monetization",
+      description: "Revenue streams for all platform participants",
+      icon: Zap,
+      features: ["Prize Pools", "Creator Revenue", "Brand Partnerships"]
+    }
   ];
 
-  const handleJoinTournament = (tournamentName: string) => {
+  const handleWaitlistSignup = () => {
     toast({
-      title: "Tournament Registration",
-      description: `Successfully registered for ${tournamentName}!`,
+      title: "Welcome to Domin8!",
+      description: "You've been added to our waitlist. We'll notify you when early access opens!",
     });
   };
 
@@ -49,38 +114,51 @@ const Index = () => {
             </div>
             <div className="hidden md:flex space-x-8">
               <button
-                onClick={() => setSelectedTab("rankings")}
+                onClick={() => setSelectedTab("home")}
                 className={`px-3 py-2 text-sm font-medium transition-colors ${
-                  selectedTab === "rankings"
+                  selectedTab === "home"
                     ? "text-blue-400 border-b-2 border-blue-400"
                     : "text-gray-300 hover:text-blue-400"
                 }`}
               >
-                Rankings
+                Home
               </button>
               <button
-                onClick={() => setSelectedTab("tournaments")}
+                onClick={() => setSelectedTab("about")}
                 className={`px-3 py-2 text-sm font-medium transition-colors ${
-                  selectedTab === "tournaments"
+                  selectedTab === "about"
                     ? "text-blue-400 border-b-2 border-blue-400"
                     : "text-gray-300 hover:text-blue-400"
                 }`}
               >
-                Tournaments
+                About
               </button>
               <button
-                onClick={() => setSelectedTab("challenges")}
+                onClick={() => setSelectedTab("aer")}
                 className={`px-3 py-2 text-sm font-medium transition-colors ${
-                  selectedTab === "challenges"
+                  selectedTab === "aer"
                     ? "text-blue-400 border-b-2 border-blue-400"
                     : "text-gray-300 hover:text-blue-400"
                 }`}
               >
-                Challenges
+                AER
+              </button>
+              <button
+                onClick={() => setSelectedTab("partners")}
+                className={`px-3 py-2 text-sm font-medium transition-colors ${
+                  selectedTab === "partners"
+                    ? "text-blue-400 border-b-2 border-blue-400"
+                    : "text-gray-300 hover:text-blue-400"
+                }`}
+              >
+                Partners
               </button>
             </div>
-            <Button className="bg-gradient-to-r from-blue-600 to-teal-600 hover:from-blue-700 hover:to-teal-700 text-white font-semibold">
-              Join Now
+            <Button 
+              className="bg-gradient-to-r from-blue-600 to-teal-600 hover:from-blue-700 hover:to-teal-700 text-white font-semibold"
+              onClick={handleWaitlistSignup}
+            >
+              Join Waitlist
             </Button>
           </div>
         </div>
@@ -91,17 +169,21 @@ const Index = () => {
         <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-teal-600/20 blur-3xl"></div>
         <div className="relative max-w-7xl mx-auto text-center">
           <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-white via-blue-200 to-teal-200 bg-clip-text text-transparent">
-            Welcome to the future of gaming
+            Powering the Next Era of Esports in Africa
           </h1>
-          <p className="text-xl md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto">
-            Transform your gameplay into cash wins. Join Africa's premier esports community where skill meets rewards.
+          <p className="text-xl md:text-2xl text-gray-300 mb-8 max-w-4xl mx-auto">
+            Domin8 is the digital infrastructure empowering esports, creators, and communities across Africa. Where players rise, creators thrive, and brands engage.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" className="bg-gradient-to-r from-blue-600 to-teal-600 hover:from-blue-700 hover:to-teal-700 text-white font-semibold px-8 py-3 text-lg">
-              Start Playing
+            <Button 
+              size="lg" 
+              className="bg-gradient-to-r from-blue-600 to-teal-600 hover:from-blue-700 hover:to-teal-700 text-white font-semibold px-8 py-3 text-lg"
+              onClick={handleWaitlistSignup}
+            >
+              Get Early Access
             </Button>
             <Button size="lg" variant="outline" className="border-blue-400 text-blue-400 hover:bg-blue-400 hover:text-black px-8 py-3 text-lg">
-              View Rankings
+              Explore Platform
             </Button>
           </div>
         </div>
@@ -109,158 +191,285 @@ const Index = () => {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
-        {/* Rankings Tab */}
-        {selectedTab === "rankings" && (
-          <div className="space-y-6">
-            <div className="text-center mb-12">
-              <h2 className="text-4xl font-bold text-white mb-4">Top Players</h2>
-              <p className="text-gray-400 text-lg">See where you stand among Africa's elite gamers</p>
-            </div>
-            
-            <div className="grid gap-4">
-              {topPlayers.map((player, index) => (
-                <Card key={player.rank} className="bg-black/40 border-blue-800/30 backdrop-blur-sm hover:border-blue-600/50 transition-all duration-300">
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-4">
-                        <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg ${
-                          index === 0 ? "bg-gradient-to-r from-yellow-400 to-yellow-600 text-black" :
-                          index === 1 ? "bg-gradient-to-r from-gray-300 to-gray-500 text-black" :
-                          index === 2 ? "bg-gradient-to-r from-orange-400 to-orange-600 text-black" :
-                          "bg-gradient-to-r from-blue-600 to-teal-600 text-white"
-                        }`}>
-                          {player.rank}
-                        </div>
-                        <div>
-                          <h3 className="text-xl font-semibold text-white">{player.name}</h3>
-                          <Badge variant="secondary" className="bg-blue-900/50 text-blue-200">
-                            {player.game}
-                          </Badge>
-                        </div>
+        {/* Home Tab */}
+        {selectedTab === "home" && (
+          <div className="space-y-16">
+            {/* What is Domin8 Section */}
+            <section className="text-center">
+              <h2 className="text-4xl font-bold text-white mb-6">What is Domin8?</h2>
+              <p className="text-xl text-gray-300 max-w-4xl mx-auto mb-12">
+                Domin8 is Africa's premier digital infrastructure platform designed to revolutionize the esports ecosystem. 
+                We connect players, creators, organizers, and brands through innovative technology and community-driven experiences.
+              </p>
+              
+              {/* Ecosystem Modules */}
+              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {ecosystemModules.map((module, index) => (
+                  <Card key={index} className="bg-black/40 border-blue-800/30 backdrop-blur-sm hover:border-blue-600/50 transition-all duration-300">
+                    <CardHeader className="text-center">
+                      <module.icon className="h-12 w-12 text-blue-400 mx-auto mb-4" />
+                      <CardTitle className="text-white">{module.name}</CardTitle>
+                      <CardDescription className="text-gray-400">{module.description}</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <ul className="space-y-2 text-sm text-gray-300">
+                        {module.features.map((feature, idx) => (
+                          <li key={idx} className="flex items-center gap-2">
+                            <Heart className="h-3 w-3 text-teal-400" />
+                            {feature}
+                          </li>
+                        ))}
+                      </ul>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </section>
+
+            {/* Featured Verticals */}
+            <section>
+              <div className="text-center mb-12">
+                <h2 className="text-4xl font-bold text-white mb-4">Platform Verticals</h2>
+                <p className="text-gray-400 text-lg">Specialized ecosystems designed for different aspects of African esports</p>
+              </div>
+              
+              <div className="grid lg:grid-cols-3 gap-8">
+                {verticals.map((vertical, index) => (
+                  <Card key={index} className="bg-black/40 border-blue-800/30 backdrop-blur-sm hover:border-blue-600/50 transition-all duration-300 overflow-hidden">
+                    <div className={`h-2 bg-gradient-to-r ${vertical.color}`}></div>
+                    <CardHeader>
+                      <CardTitle className="text-white text-2xl">{vertical.name}</CardTitle>
+                      <CardDescription className="text-lg font-semibold text-gray-200">{vertical.fullName}</CardDescription>
+                      <p className="text-sm text-gray-400 italic">"{vertical.tagline}"</p>
+                      <p className="text-gray-300">{vertical.description}</p>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-3">
+                        {vertical.features.map((feature, idx) => (
+                          <div key={idx} className="flex items-center gap-2">
+                            <Trophy className="h-4 w-4 text-teal-400" />
+                            <span className="text-gray-300 text-sm">{feature}</span>
+                          </div>
+                        ))}
                       </div>
-                      <div className="text-right">
-                        <div className="text-2xl font-bold text-teal-400">{player.score}</div>
-                        <div className="text-green-400 font-semibold">{player.earnings}</div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+                      <Button className="w-full mt-6 bg-gradient-to-r from-blue-600 to-teal-600 hover:from-blue-700 hover:to-teal-700">
+                        Learn More
+                      </Button>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </section>
+
+            {/* Platform Benefits by User Type */}
+            <section>
+              <div className="text-center mb-12">
+                <h2 className="text-4xl font-bold text-white mb-4">Built for Every Role in Esports</h2>
+                <p className="text-gray-400 text-lg">Domin8 delivers value across the entire esports ecosystem</p>
+              </div>
+              
+              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {userBenefits.map((userType, index) => (
+                  <Card key={index} className="bg-black/40 border-blue-800/30 backdrop-blur-sm hover:border-blue-600/50 transition-all duration-300">
+                    <CardHeader className="text-center">
+                      <userType.icon className={`h-12 w-12 mx-auto mb-4 ${userType.color}`} />
+                      <CardTitle className="text-white">{userType.type}</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <ul className="space-y-3">
+                        {userType.benefits.map((benefit, idx) => (
+                          <li key={idx} className="flex items-center gap-2 text-gray-300 text-sm">
+                            <Star className="h-3 w-3 text-yellow-400" />
+                            {benefit}
+                          </li>
+                        ))}
+                      </ul>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </section>
+
+            {/* CTA Section */}
+            <section className="text-center">
+              <Card className="bg-gradient-to-r from-blue-900/30 to-teal-900/30 border-blue-600/50 backdrop-blur-sm">
+                <CardContent className="p-12">
+                  <h2 className="text-4xl font-bold text-white mb-6">Ready to Join the Revolution?</h2>
+                  <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
+                    Be among the first to experience Africa's most comprehensive esports platform. 
+                    Early access members get exclusive benefits and priority access to all features.
+                  </p>
+                  <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                    <Button 
+                      size="lg" 
+                      className="bg-gradient-to-r from-blue-600 to-teal-600 hover:from-blue-700 hover:to-teal-700 text-white font-semibold px-8 py-3 text-lg"
+                      onClick={handleWaitlistSignup}
+                    >
+                      Join the Waitlist
+                    </Button>
+                    <Button size="lg" variant="outline" className="border-blue-400 text-blue-400 hover:bg-blue-400 hover:text-black px-8 py-3 text-lg">
+                      Learn More
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </section>
           </div>
         )}
 
-        {/* Tournaments Tab */}
-        {selectedTab === "tournaments" && (
-          <div className="space-y-6">
-            <div className="text-center mb-12">
-              <h2 className="text-4xl font-bold text-white mb-4">Tournaments</h2>
-              <p className="text-gray-400 text-lg">Compete in high-stakes tournaments</p>
+        {/* About Tab */}
+        {selectedTab === "about" && (
+          <div className="space-y-12">
+            <div className="text-center">
+              <h2 className="text-4xl font-bold text-white mb-6">About Domin8</h2>
+              <p className="text-xl text-gray-300 max-w-4xl mx-auto">
+                Our vision is to power African esports infrastructure by creating a comprehensive ecosystem 
+                that connects all stakeholders in the gaming community.
+              </p>
             </div>
             
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {tournaments.map((tournament, index) => (
-                <Card key={index} className="bg-black/40 border-blue-800/30 backdrop-blur-sm hover:border-blue-600/50 transition-all duration-300">
-                  <CardHeader>
-                    <CardTitle className="text-white flex items-center gap-2">
-                      <Trophy className="h-5 w-5 text-yellow-400" />
-                      {tournament.name}
-                    </CardTitle>
-                    <CardDescription className="text-gray-400">
-                      {tournament.date}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      <div className="text-3xl font-bold text-green-400">{tournament.prize}</div>
-                      <Badge 
-                        className={`${
-                          tournament.status === "Live" ? "bg-red-600 text-white" :
-                          tournament.status === "Upcoming" ? "bg-blue-600 text-white" :
-                          "bg-green-600 text-white"
-                        }`}
-                      >
-                        {tournament.status}
-                      </Badge>
-                      <Button 
-                        className="w-full bg-gradient-to-r from-blue-600 to-teal-600 hover:from-blue-700 hover:to-teal-700"
-                        onClick={() => handleJoinTournament(tournament.name)}
-                      >
-                        {tournament.status === "Live" ? "Watch Live" : tournament.status === "Upcoming" ? "Set Reminder" : "Register Now"}
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Challenges Tab */}
-        {selectedTab === "challenges" && (
-          <div className="space-y-6">
-            <div className="text-center mb-12">
-              <h2 className="text-4xl font-bold text-white mb-4">Transform Your Skills into Winnings</h2>
-              <p className="text-gray-400 text-lg">Gaming adventures without constraints - compete and win</p>
-            </div>
-            
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {earnOpportunities.map((opportunity, index) => (
-                <Card key={index} className="bg-black/40 border-blue-800/30 backdrop-blur-sm hover:border-blue-600/50 transition-all duration-300">
-                  <CardHeader>
-                    <CardTitle className="text-white flex items-center gap-2">
-                      <Star className="h-5 w-5 text-yellow-400" />
-                      {opportunity.title}
-                    </CardTitle>
-                    <CardDescription className="text-gray-400">
-                      {opportunity.description}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      <div className="text-lg font-bold text-teal-400">{opportunity.reward}</div>
-                      <Badge 
-                        className={`${
-                          opportunity.difficulty === "All Levels" ? "bg-green-600 text-white" :
-                          opportunity.difficulty === "Competitive" ? "bg-blue-600 text-white" :
-                          "bg-teal-600 text-white"
-                        }`}
-                      >
-                        {opportunity.difficulty}
-                      </Badge>
-                      <Button className="w-full bg-gradient-to-r from-blue-600 to-teal-600 hover:from-blue-700 hover:to-teal-700">
-                        Start Challenge
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-            
-            <Card className="bg-gradient-to-r from-blue-900/30 to-teal-900/30 border-blue-600/50 backdrop-blur-sm mt-12">
-              <CardHeader>
-                <CardTitle className="text-white text-2xl text-center">How Domin8 Works</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid md:grid-cols-3 gap-8 text-center">
-                  <div>
-                    <Users className="h-12 w-12 text-blue-400 mx-auto mb-4" />
-                    <h3 className="text-xl font-semibold text-white mb-2">1. Join</h3>
-                    <p className="text-gray-400">Create your account and connect with Africa's gaming community</p>
+            <Card className="bg-black/40 border-blue-800/30 backdrop-blur-sm">
+              <CardContent className="p-8">
+                <h3 className="text-2xl font-bold text-white mb-6">Our Communities</h3>
+                <div className="grid md:grid-cols-3 gap-6">
+                  <div className="text-center">
+                    <Trophy className="h-12 w-12 text-orange-400 mx-auto mb-4" />
+                    <h4 className="text-xl font-semibold text-white mb-2">AER Players</h4>
+                    <p className="text-gray-400">Rising talent in competitive gaming seeking opportunities to showcase their skills</p>
                   </div>
-                  <div>
-                    <Gamepad className="h-12 w-12 text-teal-400 mx-auto mb-4" />
-                    <h3 className="text-xl font-semibold text-white mb-2">2. Play</h3>
-                    <p className="text-gray-400">Challenge opponents with fair matchmaking and transparent gameplay</p>
+                  <div className="text-center">
+                    <Star className="h-12 w-12 text-purple-400 mx-auto mb-4" />
+                    <h4 className="text-xl font-semibold text-white mb-2">Creators</h4>
+                    <p className="text-gray-400">Content creators and streamers building audiences and monetizing their passion</p>
                   </div>
-                  <div>
-                    <Trophy className="h-12 w-12 text-yellow-400 mx-auto mb-4" />
-                    <h3 className="text-xl font-semibold text-white mb-2">3. Earn</h3>
-                    <p className="text-gray-400">Transform your skills into real cash winnings</p>
+                  <div className="text-center">
+                    <Briefcase className="h-12 w-12 text-green-400 mx-auto mb-4" />
+                    <h4 className="text-xl font-semibold text-white mb-2">Partners</h4>
+                    <p className="text-gray-400">Brands and organizations looking to engage with Africa's gaming community</p>
                   </div>
                 </div>
               </CardContent>
             </Card>
+          </div>
+        )}
+
+        {/* AER Tab */}
+        {selectedTab === "aer" && (
+          <div className="space-y-12">
+            <div className="text-center">
+              <div className="mb-6">
+                <Badge className="bg-orange-600 text-white text-lg px-4 py-2 mb-4">AER</Badge>
+                <h2 className="text-4xl font-bold text-white mb-4">African Esports Rising</h2>
+                <p className="text-xl text-orange-400 font-semibold italic mb-4">"Grassroots Today. Greatness Tomorrow."</p>
+                <p className="text-lg text-gray-300 max-w-4xl mx-auto">
+                  AER is our dedicated vertical for Tier 2 & 3 players, providing competitive opportunities, 
+                  talent development programs, and a clear pathway to professional esports.
+                </p>
+              </div>
+            </div>
+            
+            <div className="grid lg:grid-cols-2 gap-8">
+              <Card className="bg-black/40 border-orange-600/30 backdrop-blur-sm">
+                <CardHeader>
+                  <CardTitle className="text-white flex items-center gap-2">
+                    <Target className="h-6 w-6 text-orange-400" />
+                    Purpose & Mission
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-gray-300 mb-4">
+                    AER focuses on creating sustainable competitive opportunities for emerging talent across Africa. 
+                    We believe that every player deserves a chance to develop their skills and compete at their level.
+                  </p>
+                  <ul className="space-y-2 text-gray-300">
+                    <li>• Regular tournament opportunities</li>
+                    <li>• Skill development programs</li>
+                    <li>• Performance tracking and analytics</li>
+                    <li>• Community building and networking</li>
+                  </ul>
+                </CardContent>
+              </Card>
+              
+              <Card className="bg-black/40 border-orange-600/30 backdrop-blur-sm">
+                <CardHeader>
+                  <CardTitle className="text-white flex items-center gap-2">
+                    <BarChart3 className="h-6 w-6 text-orange-400" />
+                    Talent Development
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-gray-300 mb-4">
+                    Our comprehensive tracking and development tools help players understand their progress 
+                    and identify areas for improvement.
+                  </p>
+                  <div className="space-y-3">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-400">Performance Analytics</span>
+                      <span className="text-orange-400">Coming Soon</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-400">Coaching Resources</span>
+                      <span className="text-orange-400">Coming Soon</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-400">Tournament History</span>
+                      <span className="text-orange-400">Coming Soon</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        )}
+
+        {/* Partners Tab */}
+        {selectedTab === "partners" && (
+          <div className="space-y-12">
+            <div className="text-center">
+              <h2 className="text-4xl font-bold text-white mb-6">Partnership Opportunities</h2>
+              <p className="text-xl text-gray-300 max-w-4xl mx-auto">
+                Join us in building Africa's esports future. We offer various partnership opportunities 
+                for brands, organizations, and stakeholders looking to engage with our growing community.
+              </p>
+            </div>
+            
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <Card className="bg-black/40 border-blue-800/30 backdrop-blur-sm">
+                <CardHeader>
+                  <CardTitle className="text-white">Brand Partnerships</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-gray-300 mb-4">Connect with Africa's gaming community through sponsorships, collaborations, and brand activations.</p>
+                  <Button className="w-full bg-gradient-to-r from-blue-600 to-teal-600">
+                    Learn More
+                  </Button>
+                </CardContent>
+              </Card>
+              
+              <Card className="bg-black/40 border-blue-800/30 backdrop-blur-sm">
+                <CardHeader>
+                  <CardTitle className="text-white">Tournament Sponsorship</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-gray-300 mb-4">Support competitive gaming by sponsoring AER tournaments and other esports events.</p>
+                  <Button className="w-full bg-gradient-to-r from-blue-600 to-teal-600">
+                    Get Involved
+                  </Button>
+                </CardContent>
+              </Card>
+              
+              <Card className="bg-black/40 border-blue-800/30 backdrop-blur-sm">
+                <CardHeader>
+                  <CardTitle className="text-white">Technology Partners</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-gray-300 mb-4">Integrate your technology solutions with our platform to enhance the gaming experience.</p>
+                  <Button className="w-full bg-gradient-to-r from-blue-600 to-teal-600">
+                    Collaborate
+                  </Button>
+                </CardContent>
+              </Card>
+            </div>
           </div>
         )}
       </main>
@@ -276,38 +485,38 @@ const Index = () => {
                   Domin8
                 </span>
               </div>
-              <p className="text-gray-400">Africa's premier esports community for competitive gaming and earning rewards.</p>
+              <p className="text-gray-400">Powering the next era of esports in Africa through innovative technology and community-driven experiences.</p>
             </div>
             <div>
-              <h3 className="text-white font-semibold mb-4">Features</h3>
+              <h3 className="text-white font-semibold mb-4">Platform</h3>
               <ul className="space-y-2 text-gray-400">
-                <li>Player Rankings</li>
-                <li>Tournaments</li>
-                <li>Challenge System</li>
-                <li>Community</li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-white font-semibold mb-4">Games</h3>
-              <ul className="space-y-2 text-gray-400">
-                <li>Valorant</li>
-                <li>CS2</li>
-                <li>League of Legends</li>
-                <li>Apex Legends</li>
+                <li>AER - African Esports Rising</li>
+                <li>Tournament Hub</li>
+                <li>Creator Connect</li>
+                <li>Analytics Dashboard</li>
               </ul>
             </div>
             <div>
               <h3 className="text-white font-semibold mb-4">Community</h3>
               <ul className="space-y-2 text-gray-400">
-                <li>Discord</li>
-                <li>WhatsApp</li>
-                <li>Instagram</li>
-                <li>Twitter</li>
+                <li>Players</li>
+                <li>Creators</li>
+                <li>Tournament Organizers</li>
+                <li>Partners & Brands</li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="text-white font-semibold mb-4">Connect</h3>
+              <ul className="space-y-2 text-gray-400">
+                <li>Discord Community</li>
+                <li>WhatsApp Groups</li>
+                <li>Social Media</li>
+                <li>Newsletter</li>
               </ul>
             </div>
           </div>
           <div className="border-t border-blue-800/30 mt-8 pt-8 text-center text-gray-400">
-            <p>&copy; 2024 Domin8. All rights reserved.</p>
+            <p>&copy; 2024 Domin8. All rights reserved. Powering Africa's esports future.</p>
           </div>
         </div>
       </footer>
