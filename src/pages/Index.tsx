@@ -13,10 +13,10 @@ const Index = () => {
   const verticals = [
     {
       name: "AER",
-      fullName: "African Esports Rising",
-      description: "Competitive grassroots vertical for Tier 2 & 3 players",
-      tagline: "Grassroots Today. Greatness Tomorrow.",
-      features: ["Tournament Opportunities", "Talent Development", "Performance Tracking", "Rising Player Network"],
+      fullName: "Africa Esports Ranking",
+      description: "Continental ranking system for competitive esports players",
+      tagline: "Rank Up. Stand Out. Dominate.",
+      features: ["Continental Rankings", "Performance Metrics", "Tier Classification", "Competitive Analytics"],
       color: "from-orange-500 to-red-600"
     },
     {
@@ -330,7 +330,7 @@ const Index = () => {
                   <div className="text-center">
                     <Trophy className="h-12 w-12 text-orange-400 mx-auto mb-4" />
                     <h4 className="text-xl font-semibold text-white mb-2">AER Players</h4>
-                    <p className="text-gray-400">Rising talent in competitive gaming seeking opportunities to showcase their skills</p>
+                    <p className="text-gray-400">Competitive players participating in Africa's premier esports ranking system</p>
                   </div>
                   <div className="text-center">
                     <Star className="h-12 w-12 text-purple-400 mx-auto mb-4" />
@@ -354,11 +354,11 @@ const Index = () => {
             <div className="text-center">
               <div className="mb-6">
                 <Badge className="bg-orange-600 text-white text-lg px-4 py-2 mb-4">AER</Badge>
-                <h2 className="text-4xl font-bold text-white mb-4">African Esports Rising</h2>
-                <p className="text-xl text-orange-400 font-semibold italic mb-4">"Grassroots Today. Greatness Tomorrow."</p>
+                <h2 className="text-4xl font-bold text-white mb-4">Africa Esports Ranking</h2>
+                <p className="text-xl text-orange-400 font-semibold italic mb-4">"Rank Up. Stand Out. Dominate."</p>
                 <p className="text-lg text-gray-300 max-w-4xl mx-auto">
-                  AER is our dedicated vertical for Tier 2 & 3 players, providing competitive opportunities, 
-                  talent development programs, and a clear pathway to professional esports.
+                  AER is our continental ranking system that tracks and ranks competitive esports players 
+                  across Africa, providing a unified standard for measuring skill and performance.
                 </p>
               </div>
             </div>
@@ -368,19 +368,19 @@ const Index = () => {
                 <CardHeader>
                   <CardTitle className="text-white flex items-center gap-2">
                     <Target className="h-6 w-6 text-orange-400" />
-                    Purpose & Mission
+                    Ranking System
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-gray-300 mb-4">
-                    AER focuses on creating sustainable competitive opportunities for emerging talent across Africa. 
-                    We believe that every player deserves a chance to develop their skills and compete at their level.
+                    AER provides a comprehensive ranking system that evaluates players based on tournament 
+                    performance, consistency, and competitive achievements across multiple games.
                   </p>
                   <ul className="space-y-2 text-gray-300">
-                    <li>• Regular tournament opportunities</li>
-                    <li>• Skill development programs</li>
-                    <li>• Performance tracking and analytics</li>
-                    <li>• Community building and networking</li>
+                    <li>• Continental leaderboards</li>
+                    <li>• Game-specific rankings</li>
+                    <li>• Performance analytics</li>
+                    <li>• Tier classification system</li>
                   </ul>
                 </CardContent>
               </Card>
@@ -389,25 +389,25 @@ const Index = () => {
                 <CardHeader>
                   <CardTitle className="text-white flex items-center gap-2">
                     <BarChart3 className="h-6 w-6 text-orange-400" />
-                    Talent Development
+                    Performance Metrics
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-gray-300 mb-4">
-                    Our comprehensive tracking and development tools help players understand their progress 
-                    and identify areas for improvement.
+                    Track detailed performance metrics and statistics to understand your competitive 
+                    standing and identify areas for improvement.
                   </p>
                   <div className="space-y-3">
                     <div className="flex justify-between text-sm">
-                      <span className="text-gray-400">Performance Analytics</span>
+                      <span className="text-gray-400">Match Win Rate</span>
                       <span className="text-orange-400">Coming Soon</span>
                     </div>
                     <div className="flex justify-between text-sm">
-                      <span className="text-gray-400">Coaching Resources</span>
+                      <span className="text-gray-400">Tournament Placements</span>
                       <span className="text-orange-400">Coming Soon</span>
                     </div>
                     <div className="flex justify-between text-sm">
-                      <span className="text-gray-400">Tournament History</span>
+                      <span className="text-gray-400">Ranking Progression</span>
                       <span className="text-orange-400">Coming Soon</span>
                     </div>
                   </div>
@@ -485,7 +485,7 @@ const Index = () => {
             <div>
               <h3 className="text-white font-semibold mb-4">Platform</h3>
               <ul className="space-y-2 text-gray-400">
-                <li>AER - African Esports Rising</li>
+                <li>AER - African Esports Ranking</li>
                 <li>Tournament Hub</li>
                 <li>Creator Connect</li>
                 <li>Analytics Dashboard</li>
