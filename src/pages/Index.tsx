@@ -1,10 +1,10 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Gamepad, Trophy, Users, Star, Target, Zap, BarChart3, Heart, Briefcase } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import { UserMenu } from "@/components/auth/UserMenu";
 
 const Index = () => {
   const [selectedTab, setSelectedTab] = useState("home");
@@ -154,12 +154,7 @@ const Index = () => {
                 Partners
               </button>
             </div>
-            <Button 
-              className="bg-gradient-to-r from-blue-600 to-teal-600 hover:from-blue-700 hover:to-teal-700 text-white font-semibold"
-              onClick={handleWaitlistSignup}
-            >
-              Join Waitlist
-            </Button>
+            <UserMenu />
           </div>
         </div>
       </nav>
