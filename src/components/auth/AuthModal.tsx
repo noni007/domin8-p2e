@@ -1,14 +1,19 @@
 
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/lib/supabase";
-import { toast } from "@/hooks/use-toast";
-import { Loader2, Mail, Lock, User, Gamepad2 } from "lucide-react";
+import { Loader2, Mail, Lock, User, Trophy } from "lucide-react";
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -16,53 +21,19 @@ interface AuthModalProps {
 }
 
 export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState("login");
+  const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [username, setUsername] = useState("");
+  const [userType, setUserType] = useState<"player" | "creator" | "organizer">("player");
+  const { toast } = useToast();
 
-  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
-
-    const formData = new FormData(e.currentTarget);
-    const email = formData.get("email") as string;
-    const password = formData.get("password") as string;
+    setLoading(true);
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
-      if (error) throw error;
-
-      toast({
-        title: "Welcome back!",
-        description: "You have successfully logged in.",
-      });
-      onClose();
-    } catch (error: any) {
-      toast({
-        title: "Login failed",
-        description: error.message,
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleSignup = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setIsLoading(true);
-
-    const formData = new FormData(e.currentTarget);
-    const email = formData.get("email") as string;
-    const password = formData.get("password") as string;
-    const username = formData.get("username") as string;
-    const userType = formData.get("userType") as string;
-
-    try {
-      const { error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -75,19 +46,49 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
 
       if (error) throw error;
 
+      if (data.user) {
+        toast({
+          title: "Account created successfully!",
+          description: "Please check your email to verify your account.",
+        });
+        onClose();
+      }
+    } catch (error: any) {
       toast({
-        title: "Account created!",
-        description: "Please check your email to verify your account.",
+        variant: "destructive",
+        title: "Error creating account",
+        description: error.message,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSignIn = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Welcome back!",
+        description: "You have successfully signed in.",
       });
       onClose();
     } catch (error: any) {
       toast({
-        title: "Signup failed",
-        description: error.message,
         variant: "destructive",
+        title: "Error signing in",
+        description: error.message,
       });
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
@@ -95,154 +96,173 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md bg-black/95 border-blue-800/30 text-white">
         <DialogHeader>
-          <DialogTitle className="text-center text-2xl bg-gradient-to-r from-blue-400 to-teal-400 bg-clip-text text-transparent">
+          <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-teal-400 bg-clip-text text-transparent">
             Join Domin8
           </DialogTitle>
+          <DialogDescription className="text-gray-300">
+            Enter the Africa Esports ecosystem
+          </DialogDescription>
         </DialogHeader>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-2 bg-blue-900/20">
-            <TabsTrigger value="login">Login</TabsTrigger>
-            <TabsTrigger value="signup">Sign Up</TabsTrigger>
+        <Tabs defaultValue="signin" className="w-full">
+          <TabsList className="grid w-full grid-cols-2 bg-gray-800/50">
+            <TabsTrigger value="signin" className="data-[state=active]:bg-blue-600">
+              Sign In
+            </TabsTrigger>
+            <TabsTrigger value="signup" className="data-[state=active]:bg-blue-600">
+              Sign Up
+            </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="login">
-            <Card className="bg-transparent border-blue-800/30">
-              <CardHeader>
-                <CardTitle className="text-white">Welcome Back</CardTitle>
-                <CardDescription className="text-gray-400">
-                  Sign in to your Domin8 account
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <form onSubmit={handleLogin} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="login-email" className="text-white">
-                      <Mail className="w-4 h-4 inline mr-2" />
-                      Email
-                    </Label>
-                    <Input
-                      id="login-email"
-                      name="email"
-                      type="email"
-                      required
-                      className="bg-black/40 border-blue-800/30 text-white"
-                      placeholder="Enter your email"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="login-password" className="text-white">
-                      <Lock className="w-4 h-4 inline mr-2" />
-                      Password
-                    </Label>
-                    <Input
-                      id="login-password"
-                      name="password"
-                      type="password"
-                      required
-                      className="bg-black/40 border-blue-800/30 text-white"
-                      placeholder="Enter your password"
-                    />
-                  </div>
-                  <Button
-                    type="submit"
-                    className="w-full bg-gradient-to-r from-blue-600 to-teal-600 hover:from-blue-700 hover:to-teal-700"
-                    disabled={isLoading}
-                  >
-                    {isLoading ? (
-                      <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                    ) : null}
-                    Sign In
-                  </Button>
-                </form>
-              </CardContent>
-            </Card>
+          <TabsContent value="signin" className="space-y-4">
+            <form onSubmit={handleSignIn} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="signin-email" className="text-white">Email</Label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  <Input
+                    id="signin-email"
+                    type="email"
+                    placeholder="Enter your email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="pl-10 bg-gray-800/50 border-gray-600 text-white"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="signin-password" className="text-white">Password</Label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  <Input
+                    id="signin-password"
+                    type="password"
+                    placeholder="Enter your password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="pl-10 bg-gray-800/50 border-gray-600 text-white"
+                    required
+                  />
+                </div>
+              </div>
+
+              <Button
+                type="submit"
+                className="w-full bg-gradient-to-r from-blue-600 to-teal-600 hover:from-blue-700 hover:to-teal-700"
+                disabled={loading}
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Signing in...
+                  </>
+                ) : (
+                  "Sign In"
+                )}
+              </Button>
+            </form>
           </TabsContent>
 
-          <TabsContent value="signup">
-            <Card className="bg-transparent border-blue-800/30">
-              <CardHeader>
-                <CardTitle className="text-white">Create Account</CardTitle>
-                <CardDescription className="text-gray-400">
-                  Join the Domin8 community
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <form onSubmit={handleSignup} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-username" className="text-white">
-                      <User className="w-4 h-4 inline mr-2" />
-                      Username
-                    </Label>
-                    <Input
-                      id="signup-username"
-                      name="username"
-                      type="text"
-                      required
-                      className="bg-black/40 border-blue-800/30 text-white"
-                      placeholder="Choose a username"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-email" className="text-white">
-                      <Mail className="w-4 h-4 inline mr-2" />
-                      Email
-                    </Label>
-                    <Input
-                      id="signup-email"
-                      name="email"
-                      type="email"
-                      required
-                      className="bg-black/40 border-blue-800/30 text-white"
-                      placeholder="Enter your email"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-password" className="text-white">
-                      <Lock className="w-4 h-4 inline mr-2" />
-                      Password
-                    </Label>
-                    <Input
-                      id="signup-password"
-                      name="password"
-                      type="password"
-                      required
-                      minLength={6}
-                      className="bg-black/40 border-blue-800/30 text-white"
-                      placeholder="Create a password"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="user-type" className="text-white">
-                      <Gamepad2 className="w-4 h-4 inline mr-2" />
-                      I am a...
-                    </Label>
-                    <select
-                      id="user-type"
-                      name="userType"
-                      required
-                      className="w-full px-3 py-2 bg-black/40 border border-blue-800/30 rounded-md text-white"
-                    >
-                      <option value="">Select your role</option>
-                      <option value="player">Player</option>
-                      <option value="creator">Content Creator</option>
-                      <option value="organizer">Tournament Organizer</option>
-                      <option value="brand">Brand/Partner</option>
-                    </select>
-                  </div>
+          <TabsContent value="signup" className="space-y-4">
+            <form onSubmit={handleSignUp} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="signup-username" className="text-white">Username</Label>
+                <div className="relative">
+                  <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  <Input
+                    id="signup-username"
+                    type="text"
+                    placeholder="Choose a username"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    className="pl-10 bg-gray-800/50 border-gray-600 text-white"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="signup-email" className="text-white">Email</Label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  <Input
+                    id="signup-email"
+                    type="email"
+                    placeholder="Enter your email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="pl-10 bg-gray-800/50 border-gray-600 text-white"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="signup-password" className="text-white">Password</Label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  <Input
+                    id="signup-password"
+                    type="password"
+                    placeholder="Create a password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="pl-10 bg-gray-800/50 border-gray-600 text-white"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-white">Account Type</Label>
+                <div className="grid grid-cols-3 gap-2">
                   <Button
-                    type="submit"
-                    className="w-full bg-gradient-to-r from-blue-600 to-teal-600 hover:from-blue-700 hover:to-teal-700"
-                    disabled={isLoading}
+                    type="button"
+                    variant={userType === "player" ? "default" : "outline"}
+                    onClick={() => setUserType("player")}
+                    className="text-xs p-2"
                   >
-                    {isLoading ? (
-                      <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                    ) : null}
-                    Create Account
+                    <Trophy className="h-3 w-3 mr-1" />
+                    Player
                   </Button>
-                </form>
-              </CardContent>
-            </Card>
+                  <Button
+                    type="button"
+                    variant={userType === "creator" ? "default" : "outline"}
+                    onClick={() => setUserType("creator")}
+                    className="text-xs p-2"
+                  >
+                    <User className="h-3 w-3 mr-1" />
+                    Creator
+                  </Button>
+                  <Button
+                    type="button"
+                    variant={userType === "organizer" ? "default" : "outline"}
+                    onClick={() => setUserType("organizer")}
+                    className="text-xs p-2"
+                  >
+                    <Trophy className="h-3 w-3 mr-1" />
+                    Organizer
+                  </Button>
+                </div>
+              </div>
+
+              <Button
+                type="submit"
+                className="w-full bg-gradient-to-r from-blue-600 to-teal-600 hover:from-blue-700 hover:to-teal-700"
+                disabled={loading}
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Creating account...
+                  </>
+                ) : (
+                  "Create Account"
+                )}
+              </Button>
+            </form>
           </TabsContent>
         </Tabs>
       </DialogContent>

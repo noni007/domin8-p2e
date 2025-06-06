@@ -1,18 +1,21 @@
 
 import { Button } from "@/components/ui/button";
-import { Trophy, Users, TrendingUp, Calendar, Star, ChevronRight } from "lucide-react";
+import { Trophy, Users, TrendingUp, Calendar, Star, ChevronRight, Menu } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { UserDashboard } from "@/components/dashboard/UserDashboard";
+import { UserMenu } from "@/components/auth/UserMenu";
+import { useState } from "react";
 
 const Index = () => {
   const { user } = useAuth();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Show dashboard for authenticated users
   if (user) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
         {/* Navigation */}
-        <nav className="border-b border-blue-800/30 bg-black/20 backdrop-blur-sm">
+        <nav className="border-b border-blue-800/30 bg-black/20 backdrop-blur-sm sticky top-0 z-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
               <div className="flex items-center space-x-2">
@@ -21,30 +24,69 @@ const Index = () => {
                   Domin8
                 </span>
               </div>
-              <div className="flex items-center space-x-4">
+              
+              {/* Desktop Navigation */}
+              <div className="hidden md:flex items-center space-x-6">
                 <Button 
-                  variant="outline" 
-                  className="border-blue-400 text-blue-400 hover:bg-blue-400 hover:text-black"
+                  variant="ghost" 
+                  className="text-gray-300 hover:text-white"
                   onClick={() => window.location.href = '/tournaments'}
                 >
                   Tournaments
                 </Button>
                 <Button 
-                  variant="outline" 
-                  className="border-yellow-400 text-yellow-400 hover:bg-yellow-400 hover:text-black"
+                  variant="ghost" 
+                  className="text-gray-300 hover:text-white"
                   onClick={() => window.location.href = '/rankings'}
                 >
                   Rankings
                 </Button>
-                <Button 
-                  variant="outline" 
-                  className="border-teal-400 text-teal-400 hover:bg-teal-400 hover:text-black"
-                  onClick={() => window.location.href = '/profile'}
+                <UserMenu />
+              </div>
+
+              {/* Mobile menu button */}
+              <div className="md:hidden">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                  className="text-white"
                 >
-                  Profile
+                  <Menu className="h-6 w-6" />
                 </Button>
               </div>
             </div>
+
+            {/* Mobile Navigation */}
+            {mobileMenuOpen && (
+              <div className="md:hidden border-t border-blue-800/30 py-4">
+                <div className="flex flex-col space-y-2">
+                  <Button 
+                    variant="ghost" 
+                    className="text-gray-300 hover:text-white justify-start"
+                    onClick={() => {
+                      window.location.href = '/tournaments';
+                      setMobileMenuOpen(false);
+                    }}
+                  >
+                    Tournaments
+                  </Button>
+                  <Button 
+                    variant="ghost" 
+                    className="text-gray-300 hover:text-white justify-start"
+                    onClick={() => {
+                      window.location.href = '/rankings';
+                      setMobileMenuOpen(false);
+                    }}
+                  >
+                    Rankings
+                  </Button>
+                  <div className="pt-2">
+                    <UserMenu />
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </nav>
 
@@ -74,26 +116,69 @@ const Index = () => {
                   Domin8
                 </span>
               </div>
-              <div className="flex items-center space-x-4">
+              
+              {/* Desktop Navigation */}
+              <div className="hidden md:flex items-center space-x-4">
                 <Button 
-                  variant="outline" 
-                  className="border-blue-400 text-blue-400 hover:bg-blue-400 hover:text-black"
+                  variant="ghost" 
+                  className="text-gray-300 hover:text-white"
                   onClick={() => window.location.href = '/tournaments'}
                 >
-                  View Tournaments
+                  Tournaments
                 </Button>
                 <Button 
-                  variant="outline" 
-                  className="border-yellow-400 text-yellow-400 hover:bg-yellow-400 hover:text-black"
+                  variant="ghost" 
+                  className="text-gray-300 hover:text-white"
                   onClick={() => window.location.href = '/rankings'}
                 >
-                  AER Rankings
+                  Rankings
                 </Button>
-                <Button className="bg-gradient-to-r from-blue-600 to-teal-600 hover:from-blue-700 hover:to-teal-700">
-                  Get Started
+                <UserMenu />
+              </div>
+
+              {/* Mobile menu button */}
+              <div className="md:hidden">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                  className="text-white"
+                >
+                  <Menu className="h-6 w-6" />
                 </Button>
               </div>
             </div>
+
+            {/* Mobile Navigation */}
+            {mobileMenuOpen && (
+              <div className="md:hidden border-t border-blue-800/30 py-4">
+                <div className="flex flex-col space-y-2">
+                  <Button 
+                    variant="ghost" 
+                    className="text-gray-300 hover:text-white justify-start"
+                    onClick={() => {
+                      window.location.href = '/tournaments';
+                      setMobileMenuOpen(false);
+                    }}
+                  >
+                    Tournaments
+                  </Button>
+                  <Button 
+                    variant="ghost" 
+                    className="text-gray-300 hover:text-white justify-start"
+                    onClick={() => {
+                      window.location.href = '/rankings';
+                      setMobileMenuOpen(false);
+                    }}
+                  >
+                    Rankings
+                  </Button>
+                  <div className="pt-2">
+                    <UserMenu />
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </nav>
 
