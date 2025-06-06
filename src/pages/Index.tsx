@@ -124,6 +124,12 @@ const Index = () => {
                 Home
               </button>
               <button
+                onClick={() => window.location.href = '/tournaments'}
+                className="px-3 py-2 text-sm font-medium transition-colors text-gray-300 hover:text-blue-400"
+              >
+                Tournaments
+              </button>
+              <button
                 onClick={() => setSelectedTab("about")}
                 className={`px-3 py-2 text-sm font-medium transition-colors ${
                   selectedTab === "about"
@@ -177,8 +183,13 @@ const Index = () => {
             >
               Get Early Access
             </Button>
-            <Button size="lg" variant="outline" className="border-blue-400 text-blue-400 hover:bg-blue-400 hover:text-black px-8 py-3 text-lg">
-              Explore Platform
+            <Button 
+              size="lg" 
+              variant="outline" 
+              className="border-blue-400 text-blue-400 hover:bg-blue-400 hover:text-black px-8 py-3 text-lg"
+              onClick={() => window.location.href = '/tournaments'}
+            >
+              View Tournaments
             </Button>
           </div>
         </div>
