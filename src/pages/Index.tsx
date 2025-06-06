@@ -31,6 +31,13 @@ const Index = () => {
                 </Button>
                 <Button 
                   variant="outline" 
+                  className="border-yellow-400 text-yellow-400 hover:bg-yellow-400 hover:text-black"
+                  onClick={() => window.location.href = '/rankings'}
+                >
+                  Rankings
+                </Button>
+                <Button 
+                  variant="outline" 
                   className="border-teal-400 text-teal-400 hover:bg-teal-400 hover:text-black"
                   onClick={() => window.location.href = '/profile'}
                 >
@@ -75,6 +82,13 @@ const Index = () => {
                 >
                   View Tournaments
                 </Button>
+                <Button 
+                  variant="outline" 
+                  className="border-yellow-400 text-yellow-400 hover:bg-yellow-400 hover:text-black"
+                  onClick={() => window.location.href = '/rankings'}
+                >
+                  AER Rankings
+                </Button>
                 <Button className="bg-gradient-to-r from-blue-600 to-teal-600 hover:from-blue-700 hover:to-teal-700">
                   Get Started
                 </Button>
@@ -108,7 +122,8 @@ const Index = () => {
               <Button 
                 size="lg" 
                 variant="outline" 
-                className="border-blue-400 text-blue-400 hover:bg-blue-400 hover:text-black text-lg px-8 py-4"
+                className="border-yellow-400 text-yellow-400 hover:bg-yellow-400 hover:text-black text-lg px-8 py-4"
+                onClick={() => window.location.href = '/rankings'}
               >
                 Explore Rankings
                 <TrendingUp className="ml-2 h-5 w-5" />
