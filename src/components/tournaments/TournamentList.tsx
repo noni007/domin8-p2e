@@ -1,19 +1,28 @@
 
 import { useEffect, useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Trophy, Calendar, Users, DollarSign } from "lucide-react";
+import { Trophy } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
 import { supabase, Tournament } from "@/lib/supabase";
+import { useAuth } from "@/hooks/useAuth";
 import { toast } from "@/hooks/use-toast";
+import { TournamentCard } from "./TournamentCard";
+import { TournamentDetails } from "./TournamentDetails";
 
 export const TournamentList = () => {
+  const { user } = useAuth();
   const [tournaments, setTournaments] = useState<Tournament[]>([]);
   const [loading, setLoading] = useState(true);
+  const [registering, setRegistering] = useState<string | null>(null);
+  const [selectedTournament, setSelectedTournament] = useState<string | null>(null);
+  const [userRegistrations, setUserRegistrations] = useState<string[]>([]);
 
   useEffect(() => {
     fetchTournaments();
-  }, []);
+    if (user) {
+      fetchUserRegistrations();
+    }
+  }, [user]);
 
   const fetchTournaments = async () => {
     try {
@@ -36,25 +45,79 @@ export const TournamentList = () => {
     }
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  };
+  const fetchUserRegistrations = async () => {
+    if (!user) return;
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'upcoming': return 'bg-blue-600';
-      case 'registration_open': return 'bg-green-600';
-      case 'in_progress': return 'bg-yellow-600';
-      case 'completed': return 'bg-gray-600';
-      default: return 'bg-gray-600';
+    try {
+      const { data, error } = await supabase
+        .from('tournament_participants')
+        .select('tournament_id')
+        .eq('user_id', user.id);
+
+      if (error) throw error;
+      setUserRegistrations(data?.map(reg => reg.tournament_id) || []);
+    } catch (error) {
+      console.error('Error fetching user registrations:', error);
     }
   };
+
+  const handleRegister = async (tournamentId: string) => {
+    if (!user) {
+      toast({
+        title: "Authentication Required",
+        description: "Please sign in to register for tournaments.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setRegistering(tournamentId);
+    try {
+      const { error } = await supabase
+        .from('tournament_participants')
+        .insert([{
+          tournament_id: tournamentId,
+          user_id: user.id,
+          registration_date: new Date().toISOString(),
+          status: 'registered'
+        }]);
+
+      if (error) throw error;
+
+      setUserRegistrations(prev => [...prev, tournamentId]);
+      toast({
+        title: "Registration Successful!",
+        description: "You have been registered for this tournament.",
+      });
+    } catch (error) {
+      console.error('Error registering for tournament:', error);
+      toast({
+        title: "Registration Failed",
+        description: "Failed to register for tournament. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setRegistering(null);
+    }
+  };
+
+  const handleViewDetails = (tournamentId: string) => {
+    setSelectedTournament(tournamentId);
+  };
+
+  const handleBackToList = () => {
+    setSelectedTournament(null);
+    fetchUserRegistrations(); // Refresh registrations in case user registered
+  };
+
+  if (selectedTournament) {
+    return (
+      <TournamentDetails 
+        tournamentId={selectedTournament} 
+        onBack={handleBackToList}
+      />
+    );
+  }
 
   if (loading) {
     return (
@@ -91,53 +154,14 @@ export const TournamentList = () => {
       ) : (
         <div className="grid gap-6">
           {tournaments.map((tournament) => (
-            <Card key={tournament.id} className="bg-black/40 border-blue-800/30 backdrop-blur-sm hover:border-blue-600/50 transition-all duration-300">
-              <CardHeader>
-                <div className="flex justify-between items-start">
-                  <div>
-                    <CardTitle className="text-white text-xl mb-2">{tournament.title}</CardTitle>
-                    <Badge className={`${getStatusColor(tournament.status)} text-white capitalize`}>
-                      {tournament.status.replace('_', ' ')}
-                    </Badge>
-                  </div>
-                  <div className="text-right">
-                    <div className="flex items-center gap-1 text-yellow-400 text-lg font-semibold">
-                      <DollarSign className="h-5 w-5" />
-                      {tournament.prize_pool.toLocaleString()}
-                    </div>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-300 mb-4">{tournament.description}</p>
-                
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                  <div className="flex items-center gap-2 text-gray-300">
-                    <Trophy className="h-4 w-4 text-blue-400" />
-                    <span className="text-sm">{tournament.game}</span>
-                  </div>
-                  
-                  <div className="flex items-center gap-2 text-gray-300">
-                    <Users className="h-4 w-4 text-green-400" />
-                    <span className="text-sm">Max {tournament.max_participants} players</span>
-                  </div>
-                  
-                  <div className="flex items-center gap-2 text-gray-300">
-                    <Calendar className="h-4 w-4 text-purple-400" />
-                    <span className="text-sm">{formatDate(tournament.start_date)}</span>
-                  </div>
-                </div>
-                
-                <div className="flex justify-between items-center">
-                  <div className="text-sm text-gray-400">
-                    Registration closes: {formatDate(tournament.registration_deadline)}
-                  </div>
-                  <Button className="bg-gradient-to-r from-blue-600 to-teal-600 hover:from-blue-700 hover:to-teal-700">
-                    View Details
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+            <TournamentCard
+              key={tournament.id}
+              tournament={tournament}
+              onRegister={handleRegister}
+              onViewDetails={handleViewDetails}
+              isRegistered={userRegistrations.includes(tournament.id)}
+              loading={registering === tournament.id}
+            />
           ))}
         </div>
       )}
