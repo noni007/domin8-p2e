@@ -1,4 +1,3 @@
-
 import { createClient } from '@supabase/supabase-js'
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
@@ -39,6 +38,7 @@ export interface Tournament {
   registration_deadline: string
   status: 'upcoming' | 'registration_open' | 'in_progress' | 'completed'
   organizer_id: string
+  bracket_generated: boolean
   created_at: string
   updated_at: string
 }
@@ -56,12 +56,25 @@ export interface Match {
   id: string
   tournament_id: string
   round: number
+  match_number: number
   player1_id: string
-  player2_id: string
+  player2_id?: string
   winner_id?: string
   score_player1?: number
   score_player2?: number
   scheduled_time: string
   status: 'scheduled' | 'in_progress' | 'completed'
+  bracket_position: number
   created_at: string
+}
+
+export interface BracketNode {
+  id: string
+  match: Match | null
+  player1: TournamentParticipant | null
+  player2: TournamentParticipant | null
+  winner: TournamentParticipant | null
+  round: number
+  position: number
+  nextMatchId?: string
 }
