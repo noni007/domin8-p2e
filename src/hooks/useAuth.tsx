@@ -2,17 +2,7 @@
 import { useState, useEffect, createContext, useContext, ReactNode } from 'react'
 import { User, Session } from '@supabase/supabase-js'
 import { supabase } from '@/integrations/supabase/client'
-
-interface Profile {
-  id: string
-  username: string | null
-  email: string
-  user_type: 'player' | 'creator' | 'organizer' | 'brand'
-  avatar_url?: string | null
-  bio?: string | null
-  created_at: string
-  updated_at: string
-}
+import type { Profile } from '@/lib/supabase'
 
 interface AuthContextType {
   user: User | null
@@ -57,7 +47,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         console.error('Error fetching profile:', error)
         return
       }
-      setProfile(data)
+      // Type assertion to ensure user_type is properly typed
+      setProfile(data as Profile)
     } catch (error) {
       console.error('Error fetching profile:', error)
     }
