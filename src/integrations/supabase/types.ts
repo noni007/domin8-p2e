@@ -9,6 +9,62 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      matches: {
+        Row: {
+          bracket_position: number
+          created_at: string
+          id: string
+          match_number: number
+          player1_id: string
+          player2_id: string | null
+          round: number
+          scheduled_time: string
+          score_player1: number | null
+          score_player2: number | null
+          status: string
+          tournament_id: string
+          winner_id: string | null
+        }
+        Insert: {
+          bracket_position: number
+          created_at?: string
+          id?: string
+          match_number: number
+          player1_id: string
+          player2_id?: string | null
+          round: number
+          scheduled_time: string
+          score_player1?: number | null
+          score_player2?: number | null
+          status?: string
+          tournament_id: string
+          winner_id?: string | null
+        }
+        Update: {
+          bracket_position?: number
+          created_at?: string
+          id?: string
+          match_number?: number
+          player1_id?: string
+          player2_id?: string | null
+          round?: number
+          scheduled_time?: string
+          score_player1?: number | null
+          score_player2?: number | null
+          status?: string
+          tournament_id?: string
+          winner_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "matches_tournament_id_fkey"
+            columns: ["tournament_id"]
+            isOneToOne: false
+            referencedRelation: "tournaments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -39,6 +95,92 @@ export type Database = {
           updated_at?: string
           user_type?: string
           username?: string | null
+        }
+        Relationships: []
+      }
+      tournament_participants: {
+        Row: {
+          id: string
+          registration_date: string
+          status: string
+          team_name: string | null
+          tournament_id: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          registration_date?: string
+          status?: string
+          team_name?: string | null
+          tournament_id: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          registration_date?: string
+          status?: string
+          team_name?: string | null
+          tournament_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tournament_participants_tournament_id_fkey"
+            columns: ["tournament_id"]
+            isOneToOne: false
+            referencedRelation: "tournaments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tournaments: {
+        Row: {
+          bracket_generated: boolean
+          created_at: string
+          description: string
+          end_date: string
+          game: string
+          id: string
+          max_participants: number
+          organizer_id: string
+          prize_pool: number
+          registration_deadline: string
+          start_date: string
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          bracket_generated?: boolean
+          created_at?: string
+          description: string
+          end_date: string
+          game: string
+          id?: string
+          max_participants: number
+          organizer_id: string
+          prize_pool?: number
+          registration_deadline: string
+          start_date: string
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          bracket_generated?: boolean
+          created_at?: string
+          description?: string
+          end_date?: string
+          game?: string
+          id?: string
+          max_participants?: number
+          organizer_id?: string
+          prize_pool?: number
+          registration_deadline?: string
+          start_date?: string
+          status?: string
+          title?: string
+          updated_at?: string
         }
         Relationships: []
       }

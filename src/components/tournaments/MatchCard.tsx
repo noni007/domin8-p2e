@@ -5,9 +5,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Clock, Trophy, User } from "lucide-react";
-import { Match, TournamentParticipant } from "@/lib/supabase";
+import type { Tables } from "@/integrations/supabase/types";
 import { advanceWinner } from "@/utils/bracketGenerator";
 import { toast } from "@/hooks/use-toast";
+
+type Match = Tables<'matches'>;
+type TournamentParticipant = Tables<'tournament_participants'>;
 
 interface MatchCardProps {
   match: Match;

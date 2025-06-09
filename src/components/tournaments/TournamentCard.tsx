@@ -3,7 +3,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Trophy, Calendar, Users, DollarSign, Clock } from "lucide-react";
-import { Tournament } from "@/lib/supabase";
+import type { Tables } from "@/integrations/supabase/types";
+
+type Tournament = Tables<'tournaments'>;
 
 interface TournamentCardProps {
   tournament: Tournament;

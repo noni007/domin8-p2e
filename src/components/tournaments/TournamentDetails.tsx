@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -5,10 +6,14 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Trophy, Calendar, Users, DollarSign, Clock, ArrowLeft, UserCheck } from "lucide-react";
-import { supabase, Tournament, TournamentParticipant } from "@/lib/supabase";
+import { supabase } from "@/integrations/supabase/client";
+import type { Tables } from "@/integrations/supabase/types";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "@/hooks/use-toast";
 import { TournamentBracket } from "./TournamentBracket";
+
+type Tournament = Tables<'tournaments'>;
+type TournamentParticipant = Tables<'tournament_participants'>;
 
 interface TournamentDetailsProps {
   tournamentId: string;

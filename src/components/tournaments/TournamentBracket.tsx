@@ -4,10 +4,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Trophy, Clock, Users } from "lucide-react";
-import { supabase, Match, TournamentParticipant } from "@/lib/supabase";
+import { supabase } from "@/integrations/supabase/client";
+import type { Tables } from "@/integrations/supabase/types";
 import { generateTournamentBracket } from "@/utils/bracketGenerator";
 import { MatchCard } from "./MatchCard";
 import { toast } from "@/hooks/use-toast";
+
+type Match = Tables<'matches'>;
+type TournamentParticipant = Tables<'tournament_participants'>;
 
 interface TournamentBracketProps {
   tournamentId: string;

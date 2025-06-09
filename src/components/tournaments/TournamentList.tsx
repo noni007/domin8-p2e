@@ -3,11 +3,14 @@ import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Trophy } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-import { supabase, Tournament } from "@/lib/supabase";
+import { supabase } from "@/integrations/supabase/client";
+import type { Tables } from "@/integrations/supabase/types";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "@/hooks/use-toast";
 import { TournamentCard } from "./TournamentCard";
 import { TournamentDetails } from "./TournamentDetails";
+
+type Tournament = Tables<'tournaments'>;
 
 export const TournamentList = () => {
   const { user } = useAuth();
