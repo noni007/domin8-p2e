@@ -1,7 +1,18 @@
 
 import { useState, useEffect, createContext, useContext, ReactNode } from 'react'
 import { User, Session } from '@supabase/supabase-js'
-import { supabase, Profile } from '@/lib/supabase'
+import { supabase } from '@/integrations/supabase/client'
+
+interface Profile {
+  id: string
+  username: string | null
+  email: string
+  user_type: 'player' | 'creator' | 'organizer' | 'brand'
+  avatar_url?: string | null
+  bio?: string | null
+  created_at: string
+  updated_at: string
+}
 
 interface AuthContextType {
   user: User | null
@@ -42,7 +53,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         .eq('id', user.id)
         .single()
 
-      if (error) throw error
+      if (error) {
+        console.error('Error fetching profile:', error)
+        return
+      }
       setProfile(data)
     } catch (error) {
       console.error('Error fetching profile:', error)
@@ -61,37 +75,39 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   }
 
   useEffect(() => {
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session)
-      setUser(session?.user ?? null)
-      setLoading(false)
-    })
-
-    // Listen for auth changes
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event, session) => {
+    // Set up auth state listener FIRST
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log('Auth state changed:', event, session?.user?.email)
       setSession(session)
       setUser(session?.user ?? null)
       setLoading(false)
 
+      // Defer profile fetching to avoid recursion
       if (session?.user) {
-        await refreshProfile()
+        setTimeout(() => {
+          refreshProfile()
+        }, 0)
       } else {
         setProfile(null)
       }
     })
 
+    // THEN check for existing session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      console.log('Initial session:', session?.user?.email)
+      setSession(session)
+      setUser(session?.user ?? null)
+      setLoading(false)
+      
+      if (session?.user) {
+        setTimeout(() => {
+          refreshProfile()
+        }, 0)
+      }
+    })
+
     return () => subscription.unsubscribe()
   }, [])
-
-  // Fetch profile when user changes
-  useEffect(() => {
-    if (user && !profile) {
-      refreshProfile()
-    }
-  }, [user, profile])
 
   const value = {
     user,

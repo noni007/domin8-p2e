@@ -43,7 +43,7 @@ export const UserMenu = () => {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-10 w-10 rounded-full">
           <Avatar className="h-10 w-10 border-2 border-blue-400">
-            <AvatarImage src={profile?.avatar_url} alt={profile?.username} />
+            <AvatarImage src={profile?.avatar_url || undefined} alt={profile?.username || "User"} />
             <AvatarFallback className="bg-blue-600 text-white">
               {getUserInitials()}
             </AvatarFallback>
@@ -70,7 +70,10 @@ export const UserMenu = () => {
           </div>
         </div>
         <DropdownMenuSeparator className="bg-blue-800/30" />
-        <DropdownMenuItem className="text-white hover:bg-blue-900/50 cursor-pointer">
+        <DropdownMenuItem 
+          className="text-white hover:bg-blue-900/50 cursor-pointer"
+          onClick={() => window.location.href = '/profile'}
+        >
           <User className="mr-2 h-4 w-4" />
           Profile
         </DropdownMenuItem>

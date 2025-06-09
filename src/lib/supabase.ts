@@ -1,27 +1,17 @@
-import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
+// This file is deprecated - now using the integrated Supabase client
+// All imports should use: import { supabase } from "@/integrations/supabase/client"
 
-// Provide fallback values during development to prevent app crashes
-const defaultUrl = supabaseUrl || 'https://your-project.supabase.co'
-const defaultKey = supabaseAnonKey || 'your-anon-key'
+export * from "@/integrations/supabase/client";
 
-// Only throw error in production or when explicitly needed
-if (!supabaseUrl || !supabaseAnonKey) {
-  console.warn('Supabase environment variables are missing. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY')
-}
-
-export const supabase = createClient(defaultUrl, defaultKey)
-
-// Database types
+// Re-export types for backward compatibility
 export interface Profile {
   id: string
-  username: string
+  username: string | null
   email: string
   user_type: 'player' | 'creator' | 'organizer' | 'brand'
-  avatar_url?: string
-  bio?: string
+  avatar_url?: string | null
+  bio?: string | null
   created_at: string
   updated_at: string
 }

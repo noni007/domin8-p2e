@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/integrations/supabase/client";
 import { Loader2, Mail, Lock, User, Trophy } from "lucide-react";
 
 interface AuthModalProps {
@@ -33,10 +33,13 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
     setLoading(true);
 
     try {
+      const redirectUrl = `${window.location.origin}/`;
+      
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
+          emailRedirectTo: redirectUrl,
           data: {
             username,
             user_type: userType,
@@ -52,8 +55,12 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
           description: "Please check your email to verify your account.",
         });
         onClose();
+        setEmail("");
+        setPassword("");
+        setUsername("");
       }
     } catch (error: any) {
+      console.error('Signup error:', error);
       toast({
         variant: "destructive",
         title: "Error creating account",
@@ -81,7 +88,10 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
         description: "You have successfully signed in.",
       });
       onClose();
+      setEmail("");
+      setPassword("");
     } catch (error: any) {
+      console.error('Signin error:', error);
       toast({
         variant: "destructive",
         title: "Error signing in",
@@ -206,11 +216,12 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
                   <Input
                     id="signup-password"
                     type="password"
-                    placeholder="Create a password"
+                    placeholder="Create a password (min 6 characters)"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     className="pl-10 bg-gray-800/50 border-gray-600 text-white"
                     required
+                    minLength={6}
                   />
                 </div>
               </div>
