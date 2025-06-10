@@ -34,9 +34,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [loading, setLoading] = useState(true)
 
   const refreshProfile = async () => {
-    if (!user) return
+    if (!user) {
+      setProfile(null)
+      return
+    }
 
     try {
+      console.log('Fetching profile for user:', user.id)
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
@@ -47,7 +51,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         console.error('Error fetching profile:', error)
         return
       }
-      // Type assertion to ensure user_type is properly typed
+      
+      console.log('Profile fetched successfully:', data)
       setProfile(data as Profile)
     } catch (error) {
       console.error('Error fetching profile:', error)
@@ -56,6 +61,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const signOut = async () => {
     try {
+      console.log('Signing out user')
       await supabase.auth.signOut()
       setUser(null)
       setProfile(null)
@@ -66,6 +72,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   }
 
   useEffect(() => {
+    console.log('Setting up auth state listener')
+    
     // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       console.log('Auth state changed:', event, session?.user?.email)
@@ -85,7 +93,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
     // THEN check for existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
-      console.log('Initial session:', session?.user?.email)
+      console.log('Initial session check:', session?.user?.email)
       setSession(session)
       setUser(session?.user ?? null)
       setLoading(false)
@@ -97,7 +105,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       }
     })
 
-    return () => subscription.unsubscribe()
+    return () => {
+      console.log('Cleaning up auth listener')
+      subscription.unsubscribe()
+    }
   }, [])
 
   const value = {

@@ -28,8 +28,34 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
   const [userType, setUserType] = useState<"player" | "creator" | "organizer">("player");
   const { toast } = useToast();
 
+  const resetForm = () => {
+    setEmail("");
+    setPassword("");
+    setUsername("");
+    setUserType("player");
+  };
+
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!email || !password || !username) {
+      toast({
+        variant: "destructive",
+        title: "Missing information",
+        description: "Please fill in all fields.",
+      });
+      return;
+    }
+
+    if (password.length < 6) {
+      toast({
+        variant: "destructive",
+        title: "Password too short",
+        description: "Password must be at least 6 characters long.",
+      });
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -47,24 +73,33 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
         },
       });
 
-      if (error) throw error;
+      if (error) {
+        if (error.message.includes("already registered")) {
+          toast({
+            variant: "destructive",
+            title: "Account already exists",
+            description: "This email is already registered. Please sign in instead.",
+          });
+        } else {
+          throw error;
+        }
+        return;
+      }
 
       if (data.user) {
         toast({
           title: "Account created successfully!",
           description: "Please check your email to verify your account.",
         });
+        resetForm();
         onClose();
-        setEmail("");
-        setPassword("");
-        setUsername("");
       }
     } catch (error: any) {
       console.error('Signup error:', error);
       toast({
         variant: "destructive",
         title: "Error creating account",
-        description: error.message,
+        description: error.message || "An unexpected error occurred.",
       });
     } finally {
       setLoading(false);
@@ -73,6 +108,16 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!email || !password) {
+      toast({
+        variant: "destructive",
+        title: "Missing information",
+        description: "Please enter both email and password.",
+      });
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -81,21 +126,31 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
         password,
       });
 
-      if (error) throw error;
+      if (error) {
+        if (error.message.includes("Invalid login credentials")) {
+          toast({
+            variant: "destructive",
+            title: "Invalid credentials",
+            description: "Please check your email and password and try again.",
+          });
+        } else {
+          throw error;
+        }
+        return;
+      }
 
       toast({
         title: "Welcome back!",
         description: "You have successfully signed in.",
       });
+      resetForm();
       onClose();
-      setEmail("");
-      setPassword("");
     } catch (error: any) {
       console.error('Signin error:', error);
       toast({
         variant: "destructive",
         title: "Error signing in",
-        description: error.message,
+        description: error.message || "An unexpected error occurred.",
       });
     } finally {
       setLoading(false);
@@ -136,8 +191,9 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
                     placeholder="Enter your email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="pl-10 bg-gray-800/50 border-gray-600 text-white"
+                    className="pl-10 bg-gray-800/50 border-gray-600 text-white placeholder:text-gray-400"
                     required
+                    disabled={loading}
                   />
                 </div>
               </div>
@@ -152,8 +208,9 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
                     placeholder="Enter your password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="pl-10 bg-gray-800/50 border-gray-600 text-white"
+                    className="pl-10 bg-gray-800/50 border-gray-600 text-white placeholder:text-gray-400"
                     required
+                    disabled={loading}
                   />
                 </div>
               </div>
@@ -187,8 +244,9 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
                     placeholder="Choose a username"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
-                    className="pl-10 bg-gray-800/50 border-gray-600 text-white"
+                    className="pl-10 bg-gray-800/50 border-gray-600 text-white placeholder:text-gray-400"
                     required
+                    disabled={loading}
                   />
                 </div>
               </div>
@@ -203,8 +261,9 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
                     placeholder="Enter your email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="pl-10 bg-gray-800/50 border-gray-600 text-white"
+                    className="pl-10 bg-gray-800/50 border-gray-600 text-white placeholder:text-gray-400"
                     required
+                    disabled={loading}
                   />
                 </div>
               </div>
@@ -219,9 +278,10 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
                     placeholder="Create a password (min 6 characters)"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="pl-10 bg-gray-800/50 border-gray-600 text-white"
+                    className="pl-10 bg-gray-800/50 border-gray-600 text-white placeholder:text-gray-400"
                     required
                     minLength={6}
+                    disabled={loading}
                   />
                 </div>
               </div>
@@ -234,6 +294,7 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
                     variant={userType === "player" ? "default" : "outline"}
                     onClick={() => setUserType("player")}
                     className="text-xs p-2"
+                    disabled={loading}
                   >
                     <Trophy className="h-3 w-3 mr-1" />
                     Player
@@ -243,6 +304,7 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
                     variant={userType === "creator" ? "default" : "outline"}
                     onClick={() => setUserType("creator")}
                     className="text-xs p-2"
+                    disabled={loading}
                   >
                     <User className="h-3 w-3 mr-1" />
                     Creator
@@ -252,6 +314,7 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
                     variant={userType === "organizer" ? "default" : "outline"}
                     onClick={() => setUserType("organizer")}
                     className="text-xs p-2"
+                    disabled={loading}
                   >
                     <Trophy className="h-3 w-3 mr-1" />
                     Organizer
