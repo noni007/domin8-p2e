@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -70,7 +69,7 @@ export const TournamentManagement = ({
   const exportParticipants = () => {
     const csv = [
       'Player ID,Registration Date,Status',
-      ...participants.map(p => `Player ${participants.indexOf(p) + 1},${new Date(p.created_at || '').toLocaleDateString()},${p.status}`)
+      ...participants.map(p => `Player ${participants.indexOf(p) + 1},${new Date(p.registration_date).toLocaleDateString()},${p.status}`)
     ].join('\n');
     
     const blob = new Blob([csv], { type: 'text/csv' });
