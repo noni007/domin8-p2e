@@ -16,9 +16,15 @@ interface MatchCardProps {
   match: Match;
   participants: TournamentParticipant[];
   onMatchUpdate: () => void;
+  canEditResult?: boolean;
 }
 
-export const MatchCard = ({ match, participants, onMatchUpdate }: MatchCardProps) => {
+export const MatchCard = ({ 
+  match, 
+  participants, 
+  onMatchUpdate, 
+  canEditResult = false 
+}: MatchCardProps) => {
   const [updating, setUpdating] = useState(false);
   const [scorePlayer1, setScorePlayer1] = useState(match.score_player1?.toString() || '');
   const [scorePlayer2, setScorePlayer2] = useState(match.score_player2?.toString() || '');
@@ -43,6 +49,12 @@ export const MatchCard = ({ match, participants, onMatchUpdate }: MatchCardProps
       case 'completed': return 'bg-green-600';
       default: return 'bg-gray-600';
     }
+  };
+
+  const getPlayerName = (participant: TournamentParticipant | undefined) => {
+    if (!participant) return 'TBD';
+    const index = participants.indexOf(participant);
+    return `Player ${index + 1}`;
   };
 
   const handleSubmitResult = async () => {
@@ -99,6 +111,8 @@ export const MatchCard = ({ match, participants, onMatchUpdate }: MatchCardProps
     }
   };
 
+  const showScoreInput = match.status === 'scheduled' && player1 && player2 && canEditResult;
+
   return (
     <Card className="bg-black/40 border-blue-800/30 backdrop-blur-sm">
       <CardContent className="p-4">
@@ -125,9 +139,7 @@ export const MatchCard = ({ match, participants, onMatchUpdate }: MatchCardProps
             }`}>
               <div className="flex items-center gap-2">
                 <User className="h-4 w-4 text-gray-400" />
-                <span className="text-white">
-                  {player1 ? `Player ${participants.indexOf(player1) + 1}` : 'TBD'}
-                </span>
+                <span className="text-white">{getPlayerName(player1)}</span>
                 {match.winner_id === match.player1_id && (
                   <Trophy className="h-4 w-4 text-yellow-400" />
                 )}
@@ -146,9 +158,7 @@ export const MatchCard = ({ match, participants, onMatchUpdate }: MatchCardProps
             }`}>
               <div className="flex items-center gap-2">
                 <User className="h-4 w-4 text-gray-400" />
-                <span className="text-white">
-                  {player2 ? `Player ${participants.indexOf(player2) + 1}` : 'TBD'}
-                </span>
+                <span className="text-white">{getPlayerName(player2)}</span>
                 {match.winner_id === match.player2_id && (
                   <Trophy className="h-4 w-4 text-yellow-400" />
                 )}
@@ -160,7 +170,7 @@ export const MatchCard = ({ match, participants, onMatchUpdate }: MatchCardProps
           </div>
 
           {/* Score Input for Active Matches */}
-          {match.status === 'scheduled' && player1 && player2 && (
+          {showScoreInput && (
             <div className="space-y-3 pt-2 border-t border-gray-600">
               <div className="text-sm text-gray-300">Submit Result:</div>
               <div className="grid grid-cols-3 gap-2 items-center">
@@ -197,11 +207,20 @@ export const MatchCard = ({ match, participants, onMatchUpdate }: MatchCardProps
               <div className="flex items-center justify-center gap-2 text-green-400">
                 <Trophy className="h-4 w-4" />
                 <span className="font-semibold">
-                  Winner: Player {participants.indexOf(winner) + 1}
+                  Winner: {getPlayerName(winner)}
                 </span>
               </div>
             </div>
           )}
+
+          {/* Waiting for Players */}
+          {!player1 || !player2 ? (
+            <div className="text-center py-2 bg-yellow-600/20 rounded border border-yellow-600/30">
+              <span className="text-yellow-400 text-sm">
+                Waiting for previous round results
+              </span>
+            </div>
+          ) : null}
         </div>
       </CardContent>
     </Card>

@@ -1,19 +1,22 @@
 
-import { supabase, TournamentParticipant, Match } from "@/lib/supabase";
+import { supabase } from "@/integrations/supabase/client";
+import type { Tables } from "@/integrations/supabase/types";
+
+type TournamentParticipant = Tables<'tournament_participants'>;
+type Match = Tables<'matches'>;
 
 export const generateTournamentBracket = async (tournamentId: string, participants: TournamentParticipant[]) => {
+  console.log('Generating bracket for tournament:', tournamentId, 'with participants:', participants.length);
+  
   // Shuffle participants for random seeding
   const shuffledParticipants = [...participants].sort(() => Math.random() - 0.5);
   
-  // Calculate number of rounds needed
+  // Calculate number of rounds needed (power of 2)
   const participantCount = shuffledParticipants.length;
-  const rounds = Math.ceil(Math.log2(participantCount));
+  const nextPowerOf2 = Math.pow(2, Math.ceil(Math.log2(participantCount)));
+  const rounds = Math.log2(nextPowerOf2);
   
-  // Calculate total matches needed
-  let totalMatches = 0;
-  for (let round = 1; round <= rounds; round++) {
-    totalMatches += Math.pow(2, rounds - round);
-  }
+  console.log(`Creating ${rounds} rounds for ${participantCount} participants`);
   
   const matches: Omit<Match, 'id' | 'created_at'>[] = [];
   let matchNumber = 1;
@@ -31,7 +34,7 @@ export const generateTournamentBracket = async (tournamentId: string, participan
       match_number: matchNumber,
       player1_id: player1.user_id,
       player2_id: player2?.user_id || null,
-      winner_id: player2 ? null : player1.user_id, // Auto-advance if no opponent
+      winner_id: player2 ? null : player1.user_id, // Auto-advance if no opponent (bye)
       score_player1: null,
       score_player2: null,
       scheduled_time: new Date(Date.now() + (i + 1) * 60 * 60 * 1000).toISOString(), // Space matches 1 hour apart
@@ -65,23 +68,36 @@ export const generateTournamentBracket = async (tournamentId: string, participan
     }
   }
   
+  console.log('Generated matches:', matches.length);
+  
   // Insert matches into database
   const { error } = await supabase
     .from('matches')
     .insert(matches);
     
-  if (error) throw error;
+  if (error) {
+    console.error('Error inserting matches:', error);
+    throw error;
+  }
   
   // Update tournament to mark bracket as generated
-  await supabase
+  const { error: updateError } = await supabase
     .from('tournaments')
     .update({ bracket_generated: true, status: 'in_progress' })
     .eq('id', tournamentId);
     
+  if (updateError) {
+    console.error('Error updating tournament:', updateError);
+    throw updateError;
+  }
+    
+  console.log('Bracket generated successfully');
   return matches;
 };
 
 export const advanceWinner = async (matchId: string, winnerId: string, scorePlayer1: number, scorePlayer2: number) => {
+  console.log('Advancing winner:', winnerId, 'from match:', matchId);
+  
   // Update current match
   const { data: match, error: updateError } = await supabase
     .from('matches')
@@ -95,7 +111,12 @@ export const advanceWinner = async (matchId: string, winnerId: string, scorePlay
     .select()
     .single();
     
-  if (updateError) throw updateError;
+  if (updateError) {
+    console.error('Error updating match:', updateError);
+    throw updateError;
+  }
+  
+  console.log('Match updated:', match);
   
   // Find next round match to advance winner to
   const nextRound = match.round + 1;
@@ -107,9 +128,35 @@ export const advanceWinner = async (matchId: string, winnerId: string, scorePlay
     .eq('tournament_id', match.tournament_id)
     .eq('round', nextRound)
     .eq('bracket_position', nextPosition)
-    .single();
+    .maybeSingle();
     
-  if (nextMatchError || !nextMatch) return; // Final match or error
+  if (nextMatchError) {
+    console.error('Error finding next match:', nextMatchError);
+    throw nextMatchError;
+  }
+  
+  if (!nextMatch) {
+    console.log('No next match found - this was the final match');
+    
+    // Check if this was the final match and update tournament status
+    const { data: finalCheck } = await supabase
+      .from('matches')
+      .select('round')
+      .eq('tournament_id', match.tournament_id)
+      .order('round', { ascending: false })
+      .limit(1)
+      .single();
+      
+    if (finalCheck && match.round === finalCheck.round) {
+      console.log('Tournament completed, updating status');
+      await supabase
+        .from('tournaments')
+        .update({ status: 'completed' })
+        .eq('id', match.tournament_id);
+    }
+    
+    return;
+  }
   
   // Determine if winner goes to player1 or player2 slot
   const isPlayer1Slot = match.bracket_position % 2 === 0;
@@ -118,8 +165,48 @@ export const advanceWinner = async (matchId: string, winnerId: string, scorePlay
     ? { player1_id: winnerId }
     : { player2_id: winnerId };
     
-  await supabase
+  console.log('Advancing to next match:', nextMatch.id, updateData);
+    
+  const { error: advanceError } = await supabase
     .from('matches')
     .update(updateData)
     .eq('id', nextMatch.id);
+    
+  if (advanceError) {
+    console.error('Error advancing winner:', advanceError);
+    throw advanceError;
+  }
+  
+  console.log('Winner advanced successfully');
+};
+
+export const resetTournamentBracket = async (tournamentId: string) => {
+  console.log('Resetting bracket for tournament:', tournamentId);
+  
+  // Delete all matches for this tournament
+  const { error: deleteError } = await supabase
+    .from('matches')
+    .delete()
+    .eq('tournament_id', tournamentId);
+    
+  if (deleteError) {
+    console.error('Error deleting matches:', deleteError);
+    throw deleteError;
+  }
+  
+  // Update tournament status
+  const { error: updateError } = await supabase
+    .from('tournaments')
+    .update({ 
+      bracket_generated: false, 
+      status: 'registration_open' 
+    })
+    .eq('id', tournamentId);
+    
+  if (updateError) {
+    console.error('Error updating tournament:', updateError);
+    throw updateError;
+  }
+  
+  console.log('Bracket reset successfully');
 };
