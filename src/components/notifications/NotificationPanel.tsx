@@ -6,7 +6,7 @@ import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { NotificationItem } from './NotificationItem';
 import { useNotifications } from '@/hooks/useNotifications';
-import { Check, Settings } from 'lucide-react';
+import { Check, Settings, Bell } from 'lucide-react';
 
 export const NotificationPanel = () => {
   const { notifications, unreadCount, markAllAsRead, loading } = useNotifications();
