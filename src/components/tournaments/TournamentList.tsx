@@ -16,7 +16,6 @@ export const TournamentList = () => {
   const { user } = useAuth();
   const [tournaments, setTournaments] = useState<Tournament[]>([]);
   const [loading, setLoading] = useState(true);
-  const [registering, setRegistering] = useState<string | null>(null);
   const [selectedTournament, setSelectedTournament] = useState<string | null>(null);
   const [userRegistrations, setUserRegistrations] = useState<string[]>([]);
 
@@ -64,46 +63,6 @@ export const TournamentList = () => {
     }
   };
 
-  const handleRegister = async (tournamentId: string) => {
-    if (!user) {
-      toast({
-        title: "Authentication Required",
-        description: "Please sign in to register for tournaments.",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    setRegistering(tournamentId);
-    try {
-      const { error } = await supabase
-        .from('tournament_participants')
-        .insert([{
-          tournament_id: tournamentId,
-          user_id: user.id,
-          registration_date: new Date().toISOString(),
-          status: 'registered'
-        }]);
-
-      if (error) throw error;
-
-      setUserRegistrations(prev => [...prev, tournamentId]);
-      toast({
-        title: "Registration Successful!",
-        description: "You have been registered for this tournament.",
-      });
-    } catch (error) {
-      console.error('Error registering for tournament:', error);
-      toast({
-        title: "Registration Failed",
-        description: "Failed to register for tournament. Please try again.",
-        variant: "destructive"
-      });
-    } finally {
-      setRegistering(null);
-    }
-  };
-
   const handleViewDetails = (tournamentId: string) => {
     setSelectedTournament(tournamentId);
   };
@@ -111,6 +70,10 @@ export const TournamentList = () => {
   const handleBackToList = () => {
     setSelectedTournament(null);
     fetchUserRegistrations(); // Refresh registrations in case user registered
+  };
+
+  const handleRegistrationChange = () => {
+    fetchUserRegistrations(); // Refresh registrations when user registers/unregisters
   };
 
   if (selectedTournament) {
@@ -160,10 +123,9 @@ export const TournamentList = () => {
             <TournamentCard
               key={tournament.id}
               tournament={tournament}
-              onRegister={handleRegister}
               onViewDetails={handleViewDetails}
               isRegistered={userRegistrations.includes(tournament.id)}
-              loading={registering === tournament.id}
+              onRegistrationChange={handleRegistrationChange}
             />
           ))}
         </div>
