@@ -65,6 +65,81 @@ export type Database = {
           },
         ]
       }
+      notification_preferences: {
+        Row: {
+          achievement_notifications: boolean
+          created_at: string
+          email_notifications: boolean
+          friend_notifications: boolean
+          id: string
+          match_updates: boolean
+          push_notifications: boolean
+          tournament_updates: boolean
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          achievement_notifications?: boolean
+          created_at?: string
+          email_notifications?: boolean
+          friend_notifications?: boolean
+          id?: string
+          match_updates?: boolean
+          push_notifications?: boolean
+          tournament_updates?: boolean
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          achievement_notifications?: boolean
+          created_at?: string
+          email_notifications?: boolean
+          friend_notifications?: boolean
+          id?: string
+          match_updates?: boolean
+          push_notifications?: boolean
+          tournament_updates?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      notifications: {
+        Row: {
+          created_at: string
+          id: string
+          message: string
+          metadata: Json | null
+          read: boolean
+          title: string
+          type: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          message: string
+          metadata?: Json | null
+          read?: boolean
+          title: string
+          type: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          message?: string
+          metadata?: Json | null
+          read?: boolean
+          title?: string
+          type?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null

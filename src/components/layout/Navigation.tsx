@@ -2,6 +2,8 @@
 import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";
 import { UserMenu } from "@/components/auth/UserMenu";
+import { NotificationBell } from "@/components/notifications/NotificationBell";
+import { useAuth } from "@/hooks/useAuth";
 import { useState } from "react";
 
 interface NavigationProps {
@@ -10,6 +12,7 @@ interface NavigationProps {
 
 export const Navigation = ({ isAuthenticated }: NavigationProps) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { user } = useAuth();
 
   return (
     <nav className="border-b border-blue-800/30 bg-black/20 backdrop-blur-sm sticky top-0 z-50">
@@ -45,6 +48,10 @@ export const Navigation = ({ isAuthenticated }: NavigationProps) => {
             >
               Rankings
             </Button>
+            
+            {/* Show notification bell only for authenticated users */}
+            {user && <NotificationBell />}
+            
             <UserMenu />
           </div>
 
@@ -95,7 +102,10 @@ export const Navigation = ({ isAuthenticated }: NavigationProps) => {
               >
                 Rankings
               </Button>
-              <div className="pt-2">
+              
+              {/* Mobile notification and user menu */}
+              <div className="pt-2 flex items-center gap-2">
+                {user && <NotificationBell />}
                 <UserMenu />
               </div>
             </div>

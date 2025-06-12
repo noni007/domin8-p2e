@@ -11,6 +11,8 @@ export type Profile = Tables<'profiles'>;
 export type Tournament = Tables<'tournaments'>;
 export type TournamentParticipant = Tables<'tournament_participants'>;
 export type Match = Tables<'matches'>;
+export type Notification = Tables<'notifications'>;
+export type NotificationPreferences = Tables<'notification_preferences'>;
 
 export interface BracketNode {
   id: string
