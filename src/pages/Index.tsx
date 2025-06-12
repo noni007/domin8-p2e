@@ -37,6 +37,13 @@ const Index = () => {
                 <Button 
                   variant="ghost" 
                   className="text-gray-300 hover:text-white"
+                  onClick={() => window.location.href = '/leaderboards'}
+                >
+                  Leaderboards
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  className="text-gray-300 hover:text-white"
                   onClick={() => window.location.href = '/rankings'}
                 >
                   Rankings
@@ -70,6 +77,16 @@ const Index = () => {
                     }}
                   >
                     Tournaments
+                  </Button>
+                  <Button 
+                    variant="ghost" 
+                    className="text-gray-300 hover:text-white justify-start"
+                    onClick={() => {
+                      window.location.href = '/leaderboards';
+                      setMobileMenuOpen(false);
+                    }}
+                  >
+                    Leaderboards
                   </Button>
                   <Button 
                     variant="ghost" 
@@ -129,6 +146,13 @@ const Index = () => {
                 <Button 
                   variant="ghost" 
                   className="text-gray-300 hover:text-white"
+                  onClick={() => window.location.href = '/leaderboards'}
+                >
+                  Leaderboards
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  className="text-gray-300 hover:text-white"
                   onClick={() => window.location.href = '/rankings'}
                 >
                   Rankings
@@ -162,6 +186,16 @@ const Index = () => {
                     }}
                   >
                     Tournaments
+                  </Button>
+                  <Button 
+                    variant="ghost" 
+                    className="text-gray-300 hover:text-white justify-start"
+                    onClick={() => {
+                      window.location.href = '/leaderboards';
+                      setMobileMenuOpen(false);
+                    }}
+                  >
+                    Leaderboards
                   </Button>
                   <Button 
                     variant="ghost" 
@@ -208,9 +242,9 @@ const Index = () => {
                 size="lg" 
                 variant="outline" 
                 className="border-yellow-400 text-yellow-400 hover:bg-yellow-400 hover:text-black text-lg px-8 py-4"
-                onClick={() => window.location.href = '/rankings'}
+                onClick={() => window.location.href = '/leaderboards'}
               >
-                Explore Rankings
+                View Leaderboards
                 <TrendingUp className="ml-2 h-5 w-5" />
               </Button>
             </div>
