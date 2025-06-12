@@ -1,17 +1,14 @@
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Users, Calendar, Trophy, DollarSign } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import type { Tables } from "@/integrations/supabase/types";
 import { TournamentBracket } from "./TournamentBracket";
 import { toast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
-
-type Tournament = Tables<'tournaments'>;
-type TournamentParticipant = Tables<'tournament_participants'>;
+import { useRealTimeTournament } from "@/hooks/useRealTimeTournament";
 
 interface TournamentDetailsProps {
   tournamentId: string;
@@ -20,75 +17,14 @@ interface TournamentDetailsProps {
 
 export const TournamentDetails = ({ tournamentId, onBack }: TournamentDetailsProps) => {
   const { user } = useAuth();
-  const [tournament, setTournament] = useState<Tournament | null>(null);
-  const [participants, setParticipants] = useState<TournamentParticipant[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [registering, setRegistering] = useState(false);
-  const [isRegistered, setIsRegistered] = useState(false);
-
-  useEffect(() => {
-    fetchTournamentDetails();
-    fetchParticipants();
-    if (user) {
-      checkRegistrationStatus();
+  
+  // Use real-time tournament hook
+  const { tournament, participants, loading } = useRealTimeTournament({
+    tournamentId,
+    onTournamentUpdate: () => {
+      console.log('Tournament updated via real-time');
     }
-  }, [tournamentId, user]);
-
-  const fetchTournamentDetails = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('tournaments')
-        .select('*')
-        .eq('id', tournamentId)
-        .single();
-
-      if (error) throw error;
-      setTournament(data);
-    } catch (error) {
-      console.error('Error fetching tournament:', error);
-      toast({
-        title: "Error",
-        description: "Failed to load tournament details.",
-        variant: "destructive"
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchParticipants = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('tournament_participants')
-        .select('*')
-        .eq('tournament_id', tournamentId)
-        .eq('status', 'registered');
-
-      if (error) throw error;
-      setParticipants(data || []);
-    } catch (error) {
-      console.error('Error fetching participants:', error);
-    }
-  };
-
-  const checkRegistrationStatus = async () => {
-    if (!user) return;
-
-    try {
-      const { data, error } = await supabase
-        .from('tournament_participants')
-        .select('id')
-        .eq('tournament_id', tournamentId)
-        .eq('user_id', user.id)
-        .eq('status', 'registered')
-        .maybeSingle();
-
-      if (error && error.code !== 'PGRST116') throw error;
-      setIsRegistered(!!data);
-    } catch (error) {
-      console.error('Error checking registration:', error);
-    }
-  };
+  });
 
   const handleRegister = async () => {
     if (!user) {
@@ -111,7 +47,6 @@ export const TournamentDetails = ({ tournamentId, onBack }: TournamentDetailsPro
       return;
     }
 
-    setRegistering(true);
     try {
       const { error } = await supabase
         .from('tournament_participants')
@@ -122,7 +57,7 @@ export const TournamentDetails = ({ tournamentId, onBack }: TournamentDetailsPro
         });
 
       if (error) {
-        if (error.code === '23505') { // Unique constraint violation
+        if (error.code === '23505') {
           toast({
             title: "Already Registered",
             description: "You are already registered for this tournament.",
@@ -133,9 +68,6 @@ export const TournamentDetails = ({ tournamentId, onBack }: TournamentDetailsPro
         }
         return;
       }
-
-      setIsRegistered(true);
-      await fetchParticipants();
       
       toast({
         title: "Registration Successful!",
@@ -148,14 +80,12 @@ export const TournamentDetails = ({ tournamentId, onBack }: TournamentDetailsPro
         description: "Failed to register for tournament.",
         variant: "destructive"
       });
-    } finally {
-      setRegistering(false);
     }
   };
 
   const handleBracketUpdate = () => {
-    fetchTournamentDetails();
-    fetchParticipants();
+    // Real-time hooks will automatically update the data
+    console.log('Bracket update triggered');
   };
 
   if (loading || !tournament) {
@@ -189,6 +119,8 @@ export const TournamentDetails = ({ tournamentId, onBack }: TournamentDetailsPro
       default: return 'bg-gray-600';
     }
   };
+
+  const isRegistered = participants.some(p => p.user_id === user?.id);
 
   const canRegister = tournament.status === 'registration_open' && 
                      !isRegistered && 
@@ -226,6 +158,9 @@ export const TournamentDetails = ({ tournamentId, onBack }: TournamentDetailsPro
                     Registered
                   </Badge>
                 )}
+                <Badge className="bg-purple-600 text-white text-xs">
+                  Live Updates
+                </Badge>
               </div>
             </div>
             <div className="text-right">
@@ -283,10 +218,9 @@ export const TournamentDetails = ({ tournamentId, onBack }: TournamentDetailsPro
           {canRegister && (
             <Button 
               onClick={handleRegister}
-              disabled={registering}
               className="bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700"
             >
-              {registering ? "Registering..." : "Register for Tournament"}
+              Register for Tournament
             </Button>
           )}
         </CardContent>

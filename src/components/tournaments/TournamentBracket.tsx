@@ -3,16 +3,15 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Trophy, Users } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
 import type { Tables } from "@/integrations/supabase/types";
 import { MatchCard } from "./MatchCard";
 import { BracketControls } from "./BracketControls";
 import { toast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
+import { useRealTimeMatches } from "@/hooks/useRealTimeMatches";
 
-type Match = Tables<'matches'>;
-type TournamentParticipant = Tables<'tournament_participants'>;
 type Tournament = Tables<'tournaments'>;
+type TournamentParticipant = Tables<'tournament_participants'>;
 
 interface TournamentBracketProps {
   tournament: Tournament;
@@ -28,49 +27,26 @@ export const TournamentBracket = ({
   onBracketGenerated 
 }: TournamentBracketProps) => {
   const { user } = useAuth();
-  const [matches, setMatches] = useState<Match[]>([]);
-  const [loading, setLoading] = useState(false);
 
   // Check if current user is the organizer
   const isOrganizer = user?.id === tournament.organizer_id;
 
-  useEffect(() => {
-    if (bracketGenerated) {
-      fetchMatches();
+  // Use real-time matches hook
+  const { matches, loading } = useRealTimeMatches({
+    tournamentId: tournament.id,
+    onMatchUpdate: () => {
+      console.log('Match updated - refreshing tournament data');
+      onBracketGenerated();
     }
-  }, [tournament.id, bracketGenerated]);
-
-  const fetchMatches = async () => {
-    setLoading(true);
-    try {
-      const { data, error } = await supabase
-        .from('matches')
-        .select('*')
-        .eq('tournament_id', tournament.id)
-        .order('round')
-        .order('bracket_position');
-
-      if (error) throw error;
-      setMatches(data || []);
-    } catch (error) {
-      console.error('Error fetching matches:', error);
-      toast({
-        title: "Error",
-        description: "Failed to load tournament bracket.",
-        variant: "destructive"
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
+  });
 
   const handleBracketChange = () => {
     onBracketGenerated();
-    fetchMatches();
   };
 
   const handleMatchUpdate = () => {
-    fetchMatches(); // Refresh matches when a match is updated
+    // The real-time hook will automatically update the matches
+    console.log('Match result submitted');
   };
 
   if (!bracketGenerated) {
@@ -147,7 +123,7 @@ export const TournamentBracket = ({
     }
     acc[match.round].push(match);
     return acc;
-  }, {} as Record<number, Match[]>);
+  }, {} as Record<number, typeof matches>);
 
   const rounds = Object.keys(matchesByRound).map(Number).sort((a, b) => a - b);
 
@@ -173,6 +149,9 @@ export const TournamentBracket = ({
           <CardTitle className="text-white flex items-center gap-2">
             <Trophy className="h-5 w-5" />
             Tournament Bracket
+            <Badge className="bg-green-600 text-white text-xs">
+              Live Updates
+            </Badge>
           </CardTitle>
         </CardHeader>
         <CardContent>
