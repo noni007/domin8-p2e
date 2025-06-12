@@ -2,6 +2,8 @@
 import { Card } from "@/components/ui/card";
 import type { Tables } from "@/integrations/supabase/types";
 import { BracketControls } from "./BracketControls";
+import { TournamentStats } from "./TournamentStats";
+import { TournamentManagement } from "./TournamentManagement";
 import { useAuth } from "@/hooks/useAuth";
 import { useRealTimeMatches } from "@/hooks/useRealTimeMatches";
 import { BracketHeader } from "./bracket/BracketHeader";
@@ -52,43 +54,26 @@ export const TournamentBracket = ({
     user?.id === match.player1_id || user?.id === match.player2_id
   );
 
-  if (!bracketGenerated) {
-    return (
-      <div className="space-y-6">
-        <BracketControls
-          tournamentId={tournament.id}
-          participants={participants}
-          bracketGenerated={bracketGenerated}
-          onBracketChange={handleBracketChange}
-          isOrganizer={isOrganizer}
-        />
-        
-        <BracketEmptyState 
-          participants={participants} 
-          isOrganizer={isOrganizer} 
-        />
-      </div>
-    );
-  }
-
-  if (loading) {
-    return (
-      <div className="space-y-6">
-        <BracketControls
-          tournamentId={tournament.id}
-          participants={participants}
-          bracketGenerated={bracketGenerated}
-          onBracketChange={handleBracketChange}
-          isOrganizer={isOrganizer}
-        />
-        
-        <BracketLoadingState />
-      </div>
-    );
-  }
-
   return (
     <div className="space-y-6">
+      {/* Tournament Statistics */}
+      <TournamentStats 
+        tournament={tournament}
+        participants={participants}
+        matches={matches}
+      />
+
+      {/* Tournament Management (Organizer Only) */}
+      {isOrganizer && (
+        <TournamentManagement
+          tournament={tournament}
+          participants={participants}
+          isOrganizer={isOrganizer}
+          onUpdate={handleBracketChange}
+        />
+      )}
+
+      {/* Bracket Controls */}
       <BracketControls
         tournamentId={tournament.id}
         participants={participants}
@@ -97,15 +82,25 @@ export const TournamentBracket = ({
         isOrganizer={isOrganizer}
       />
       
-      <Card className="bg-black/40 border-blue-800/30 backdrop-blur-sm">
-        <BracketHeader />
-        <BracketRounds
-          matches={matches}
-          participants={participants}
-          canEditResult={canEditResult}
-          onMatchUpdate={handleMatchUpdate}
+      {/* Bracket Display */}
+      {!bracketGenerated ? (
+        <BracketEmptyState 
+          participants={participants} 
+          isOrganizer={isOrganizer} 
         />
-      </Card>
+      ) : loading ? (
+        <BracketLoadingState />
+      ) : (
+        <Card className="bg-black/40 border-blue-800/30 backdrop-blur-sm">
+          <BracketHeader />
+          <BracketRounds
+            matches={matches}
+            participants={participants}
+            canEditResult={canEditResult}
+            onMatchUpdate={handleMatchUpdate}
+          />
+        </Card>
+      )}
     </div>
   );
 };
