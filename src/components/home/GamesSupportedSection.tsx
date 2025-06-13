@@ -1,0 +1,91 @@
+
+import { Gamepad2 } from "lucide-react";
+
+export const GamesSupportedSection = () => {
+  const games = [
+    {
+      name: "FIFA 24",
+      category: "Sports",
+      players: "12K+ Players",
+      image: "https://images.unsplash.com/photo-1574435493412-e99c977e37e2?w=300&h=200&fit=crop"
+    },
+    {
+      name: "Mortal Kombat",
+      category: "Fighting",
+      players: "8K+ Players",
+      image: "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=300&h=200&fit=crop"
+    },
+    {
+      name: "Call of Duty",
+      category: "FPS",
+      players: "15K+ Players",
+      image: "https://images.unsplash.com/photo-1552820728-8b83bb6b773f?w=300&h=200&fit=crop"
+    },
+    {
+      name: "Street Fighter 6",
+      category: "Fighting",
+      players: "6K+ Players",
+      image: "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=300&h=200&fit=crop"
+    },
+    {
+      name: "TEKKEN 8",
+      category: "Fighting",
+      players: "7K+ Players",
+      image: "https://images.unsplash.com/photo-1493711662062-fa541adb3fc8?w=300&h=200&fit=crop"
+    },
+    {
+      name: "eFootball",
+      category: "Sports",
+      players: "9K+ Players",
+      image: "https://images.unsplash.com/photo-1556056504-5c7696c4c28d?w=300&h=200&fit=crop"
+    }
+  ];
+
+  return (
+    <div className="bg-gradient-to-r from-slate-900/50 to-blue-900/50 backdrop-blur-sm">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+        <div className="text-center mb-16">
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
+            Supported Games
+          </h2>
+          <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+            Compete in the most popular esports titles across multiple genres, from fighting games to sports simulations.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {games.map((game, index) => (
+            <div key={index} className="group relative overflow-hidden rounded-xl bg-black/40 border border-blue-800/30 backdrop-blur-sm transition-all duration-300 hover:border-blue-600/50 hover:bg-black/60">
+              <div className="aspect-video overflow-hidden">
+                <img 
+                  src={game.image} 
+                  alt={game.name}
+                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                />
+              </div>
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="text-xl font-semibold text-white">{game.name}</h3>
+                  <span className="px-3 py-1 bg-blue-600 text-white text-sm rounded-full">{game.category}</span>
+                </div>
+                <div className="flex items-center text-gray-400">
+                  <Gamepad2 className="h-4 w-4 mr-2" />
+                  <span className="text-sm">{game.players}</span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="text-center mt-12">
+          <p className="text-gray-400 mb-4">More games coming soon...</p>
+          <div className="flex justify-center space-x-4">
+            <span className="px-4 py-2 bg-gray-800 text-gray-300 rounded-lg">Valorant</span>
+            <span className="px-4 py-2 bg-gray-800 text-gray-300 rounded-lg">League of Legends</span>
+            <span className="px-4 py-2 bg-gray-800 text-gray-300 rounded-lg">Rocket League</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
