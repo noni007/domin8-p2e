@@ -63,6 +63,39 @@ export type Database = {
         }
         Relationships: []
       }
+      feature_waitlist: {
+        Row: {
+          created_at: string
+          email: string
+          feature_name: string
+          id: string
+          join_position: number
+          referral_code: string
+          referred_by: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          feature_name?: string
+          id?: string
+          join_position: number
+          referral_code?: string
+          referred_by?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          feature_name?: string
+          id?: string
+          join_position?: number
+          referral_code?: string
+          referred_by?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       friend_requests: {
         Row: {
           created_at: string
@@ -636,6 +669,39 @@ export type Database = {
         }
         Relationships: []
       }
+      waitlist_milestones: {
+        Row: {
+          created_at: string
+          description: string
+          feature_name: string
+          id: string
+          milestone_count: number
+          reward_type: string
+          title: string
+          unlocked_at: string | null
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          feature_name: string
+          id?: string
+          milestone_count: number
+          reward_type?: string
+          title: string
+          unlocked_at?: string | null
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          feature_name?: string
+          id?: string
+          milestone_count?: number
+          reward_type?: string
+          title?: string
+          unlocked_at?: string | null
+        }
+        Relationships: []
+      }
       wallet_transactions: {
         Row: {
           amount: number
@@ -691,6 +757,19 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_waitlist_position: {
+        Args: { user_email: string; feature?: string }
+        Returns: number
+      }
+      get_waitlist_stats: {
+        Args: { feature?: string }
+        Returns: {
+          total_count: number
+          progress_to_next_milestone: number
+          next_milestone_target: number
+          next_milestone_title: string
+        }[]
+      }
       is_admin: {
         Args: { user_id: string }
         Returns: boolean

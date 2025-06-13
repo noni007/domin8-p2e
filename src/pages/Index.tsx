@@ -7,6 +7,7 @@ import { FeaturesSection } from "@/components/home/FeaturesSection";
 import { HowItWorksSection } from "@/components/home/HowItWorksSection";
 import { GamesSupportedSection } from "@/components/home/GamesSupportedSection";
 import { TournamentShowcaseSection } from "@/components/home/TournamentShowcaseSection";
+import { ComingSoonSection } from "@/components/home/ComingSoonSection";
 import { CommunitySection } from "@/components/home/CommunitySection";
 import { CTASection } from "@/components/home/CTASection";
 
@@ -31,6 +32,7 @@ const Index = () => {
       <HowItWorksSection />
       <GamesSupportedSection />
       <TournamentShowcaseSection />
+      <ComingSoonSection />
       <CommunitySection />
       <CTASection />
     </>
