@@ -36,6 +36,11 @@ export const BracketRounds = ({
     onMatchUpdate();
   };
 
+  const getPlayerName = (playerId: string) => {
+    const participant = participants.find(p => p.user_id === playerId);
+    return participant?.team_name || `Player ${playerId.slice(0, 8)}`;
+  };
+
   if (matches.length === 0) {
     return (
       <Card className="bg-black/40 border-blue-800/30 backdrop-blur-sm">
@@ -59,12 +64,15 @@ export const BracketRounds = ({
       </CardContent>
       
       {/* Match Result Form Modal */}
-      {selectedMatch && (
+      {selectedMatch && selectedMatch.player1_id && selectedMatch.player2_id && (
         <MatchResultForm
-          match={selectedMatch}
-          participants={participants}
-          onClose={handleCloseForm}
-          onMatchUpdated={handleMatchUpdated}
+          matchId={selectedMatch.id}
+          player1Id={selectedMatch.player1_id}
+          player2Id={selectedMatch.player2_id}
+          player1Name={getPlayerName(selectedMatch.player1_id)}
+          player2Name={getPlayerName(selectedMatch.player2_id)}
+          tournamentId={selectedMatch.tournament_id}
+          onResultSubmitted={handleMatchUpdated}
         />
       )}
     </>
