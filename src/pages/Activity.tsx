@@ -1,6 +1,6 @@
 
 import { useAuth } from "@/hooks/useAuth";
-import { Navigation } from "@/components/layout/Navigation";
+import Navigation from "@/components/layout/Navigation";
 import { EnhancedActivityFeed } from "@/components/activity/EnhancedActivityFeed";
 import { Card, CardContent } from "@/components/ui/card";
 import { User } from "lucide-react";

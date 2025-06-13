@@ -1,7 +1,7 @@
 
 import { useAuth } from "@/hooks/useAuth";
 import { UserDashboard } from "@/components/dashboard/UserDashboard";
-import { Navigation } from "@/components/layout/Navigation";
+import Navigation from "@/components/layout/Navigation";
 import { Footer } from "@/components/layout/Footer";
 import { HeroSection } from "@/components/home/HeroSection";
 import { StatisticsSection } from "@/components/home/StatisticsSection";

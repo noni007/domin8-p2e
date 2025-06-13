@@ -4,7 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider } from "@/hooks/useAuth";
 import { Toaster } from "@/components/ui/toaster";
 import Navigation from "@/components/layout/Navigation";
-import Footer from "@/components/layout/Footer";
+import { Footer } from "@/components/layout/Footer";
 import Index from "@/pages/Index";
 import Tournaments from "@/pages/Tournaments";
 import Leaderboards from "@/pages/Leaderboards";
