@@ -6,8 +6,7 @@ import {
   Youtube, 
   Mail, 
   MapPin, 
-  Phone,
-  Gamepad2
+  Phone
 } from "lucide-react";
 
 export const Footer = () => {
@@ -19,11 +18,12 @@ export const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Brand Section */}
           <div className="space-y-4">
-            <div className="flex items-center space-x-2">
-              <Gamepad2 className="h-8 w-8 text-blue-400" />
-              <span className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-teal-400 bg-clip-text text-transparent">
-                Domin8
-              </span>
+            <div className="flex items-center">
+              <img 
+                src="/lovable-uploads/be31ac20-7045-4c65-bf6f-1dda987cd378.png" 
+                alt="Logo" 
+                className="h-10 w-auto"
+              />
             </div>
             <p className="text-gray-300 leading-relaxed">
               Africa's premier esports ranking platform, connecting gamers across the continent for competitive glory and community building.
