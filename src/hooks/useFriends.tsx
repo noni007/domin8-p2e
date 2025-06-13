@@ -29,18 +29,37 @@ export const useFriends = () => {
     if (!user) return;
 
     try {
-      const { data, error } = await supabase
+      // First get friendships
+      const { data: friendships, error: friendshipsError } = await supabase
         .from('friendships')
-        .select(`
-          *,
-          friend_profile:profiles!friendships_friend_id_fkey(*)
-        `)
+        .select('*')
         .eq('user_id', user.id);
 
-      if (error) throw error;
-      setFriends(data || []);
+      if (friendshipsError) throw friendshipsError;
+
+      // Then get profiles for friends
+      if (friendships && friendships.length > 0) {
+        const friendIds = friendships.map(f => f.friend_id);
+        const { data: profiles, error: profilesError } = await supabase
+          .from('profiles')
+          .select('*')
+          .in('id', friendIds);
+
+        if (profilesError) throw profilesError;
+
+        // Combine friendships with profiles
+        const friendsWithProfiles = friendships.map(friendship => ({
+          ...friendship,
+          friend_profile: profiles?.find(p => p.id === friendship.friend_id)
+        }));
+
+        setFriends(friendsWithProfiles);
+      } else {
+        setFriends([]);
+      }
     } catch (error) {
       console.error('Error fetching friends:', error);
+      setFriends([]);
     }
   };
 
@@ -51,30 +70,64 @@ export const useFriends = () => {
       // Fetch sent requests
       const { data: sent, error: sentError } = await supabase
         .from('friend_requests')
-        .select(`
-          *,
-          receiver_profile:profiles!friend_requests_receiver_id_fkey(*)
-        `)
+        .select('*')
         .eq('sender_id', user.id)
         .eq('status', 'pending');
 
       if (sentError) throw sentError;
-      setSentRequests(sent || []);
+
+      // Get receiver profiles for sent requests
+      if (sent && sent.length > 0) {
+        const receiverIds = sent.map(r => r.receiver_id);
+        const { data: receiverProfiles, error: receiverProfilesError } = await supabase
+          .from('profiles')
+          .select('*')
+          .in('id', receiverIds);
+
+        if (receiverProfilesError) throw receiverProfilesError;
+
+        const sentWithProfiles = sent.map(request => ({
+          ...request,
+          receiver_profile: receiverProfiles?.find(p => p.id === request.receiver_id)
+        }));
+
+        setSentRequests(sentWithProfiles);
+      } else {
+        setSentRequests([]);
+      }
 
       // Fetch received requests
       const { data: received, error: receivedError } = await supabase
         .from('friend_requests')
-        .select(`
-          *,
-          sender_profile:profiles!friend_requests_sender_id_fkey(*)
-        `)
+        .select('*')
         .eq('receiver_id', user.id)
         .eq('status', 'pending');
 
       if (receivedError) throw receivedError;
-      setReceivedRequests(received || []);
+
+      // Get sender profiles for received requests
+      if (received && received.length > 0) {
+        const senderIds = received.map(r => r.sender_id);
+        const { data: senderProfiles, error: senderProfilesError } = await supabase
+          .from('profiles')
+          .select('*')
+          .in('id', senderIds);
+
+        if (senderProfilesError) throw senderProfilesError;
+
+        const receivedWithProfiles = received.map(request => ({
+          ...request,
+          sender_profile: senderProfiles?.find(p => p.id === request.sender_id)
+        }));
+
+        setReceivedRequests(receivedWithProfiles);
+      } else {
+        setReceivedRequests([]);
+      }
     } catch (error) {
       console.error('Error fetching friend requests:', error);
+      setSentRequests([]);
+      setReceivedRequests([]);
     }
   };
 
