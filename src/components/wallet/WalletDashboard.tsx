@@ -1,25 +1,17 @@
 
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Wallet, DollarSign, TrendingUp, TrendingDown, Plus, Minus } from "lucide-react";
 import { useWallet } from "@/hooks/useWallet";
 import { WalletTransactionHistory } from "./WalletTransactionHistory";
+import { StripePayment } from "./StripePayment";
 
 export const WalletDashboard = () => {
-  const { wallet, transactions, loading, createTransaction, formatAmount } = useWallet();
-
-  const handleDeposit = async () => {
-    // This would integrate with Stripe or another payment processor
-    await createTransaction('deposit', 1000, 'Test deposit - $10.00');
-  };
-
-  const handleWithdrawal = async () => {
-    if (!wallet || wallet.balance < 500) {
-      return;
-    }
-    await createTransaction('withdrawal', -500, 'Test withdrawal - $5.00');
-  };
+  const { wallet, transactions, loading, formatAmount } = useWallet();
+  const [showDeposit, setShowDeposit] = useState(false);
+  const [showWithdrawal, setShowWithdrawal] = useState(false);
 
   if (loading) {
     return <div className="text-center text-gray-400">Loading wallet...</div>;
@@ -42,6 +34,25 @@ export const WalletDashboard = () => {
   const totalWithdrawals = transactions
     .filter(t => t.transaction_type === 'withdrawal' && t.status === 'completed')
     .reduce((sum, t) => sum + Math.abs(t.amount), 0);
+
+  // Show payment form if either deposit or withdrawal is active
+  if (showDeposit || showWithdrawal) {
+    return (
+      <div className="space-y-6">
+        <StripePayment
+          type={showDeposit ? 'deposit' : 'withdrawal'}
+          onSuccess={() => {
+            setShowDeposit(false);
+            setShowWithdrawal(false);
+          }}
+          onCancel={() => {
+            setShowDeposit(false);
+            setShowWithdrawal(false);
+          }}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -95,24 +106,24 @@ export const WalletDashboard = () => {
         <CardContent>
           <div className="flex space-x-4">
             <Button 
-              onClick={handleDeposit}
+              onClick={() => setShowDeposit(true)}
               className="bg-green-600 hover:bg-green-700 text-white"
             >
               <Plus className="h-4 w-4 mr-2" />
               Add Funds
             </Button>
             <Button 
-              onClick={handleWithdrawal}
-              disabled={wallet.balance < 500}
+              onClick={() => setShowWithdrawal(true)}
+              disabled={wallet.balance < 100}
               variant="outline"
-              className="border-red-400 text-red-400 hover:bg-red-400 hover:text-black"
+              className="border-orange-400 text-orange-400 hover:bg-orange-400 hover:text-black"
             >
               <Minus className="h-4 w-4 mr-2" />
               Withdraw
             </Button>
           </div>
           <p className="text-xs text-gray-400 mt-2">
-            Minimum withdrawal: $5.00
+            Minimum withdrawal: $1.00
           </p>
         </CardContent>
       </Card>

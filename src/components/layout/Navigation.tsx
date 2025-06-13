@@ -1,149 +1,125 @@
 
-import { useState, memo, useCallback } from "react";
-import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { AuthModal } from "@/components/auth/AuthModal";
-import { UserMenu } from "@/components/layout/UserMenu";
-import { MobileMenu } from "@/components/layout/MobileMenu";
-import { ThemeToggle } from "@/components/ui/theme-toggle";
-import { useAuth } from "@/hooks/useAuth";
-import { useCommandPalette } from "@/hooks/useCommandPalette";
-import { Search } from "lucide-react";
+import { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { Button } from '@/components/ui/button'
+import { useAuth } from '@/hooks/useAuth'
+import { useAdmin } from '@/hooks/useAdmin'
+import { AuthModal } from '@/components/auth/AuthModal'
+import { UserMenu } from './UserMenu'
+import { MobileMenu } from './MobileMenu'
+import { Menu, Trophy, Shield, Wallet } from 'lucide-react'
 
-const Navigation = memo(() => {
-  const { user, signOut } = useAuth();
-  const [showAuthModal, setShowAuthModal] = useState(false);
-  const commandPalette = useCommandPalette();
+export const Navigation = () => {
+  const { user } = useAuth()
+  const { isAdmin } = useAdmin()
+  const [showAuthModal, setShowAuthModal] = useState(false)
+  const [showMobileMenu, setShowMobileMenu] = useState(false)
+  const navigate = useNavigate()
 
-  const handleSignOut = useCallback(async () => {
-    try {
-      await signOut();
-    } catch (error) {
-      console.error('Error signing out:', error);
-    }
-  }, [signOut]);
-
-  const handleAuthModalOpen = useCallback(() => {
-    setShowAuthModal(true);
-  }, []);
-
-  const handleAuthModalClose = useCallback(() => {
-    setShowAuthModal(false);
-  }, []);
+  const navItems = [
+    { to: '/tournaments', label: 'Tournaments' },
+    { to: '/rankings', label: 'Rankings' },
+    { to: '/teams', label: 'Teams' },
+    { to: '/activity', label: 'Activity' },
+  ]
 
   return (
     <>
-      <nav className="bg-transparent backdrop-blur-sm sticky top-0 z-50" role="navigation" aria-label="Main navigation">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center">
-              <Link 
-                to="/" 
-                className="flex items-center focus:outline-none focus:ring-2 focus:ring-blue-400 rounded-md p-1" 
-                aria-label="Domin8 - Go to homepage"
-              >
-                <img 
-                  src="/lovable-uploads/7754c2e2-2bb1-4a54-92b5-a2a7fc48a8cf.png" 
-                  alt="Domin8 Logo" 
-                  className="h-8 w-auto"
-                  loading="eager"
-                />
-              </Link>
-            </div>
+      <nav className="bg-black/20 backdrop-blur-sm border-b border-blue-800/30 sticky top-0 z-50">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-between h-16">
+            {/* Logo */}
+            <Link to="/" className="flex items-center space-x-2">
+              <Trophy className="h-8 w-8 text-blue-400" />
+              <span className="text-xl font-bold text-white">TourneyPro</span>
+            </Link>
 
             {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center space-x-8" role="menubar">
-              <Link 
-                to="/tournaments" 
-                className="text-gray-300 hover:text-white px-3 py-2 text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-400 rounded-md"
-                role="menuitem"
-                aria-label="View tournaments"
-              >
-                Tournaments
-              </Link>
-              <Link 
-                to="/teams" 
-                className="text-gray-300 hover:text-white px-3 py-2 text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-400 rounded-md"
-                role="menuitem"
-                aria-label="View teams"
-              >
-                Teams
-              </Link>
-              <Link 
-                to="/leaderboards" 
-                className="text-gray-300 hover:text-white px-3 py-2 text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-400 rounded-md"
-                role="menuitem"
-                aria-label="View leaderboards"
-              >
-                Leaderboards
-              </Link>
-              <Link 
-                to="/rankings" 
-                className="text-gray-300 hover:text-white px-3 py-2 text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-400 rounded-md"
-                role="menuitem"
-                aria-label="View rankings"
-              >
-                Rankings
-              </Link>
-              {user && (
-                <Link 
-                  to="/friends" 
-                  className="text-gray-300 hover:text-white px-3 py-2 text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-400 rounded-md"
-                  role="menuitem"
-                  aria-label="View friends"
+            <div className="hidden md:flex items-center space-x-8">
+              {navItems.map((item) => (
+                <Link
+                  key={item.to}
+                  to={item.to}
+                  className="text-gray-300 hover:text-white transition-colors"
                 >
-                  Friends
+                  {item.label}
+                </Link>
+              ))}
+              
+              {user && (
+                <Link
+                  to="/wallet"
+                  className="text-gray-300 hover:text-white transition-colors flex items-center"
+                >
+                  <Wallet className="h-4 w-4 mr-1" />
+                  Wallet
+                </Link>
+              )}
+              
+              {isAdmin && (
+                <Link
+                  to="/admin"
+                  className="text-yellow-400 hover:text-yellow-300 transition-colors flex items-center"
+                >
+                  <Shield className="h-4 w-4 mr-1" />
+                  Admin
                 </Link>
               )}
             </div>
 
-            {/* Desktop Controls */}
-            <div className="flex items-center space-x-2">
-              {/* Command Palette Trigger */}
+            {/* Auth Section */}
+            <div className="hidden md:flex items-center space-x-4">
+              {user ? (
+                <UserMenu />
+              ) : (
+                <div className="flex space-x-2">
+                  <Button
+                    variant="outline"
+                    onClick={() => setShowAuthModal(true)}
+                    className="border-blue-400 text-blue-400 hover:bg-blue-400 hover:text-black"
+                  >
+                    Sign In
+                  </Button>
+                  <Button
+                    onClick={() => setShowAuthModal(true)}
+                    className="bg-blue-600 hover:bg-blue-700"
+                  >
+                    Get Started
+                  </Button>
+                </div>
+              )}
+            </div>
+
+            {/* Mobile Menu Button */}
+            <div className="md:hidden">
               <Button
                 variant="ghost"
-                size="icon"
-                onClick={commandPalette.open}
-                className="hidden md:flex h-9 w-9 text-gray-400 hover:text-white"
-                aria-label="Open command palette (Ctrl+K)"
+                size="sm"
+                onClick={() => setShowMobileMenu(true)}
+                className="text-white"
               >
-                <Search className="h-4 w-4" />
+                <Menu className="h-6 w-6" />
               </Button>
-
-              {/* Theme Toggle */}
-              <ThemeToggle />
-
-              {/* Desktop Auth */}
-              <div className="hidden md:block">
-                {user ? (
-                  <UserMenu user={user} onSignOut={handleSignOut} />
-                ) : (
-                  <Button 
-                    onClick={handleAuthModalOpen}
-                    className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-                    aria-label="Sign in or create account"
-                  >
-                    Login / Sign Up
-                  </Button>
-                )}
-              </div>
-
-              {/* Mobile Menu */}
-              <MobileMenu 
-                user={user}
-                onAuthClick={handleAuthModalOpen}
-                onSignOut={handleSignOut}
-              />
             </div>
           </div>
         </div>
       </nav>
 
-      <AuthModal isOpen={showAuthModal} onClose={handleAuthModalClose} />
+      {/* Mobile Menu */}
+      <MobileMenu
+        isOpen={showMobileMenu}
+        onClose={() => setShowMobileMenu(false)}
+        onAuthClick={() => {
+          setShowMobileMenu(false)
+          setShowAuthModal(true)
+        }}
+      />
+
+      {/* Auth Modal */}
+      <AuthModal
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+      />
     </>
-  );
-});
-
-Navigation.displayName = "Navigation";
-
-export default Navigation;
+  )
+}
