@@ -6,11 +6,7 @@ import { NotificationBell } from "@/components/notifications/NotificationBell";
 import { useAuth } from "@/hooks/useAuth";
 import { useState } from "react";
 
-interface NavigationProps {
-  isAuthenticated: boolean;
-}
-
-export const Navigation = ({ isAuthenticated }: NavigationProps) => {
+export const Navigation = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { user } = useAuth();
 
@@ -22,7 +18,8 @@ export const Navigation = ({ isAuthenticated }: NavigationProps) => {
             <img 
               src="/lovable-uploads/be31ac20-7045-4c65-bf6f-1dda987cd378.png" 
               alt="Logo" 
-              className="h-10 w-auto"
+              className="h-10 w-auto cursor-pointer"
+              onClick={() => window.location.href = '/'}
             />
           </div>
           
