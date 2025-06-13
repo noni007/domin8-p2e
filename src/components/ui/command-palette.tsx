@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { Search, Trophy, Users, TrendingUp, Calendar, Settings, User } from "lucide-react";
+import { Search, Trophy, Users, TrendingUp, Calendar, Settings, User, Shield } from "lucide-react";
 
 interface CommandPaletteProps {
   open: boolean;
@@ -17,6 +17,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
       group: "Navigation",
       items: [
         { label: "Tournaments", icon: Trophy, action: () => window.location.href = "/tournaments" },
+        { label: "Teams", icon: Shield, action: () => window.location.href = "/teams" },
         { label: "Leaderboards", icon: TrendingUp, action: () => window.location.href = "/leaderboards" },
         { label: "Rankings", icon: TrendingUp, action: () => window.location.href = "/rankings" },
         { label: "Friends", icon: Users, action: () => window.location.href = "/friends" },
@@ -27,6 +28,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
       group: "Quick Actions",
       items: [
         { label: "Join Tournament", icon: Calendar, action: () => window.location.href = "/tournaments" },
+        { label: "Create Team", icon: Shield, action: () => window.location.href = "/teams" },
         { label: "View My Stats", icon: TrendingUp, action: () => window.location.href = "/profile" },
         { label: "Settings", icon: Settings, action: () => window.location.href = "/profile" },
       ]

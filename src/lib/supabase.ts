@@ -13,6 +13,10 @@ export type TournamentParticipant = Tables<'tournament_participants'>;
 export type Match = Tables<'matches'>;
 export type Notification = Tables<'notifications'>;
 export type NotificationPreferences = Tables<'notification_preferences'>;
+export type Team = Tables<'teams'>;
+export type TeamMember = Tables<'team_members'>;
+export type TeamInvitation = Tables<'team_invitations'>;
+export type TeamMessage = Tables<'team_messages'>;
 
 export interface BracketNode {
   id: string

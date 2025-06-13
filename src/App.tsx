@@ -18,6 +18,7 @@ import "./App.css";
 // Lazy load pages for better performance
 const Index = lazy(() => import("@/pages/Index"));
 const Tournaments = lazy(() => import("@/pages/Tournaments"));
+const Teams = lazy(() => import("@/pages/Teams"));
 const Leaderboards = lazy(() => import("@/pages/Leaderboards"));
 const Rankings = lazy(() => import("@/pages/Rankings"));
 const Friends = lazy(() => import("@/pages/Friends"));
@@ -77,6 +78,11 @@ function AppContent() {
           <Route path="/tournaments" element={
             <LazyComponentWrapper>
               <Tournaments />
+            </LazyComponentWrapper>
+          } />
+          <Route path="/teams" element={
+            <LazyComponentWrapper>
+              <Teams />
             </LazyComponentWrapper>
           } />
           <Route path="/leaderboards" element={
