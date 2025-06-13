@@ -5,25 +5,48 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ActivityItem } from "./ActivityItem";
 import { ActivityFilters } from "./ActivityFilters";
-import { useActivityFeed } from "@/hooks/useActivityFeed";
-import { Activity, Search, Filter } from "lucide-react";
+import { ActivityPagination } from "./ActivityPagination";
+import { usePaginatedActivityFeed } from "@/hooks/usePaginatedActivityFeed";
+import { Activity, Search, Filter, Loader2 } from "lucide-react";
 import type { ActivityType } from "@/utils/activityHelpers";
 
 interface EnhancedActivityFeedProps {
   showFilters?: boolean;
   maxItems?: number;
   title?: string;
+  userId?: string;
+  showPagination?: boolean;
 }
 
 export const EnhancedActivityFeed = ({ 
   showFilters = true, 
   maxItems,
-  title = "Activity Feed"
+  title = "Activity Feed",
+  userId,
+  showPagination = true
 }: EnhancedActivityFeedProps) => {
-  const { personalActivities, friendsActivities, loading } = useActivityFeed();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedFilters, setSelectedFilters] = useState<ActivityType[]>([]);
   const [showFilterPanel, setShowFilterPanel] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
+
+  const { 
+    personalActivities, 
+    friendsActivities, 
+    loading,
+    personalTotal,
+    friendsTotal,
+    hasMorePersonal,
+    hasMoreFriends,
+    loadMorePersonal,
+    loadMoreFriends,
+    refetch
+  } = usePaginatedActivityFeed({
+    pageSize,
+    activityTypes: selectedFilters,
+    userId
+  });
 
   const allActivities = useMemo(() => {
     return [...personalActivities, ...friendsActivities].sort((a, b) => 
@@ -43,20 +66,21 @@ export const EnhancedActivityFeed = ({
       );
     }
 
-    // Apply activity type filters
-    if (selectedFilters.length > 0) {
-      filtered = filtered.filter(activity =>
-        selectedFilters.includes(activity.activity_type as ActivityType)
-      );
-    }
-
     // Apply max items limit
     if (maxItems) {
       filtered = filtered.slice(0, maxItems);
     }
 
     return filtered;
-  }, [allActivities, searchQuery, selectedFilters, maxItems]);
+  }, [allActivities, searchQuery, maxItems]);
+
+  const paginatedActivities = useMemo(() => {
+    if (!showPagination) return filteredActivities;
+    
+    const startIndex = (currentPage - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+    return filteredActivities.slice(startIndex, endIndex);
+  }, [filteredActivities, currentPage, pageSize, showPagination]);
 
   const activityCounts = useMemo(() => {
     const counts: Record<ActivityType, number> = {
@@ -77,11 +101,14 @@ export const EnhancedActivityFeed = ({
     return counts;
   }, [allActivities]);
 
+  const totalItems = filteredActivities.length;
+  const totalPages = Math.ceil(totalItems / pageSize);
+
   if (loading) {
     return (
       <Card className="bg-black/40 border-blue-800/30 backdrop-blur-sm">
         <CardContent className="p-6 text-center">
-          <Activity className="h-8 w-8 animate-spin text-blue-400 mx-auto mb-2" />
+          <Loader2 className="h-8 w-8 animate-spin text-blue-400 mx-auto mb-2" />
           <p className="text-gray-400">Loading activities...</p>
         </CardContent>
       </Card>
@@ -131,15 +158,53 @@ export const EnhancedActivityFeed = ({
       </CardHeader>
 
       <CardContent className="space-y-3">
-        {filteredActivities.length > 0 ? (
+        {paginatedActivities.length > 0 ? (
           <>
-            {filteredActivities.map((activity) => (
+            {paginatedActivities.map((activity) => (
               <ActivityItem 
                 key={activity.id} 
                 activity={activity} 
-                showUserInfo={true}
+                showUserInfo={!userId}
               />
             ))}
+            
+            {/* Load More Buttons for Infinite Scroll Alternative */}
+            {!showPagination && !maxItems && (
+              <div className="flex gap-2 justify-center pt-4">
+                {hasMorePersonal && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={loadMorePersonal}
+                    className="bg-gray-800 border-gray-600 text-white hover:bg-gray-700"
+                  >
+                    Load More Personal
+                  </Button>
+                )}
+                {hasMoreFriends && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={loadMoreFriends}
+                    className="bg-gray-800 border-gray-600 text-white hover:bg-gray-700"
+                  >
+                    Load More Friends
+                  </Button>
+                )}
+              </div>
+            )}
+
+            {/* Pagination */}
+            {showPagination && !maxItems && (
+              <ActivityPagination
+                currentPage={currentPage}
+                totalItems={totalItems}
+                itemsPerPage={pageSize}
+                onPageChange={setCurrentPage}
+                loading={loading}
+              />
+            )}
+
             {maxItems && allActivities.length > maxItems && (
               <div className="text-center pt-4">
                 <p className="text-sm text-gray-400">

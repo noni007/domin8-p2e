@@ -10,7 +10,7 @@ export const useTournamentRegistration = () => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
 
-  const registerForTournament = async (tournamentId: string, tournamentTitle: string) => {
+  const registerForTournament = async (tournamentId: string, tournamentTitle: string, prizePool?: number) => {
     if (!user) {
       toast({
         title: "Authentication Required",
@@ -22,6 +22,27 @@ export const useTournamentRegistration = () => {
 
     setLoading(true);
     try {
+      // Check if already registered
+      const { data: existingRegistration, error: checkError } = await supabase
+        .from('tournament_participants')
+        .select('id')
+        .eq('tournament_id', tournamentId)
+        .eq('user_id', user.id)
+        .single();
+
+      if (checkError && checkError.code !== 'PGRST116') {
+        throw checkError;
+      }
+
+      if (existingRegistration) {
+        toast({
+          title: "Already Registered",
+          description: "You're already registered for this tournament",
+          variant: "destructive"
+        });
+        return false;
+      }
+
       // Register for tournament
       const { error: registrationError } = await supabase
         .from('tournament_participants')
@@ -33,7 +54,7 @@ export const useTournamentRegistration = () => {
       if (registrationError) throw registrationError;
 
       // Log activity
-      await logTournamentJoin(user.id, tournamentTitle, tournamentId);
+      await logTournamentJoin(user.id, tournamentTitle, tournamentId, prizePool);
 
       toast({
         title: "Registration Successful",
