@@ -12,7 +12,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { toast } from "@/hooks/use-toast";
 
 type TeamMember = Tables<'team_members'> & {
-  profiles: Tables<'profiles'>;
+  member_profile: Tables<'profiles'>;
 };
 
 interface TeamMembersProps {
@@ -38,7 +38,7 @@ export const TeamMembers = ({ teamId, userRole, onUpdate }: TeamMembersProps) =>
         .from('team_members')
         .select(`
           *,
-          profiles(*)
+          member_profile:profiles!team_members_user_id_fkey(*)
         `)
         .eq('team_id', teamId)
         .order('joined_at', { ascending: true });
@@ -247,17 +247,17 @@ export const TeamMembers = ({ teamId, userRole, onUpdate }: TeamMembersProps) =>
               <div key={member.id} className="flex items-center justify-between p-4 rounded-lg bg-black/20">
                 <div className="flex items-center space-x-3">
                   <Avatar>
-                    <AvatarImage src={member.profiles.avatar_url || undefined} />
+                    <AvatarImage src={member.member_profile?.avatar_url || undefined} />
                     <AvatarFallback>
-                      {member.profiles.username?.charAt(0).toUpperCase() || 
-                       member.profiles.email.charAt(0).toUpperCase()}
+                      {member.member_profile?.username?.charAt(0).toUpperCase() || 
+                       member.member_profile?.email.charAt(0).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
                   <div>
                     <p className="font-medium text-white">
-                      {member.profiles.username || member.profiles.email}
+                      {member.member_profile?.username || member.member_profile?.email}
                     </p>
-                    <p className="text-sm text-gray-400">{member.profiles.email}</p>
+                    <p className="text-sm text-gray-400">{member.member_profile?.email}</p>
                   </div>
                 </div>
 

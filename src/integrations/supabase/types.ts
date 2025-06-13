@@ -251,6 +251,20 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "fk_team_invitations_invited_by"
+            columns: ["invited_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_team_invitations_invited_user_id"
+            columns: ["invited_user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "team_invitations_team_id_fkey"
             columns: ["team_id"]
             isOneToOne: false
@@ -283,6 +297,13 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "fk_team_members_user_id"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "team_members_team_id_fkey"
             columns: ["team_id"]
             isOneToOne: false
@@ -314,6 +335,13 @@ export type Database = {
           team_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "fk_team_messages_sender_id"
+            columns: ["sender_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "team_messages_team_id_fkey"
             columns: ["team_id"]
@@ -360,7 +388,15 @@ export type Database = {
           tag?: string
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "fk_teams_created_by"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       tournament_participants: {
         Row: {

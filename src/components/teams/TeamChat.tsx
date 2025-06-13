@@ -12,7 +12,7 @@ import { toast } from "@/hooks/use-toast";
 import { formatDistanceToNow } from "date-fns";
 
 type TeamMessage = Tables<'team_messages'> & {
-  profiles: Tables<'profiles'>;
+  sender_profile: Tables<'profiles'>;
 };
 
 interface TeamChatProps {
@@ -42,7 +42,7 @@ export const TeamChat = ({ teamId }: TeamChatProps) => {
         .from('team_messages')
         .select(`
           *,
-          profiles(*)
+          sender_profile:profiles!team_messages_sender_id_fkey(*)
         `)
         .eq('team_id', teamId)
         .order('created_at', { ascending: true })
@@ -79,7 +79,7 @@ export const TeamChat = ({ teamId }: TeamChatProps) => {
             .from('team_messages')
             .select(`
               *,
-              profiles(*)
+              sender_profile:profiles!team_messages_sender_id_fkey(*)
             `)
             .eq('id', payload.new.id)
             .single();
@@ -157,10 +157,10 @@ export const TeamChat = ({ teamId }: TeamChatProps) => {
                 }`}
               >
                 <Avatar className="h-8 w-8">
-                  <AvatarImage src={message.profiles.avatar_url || undefined} />
+                  <AvatarImage src={message.sender_profile?.avatar_url || undefined} />
                   <AvatarFallback>
-                    {message.profiles.username?.charAt(0).toUpperCase() || 
-                     message.profiles.email.charAt(0).toUpperCase()}
+                    {message.sender_profile?.username?.charAt(0).toUpperCase() || 
+                     message.sender_profile?.email.charAt(0).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
                 <div className={`max-w-[70%] ${
@@ -168,7 +168,7 @@ export const TeamChat = ({ teamId }: TeamChatProps) => {
                 }`}>
                   <div className="flex items-center space-x-2 mb-1">
                     <span className="text-sm font-medium text-gray-300">
-                      {message.profiles.username || message.profiles.email}
+                      {message.sender_profile?.username || message.sender_profile?.email}
                     </span>
                     <span className="text-xs text-gray-500">
                       {formatDistanceToNow(new Date(message.created_at), { addSuffix: true })}
