@@ -9,6 +9,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { toast } from "@/hooks/use-toast";
 import { TournamentCard } from "./TournamentCard";
 import { TournamentDetails } from "./TournamentDetails";
+import { TournamentCardSkeleton } from "./TournamentCardSkeleton";
+import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 
 type Tournament = Tables<'tournaments'>;
 
@@ -18,6 +20,7 @@ export const TournamentList = () => {
   const [loading, setLoading] = useState(true);
   const [selectedTournament, setSelectedTournament] = useState<string | null>(null);
   const [userRegistrations, setUserRegistrations] = useState<string[]>([]);
+  const [registrationsLoading, setRegistrationsLoading] = useState(false);
 
   useEffect(() => {
     fetchTournaments();
@@ -50,6 +53,7 @@ export const TournamentList = () => {
   const fetchUserRegistrations = async () => {
     if (!user) return;
 
+    setRegistrationsLoading(true);
     try {
       const { data, error } = await supabase
         .from('tournament_participants')
@@ -60,6 +64,8 @@ export const TournamentList = () => {
       setUserRegistrations(data?.map(reg => reg.tournament_id) || []);
     } catch (error) {
       console.error('Error fetching user registrations:', error);
+    } finally {
+      setRegistrationsLoading(false);
     }
   };
 
@@ -69,11 +75,11 @@ export const TournamentList = () => {
 
   const handleBackToList = () => {
     setSelectedTournament(null);
-    fetchUserRegistrations(); // Refresh registrations in case user registered
+    fetchUserRegistrations();
   };
 
   const handleRegistrationChange = () => {
-    fetchUserRegistrations(); // Refresh registrations when user registers/unregisters
+    fetchUserRegistrations();
   };
 
   if (selectedTournament) {
@@ -87,15 +93,20 @@ export const TournamentList = () => {
 
   if (loading) {
     return (
-      <div className="space-y-4">
-        {[1, 2, 3].map((i) => (
-          <Card key={i} className="bg-black/40 border-blue-800/30 backdrop-blur-sm animate-pulse">
-            <CardContent className="p-6">
-              <div className="h-4 bg-gray-600 rounded w-3/4 mb-2"></div>
-              <div className="h-3 bg-gray-600 rounded w-1/2"></div>
-            </CardContent>
-          </Card>
-        ))}
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <h2 className="text-3xl font-bold text-white">Active Tournaments</h2>
+          <div className="flex items-center gap-2">
+            <LoadingSpinner size="sm" />
+            <span className="text-gray-400">Loading tournaments...</span>
+          </div>
+        </div>
+        
+        <div className="space-y-4">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <TournamentCardSkeleton key={i} />
+          ))}
+        </div>
       </div>
     );
   }
@@ -104,9 +115,12 @@ export const TournamentList = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-3xl font-bold text-white">Active Tournaments</h2>
-        <Badge className="bg-blue-600 text-white">
-          {tournaments.length} Tournament{tournaments.length !== 1 ? 's' : ''}
-        </Badge>
+        <div className="flex items-center gap-3">
+          {registrationsLoading && <LoadingSpinner size="sm" />}
+          <Badge className="bg-blue-600 text-white">
+            {tournaments.length} Tournament{tournaments.length !== 1 ? 's' : ''}
+          </Badge>
+        </div>
       </div>
       
       {tournaments.length === 0 ? (

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -7,6 +6,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Trophy, TrendingUp, Crown, Medal, Award } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import type { Tables } from "@/integrations/supabase/types";
+import { LeaderboardSkeleton } from "./LeaderboardSkeleton";
+import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 
 type Profile = Tables<'profiles'>;
 
@@ -27,6 +28,7 @@ export const GlobalLeaderboard = () => {
   const [rankings, setRankings] = useState<PlayerRanking[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState<'overall' | 'tournaments' | 'winrate'>('overall');
+  const [categoryLoading, setCategoryLoading] = useState(false);
 
   useEffect(() => {
     fetchRankings();
@@ -43,7 +45,11 @@ export const GlobalLeaderboard = () => {
   };
 
   const fetchRankings = async () => {
-    setLoading(true);
+    if (rankings.length > 0) {
+      setCategoryLoading(true);
+    } else {
+      setLoading(true);
+    }
     
     try {
       // Fetch all profiles
@@ -56,6 +62,7 @@ export const GlobalLeaderboard = () => {
       if (!profiles || profiles.length === 0) {
         setRankings([]);
         setLoading(false);
+        setCategoryLoading(false);
         return;
       }
 
@@ -144,6 +151,7 @@ export const GlobalLeaderboard = () => {
       console.error('Error fetching rankings:', error);
     } finally {
       setLoading(false);
+      setCategoryLoading(false);
     }
   };
 
@@ -166,11 +174,7 @@ export const GlobalLeaderboard = () => {
   };
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center p-8">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-400"></div>
-      </div>
-    );
+    return <LeaderboardSkeleton />;
   }
 
   return (
@@ -179,24 +183,29 @@ export const GlobalLeaderboard = () => {
         <CardTitle className="flex items-center gap-2 text-white">
           <Trophy className="h-6 w-6 text-yellow-500" />
           Global Leaderboard
+          {categoryLoading && <LoadingSpinner size="sm" />}
         </CardTitle>
       </CardHeader>
       <CardContent>
         <Tabs value={selectedCategory} onValueChange={(value) => setSelectedCategory(value as any)} className="space-y-4">
           <TabsList className="bg-black/40 border-blue-800/30">
-            <TabsTrigger value="overall" className="data-[state=active]:bg-blue-600">
+            <TabsTrigger value="overall" className="data-[state=active]:bg-blue-600" disabled={categoryLoading}>
               Overall Points
             </TabsTrigger>
-            <TabsTrigger value="tournaments" className="data-[state=active]:bg-blue-600">
+            <TabsTrigger value="tournaments" className="data-[state=active]:bg-blue-600" disabled={categoryLoading}>
               Tournament Wins
             </TabsTrigger>
-            <TabsTrigger value="winrate" className="data-[state=active]:bg-blue-600">
+            <TabsTrigger value="winrate" className="data-[state=active]:bg-blue-600" disabled={categoryLoading}>
               Win Rate
             </TabsTrigger>
           </TabsList>
 
           <TabsContent value={selectedCategory} className="space-y-3">
-            {rankings.length === 0 ? (
+            {categoryLoading ? (
+              <div className="flex items-center justify-center py-8">
+                <LoadingSpinner text="Updating rankings..." />
+              </div>
+            ) : rankings.length === 0 ? (
               <div className="text-center py-8">
                 <Trophy className="h-16 w-16 text-gray-400 mx-auto mb-4" />
                 <p className="text-gray-400">No rankings available yet.</p>

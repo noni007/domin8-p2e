@@ -1,10 +1,11 @@
-
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { BarChart3, Users } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import { Skeleton } from "@/components/common/Skeleton";
 
 interface TierData {
   tier: 'Bronze' | 'Silver' | 'Gold' | 'Platinum' | 'Diamond' | 'Master';
@@ -108,10 +109,29 @@ export const TierDistribution = () => {
   if (loading) {
     return (
       <Card className="bg-black/40 border-blue-800/30 backdrop-blur-sm">
-        <CardContent className="p-6">
-          <div className="flex items-center justify-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-400"></div>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-white">
+            <BarChart3 className="h-5 w-5" />
+            Tier Distribution
+          </CardTitle>
+          <div className="flex items-center gap-2 text-gray-400">
+            <Users className="h-4 w-4" />
+            <LoadingSpinner size="sm" text="Calculating tiers..." />
           </div>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className="space-y-2">
+              <div className="flex items-center justify-between">
+                <Skeleton className="h-6 w-16" />
+                <div className="text-right space-y-1">
+                  <Skeleton className="h-4 w-20" />
+                  <Skeleton className="h-3 w-12" />
+                </div>
+              </div>
+              <Skeleton className="h-2 w-full" />
+            </div>
+          ))}
         </CardContent>
       </Card>
     );
