@@ -1,6 +1,7 @@
 
 import { GlobalLeaderboard } from "@/components/rankings/GlobalLeaderboard";
 import { TierDistribution } from "@/components/rankings/TierDistribution";
+import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 
 export const Leaderboards = () => {
   return (
@@ -13,10 +14,22 @@ export const Leaderboards = () => {
         
         <div className="grid gap-8 lg:grid-cols-3">
           <div className="lg:col-span-2">
-            <GlobalLeaderboard />
+            <ErrorBoundary fallback={
+              <div className="bg-red-900/20 border border-red-800/30 rounded-lg p-6 text-center">
+                <p className="text-red-400">Unable to load leaderboard data</p>
+              </div>
+            }>
+              <GlobalLeaderboard />
+            </ErrorBoundary>
           </div>
           <div>
-            <TierDistribution />
+            <ErrorBoundary fallback={
+              <div className="bg-red-900/20 border border-red-800/30 rounded-lg p-6 text-center">
+                <p className="text-red-400">Unable to load tier distribution</p>
+              </div>
+            }>
+              <TierDistribution />
+            </ErrorBoundary>
           </div>
         </div>
       </div>

@@ -1,5 +1,6 @@
 
 import { FriendsList } from "@/components/friends/FriendsList";
+import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 
 export const Friends = () => {
   return (
@@ -10,7 +11,13 @@ export const Friends = () => {
           <p className="text-gray-400">Connect with other players and build your gaming network.</p>
         </div>
         
-        <FriendsList />
+        <ErrorBoundary fallback={
+          <div className="bg-red-900/20 border border-red-800/30 rounded-lg p-6 text-center">
+            <p className="text-red-400">Unable to load friends list</p>
+          </div>
+        }>
+          <FriendsList />
+        </ErrorBoundary>
       </div>
     </div>
   );
