@@ -189,7 +189,7 @@ export const TeamDetails = ({ teamId, onBack, onTeamUpdate }: TeamDetailsProps) 
         </TabsList>
 
         <TabsContent value="members">
-          <TeamMembers teamId={teamId} userRole={userRole} onUpdate={fetchTeamDetails} />
+          <TeamMembers teamId={teamId} />
         </TabsContent>
 
         {userRole && (
