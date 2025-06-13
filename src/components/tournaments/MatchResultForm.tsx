@@ -35,15 +35,12 @@ export const MatchResultForm = ({
     
     const winnerId = player1Score > player2Score ? player1Id : player2Id;
     
-    const success = await submitMatchResult({
+    const success = await submitMatchResult(
       matchId,
-      player1Score,
-      player2Score,
       winnerId,
-      player1Id,
-      player2Id,
-      tournamentId
-    });
+      player1Score,
+      player2Score
+    );
 
     if (success) {
       onResultSubmitted();

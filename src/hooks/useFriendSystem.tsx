@@ -6,7 +6,7 @@ import { logFriendAdded } from '@/utils/activityHelpers';
 import { useToast } from '@/hooks/use-toast';
 
 export const useFriendSystem = () => {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
 
@@ -100,9 +100,11 @@ export const useFriendSystem = () => {
 
       // Log activity for both users
       const friendName = friendProfile?.username || 'Unknown User';
+      const currentUserName = profile?.username || 'Unknown User';
+      
       await Promise.all([
         logFriendAdded(user.id, friendName, senderId),
-        logFriendAdded(senderId, user.profile?.username || 'Unknown User', user.id)
+        logFriendAdded(senderId, currentUserName, user.id)
       ]);
 
       toast({
