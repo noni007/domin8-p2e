@@ -5,11 +5,15 @@ import { Button } from "@/components/ui/button";
 import { AuthModal } from "@/components/auth/AuthModal";
 import { UserMenu } from "@/components/layout/UserMenu";
 import { MobileMenu } from "@/components/layout/MobileMenu";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { useAuth } from "@/hooks/useAuth";
+import { useCommandPalette } from "@/hooks/useCommandPalette";
+import { Search } from "lucide-react";
 
 const Navigation = memo(() => {
   const { user, signOut } = useAuth();
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const commandPalette = useCommandPalette();
 
   const handleSignOut = useCallback(async () => {
     try {
@@ -85,8 +89,22 @@ const Navigation = memo(() => {
               )}
             </div>
 
-            {/* Desktop Auth / Mobile Menu */}
-            <div className="flex items-center">
+            {/* Desktop Controls */}
+            <div className="flex items-center space-x-2">
+              {/* Command Palette Trigger */}
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={commandPalette.open}
+                className="hidden md:flex h-9 w-9 text-gray-400 hover:text-white"
+                aria-label="Open command palette (Ctrl+K)"
+              >
+                <Search className="h-4 w-4" />
+              </Button>
+
+              {/* Theme Toggle */}
+              <ThemeToggle />
+
               {/* Desktop Auth */}
               <div className="hidden md:block">
                 {user ? (

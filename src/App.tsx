@@ -2,12 +2,17 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider } from "@/hooks/useAuth";
+import { ThemeProvider } from "@/hooks/useTheme";
 import { Toaster } from "@/components/ui/toaster";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 import { LazyComponentWrapper } from "@/components/common/LazyComponentWrapper";
 import Navigation from "@/components/layout/Navigation";
 import { Footer } from "@/components/layout/Footer";
-import { lazy } from "react";
+import { CommandPalette } from "@/components/ui/command-palette";
+import { OnboardingFlow } from "@/components/onboarding/OnboardingFlow";
+import { useCommandPalette } from "@/hooks/useCommandPalette";
+import { useAuth } from "@/hooks/useAuth";
+import { lazy, useEffect, useState } from "react";
 import "./App.css";
 
 // Lazy load pages for better performance
@@ -44,77 +49,102 @@ const queryClient = new QueryClient({
   },
 });
 
+function AppContent() {
+  const { user } = useAuth();
+  const commandPalette = useCommandPalette();
+  const [showOnboarding, setShowOnboarding] = useState(false);
+
+  useEffect(() => {
+    // Check if user should see onboarding
+    const hasCompletedOnboarding = localStorage.getItem('onboarding_completed');
+    if (user && !hasCompletedOnboarding) {
+      setShowOnboarding(true);
+    }
+  }, [user]);
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 w-full">
+      <ErrorBoundary>
+        <Navigation />
+      </ErrorBoundary>
+      <main>
+        <Routes>
+          <Route path="/" element={
+            <LazyComponentWrapper>
+              <Index />
+            </LazyComponentWrapper>
+          } />
+          <Route path="/tournaments" element={
+            <LazyComponentWrapper>
+              <Tournaments />
+            </LazyComponentWrapper>
+          } />
+          <Route path="/leaderboards" element={
+            <LazyComponentWrapper>
+              <Leaderboards />
+            </LazyComponentWrapper>
+          } />
+          <Route path="/rankings" element={
+            <LazyComponentWrapper>
+              <Rankings />
+            </LazyComponentWrapper>
+          } />
+          <Route path="/friends" element={
+            <LazyComponentWrapper>
+              <Friends />
+            </LazyComponentWrapper>
+          } />
+          <Route path="/profile" element={
+            <LazyComponentWrapper>
+              <Profile />
+            </LazyComponentWrapper>
+          } />
+          <Route path="/user/:userId" element={
+            <LazyComponentWrapper>
+              <UserProfile />
+            </LazyComponentWrapper>
+          } />
+          <Route path="/activity" element={
+            <LazyComponentWrapper>
+              <Activity />
+            </LazyComponentWrapper>
+          } />
+          <Route path="/auth" element={
+            <LazyComponentWrapper>
+              <Auth />
+            </LazyComponentWrapper>
+          } />
+          <Route path="*" element={
+            <LazyComponentWrapper>
+              <NotFound />
+            </LazyComponentWrapper>
+          } />
+        </Routes>
+      </main>
+      <ErrorBoundary>
+        <Footer />
+      </ErrorBoundary>
+      <Toaster />
+      <CommandPalette 
+        open={commandPalette.isOpen} 
+        onOpenChange={commandPalette.setIsOpen} 
+      />
+      {showOnboarding && <OnboardingFlow />}
+    </div>
+  );
+}
+
 function App() {
   return (
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <Router>
-            <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
-              <ErrorBoundary>
-                <Navigation />
-              </ErrorBoundary>
-              <main>
-                <Routes>
-                  <Route path="/" element={
-                    <LazyComponentWrapper>
-                      <Index />
-                    </LazyComponentWrapper>
-                  } />
-                  <Route path="/tournaments" element={
-                    <LazyComponentWrapper>
-                      <Tournaments />
-                    </LazyComponentWrapper>
-                  } />
-                  <Route path="/leaderboards" element={
-                    <LazyComponentWrapper>
-                      <Leaderboards />
-                    </LazyComponentWrapper>
-                  } />
-                  <Route path="/rankings" element={
-                    <LazyComponentWrapper>
-                      <Rankings />
-                    </LazyComponentWrapper>
-                  } />
-                  <Route path="/friends" element={
-                    <LazyComponentWrapper>
-                      <Friends />
-                    </LazyComponentWrapper>
-                  } />
-                  <Route path="/profile" element={
-                    <LazyComponentWrapper>
-                      <Profile />
-                    </LazyComponentWrapper>
-                  } />
-                  <Route path="/user/:userId" element={
-                    <LazyComponentWrapper>
-                      <UserProfile />
-                    </LazyComponentWrapper>
-                  } />
-                  <Route path="/activity" element={
-                    <LazyComponentWrapper>
-                      <Activity />
-                    </LazyComponentWrapper>
-                  } />
-                  <Route path="/auth" element={
-                    <LazyComponentWrapper>
-                      <Auth />
-                    </LazyComponentWrapper>
-                  } />
-                  <Route path="*" element={
-                    <LazyComponentWrapper>
-                      <NotFound />
-                    </LazyComponentWrapper>
-                  } />
-                </Routes>
-              </main>
-              <ErrorBoundary>
-                <Footer />
-              </ErrorBoundary>
-            </div>
-            <Toaster />
-          </Router>
-        </AuthProvider>
+        <ThemeProvider defaultTheme="dark" storageKey="domin8-theme">
+          <AuthProvider>
+            <Router>
+              <AppContent />
+            </Router>
+          </AuthProvider>
+        </ThemeProvider>
       </QueryClientProvider>
     </ErrorBoundary>
   );
