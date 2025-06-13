@@ -1,11 +1,10 @@
-
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Navigation } from '@/components/layout/Navigation'
 import { Footer } from '@/components/layout/Footer'
 import { AuthProvider } from '@/hooks/useAuth'
 import { Toaster } from '@/components/ui/toaster'
-import { ThemeProvider } from '@/components/ui/theme-provider'
+import { ThemeProvider } from '@/hooks/useTheme'
 
 // Pages
 import Index from '@/pages/Index'

@@ -13,14 +13,13 @@ import { useAuth } from "@/hooks/useAuth";
 import { AuthModal } from "@/components/auth/AuthModal";
 import { User, Settings, LogOut, Trophy, BarChart3, Users } from "lucide-react";
 
-interface UserMenuProps {
-  user: any;
-  onSignOut: () => void;
-}
-
-export const UserMenu = ({ user, onSignOut }: UserMenuProps) => {
-  const { profile } = useAuth();
+export const UserMenu = () => {
+  const { user, profile, signOut } = useAuth();
   const [showAuthModal, setShowAuthModal] = useState(false);
+
+  const handleSignOut = async () => {
+    await signOut();
+  };
 
   if (!user) {
     return (
@@ -104,7 +103,7 @@ export const UserMenu = ({ user, onSignOut }: UserMenuProps) => {
         <DropdownMenuSeparator className="bg-blue-800/30" />
         <DropdownMenuItem 
           className="text-red-400 hover:bg-red-900/50 cursor-pointer"
-          onClick={onSignOut}
+          onClick={handleSignOut}
         >
           <LogOut className="mr-2 h-4 w-4" />
           Sign Out
