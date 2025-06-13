@@ -109,7 +109,7 @@ export const EnhancedActivityFeed = ({
     setSelectedFilters([]);
   };
 
-  const hasFilters = searchQuery || selectedFilters.length > 0;
+  const hasFilters = Boolean(searchQuery || selectedFilters.length > 0);
   const totalItems = filteredActivities.length;
 
   if (loading) {
