@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -48,10 +47,10 @@ export const PerformanceMonitor = ({
     const fcp = paintEntries.find(entry => entry.name === 'first-contentful-paint')?.startTime || 0;
     const lcp = performance.getEntriesByType('largest-contentful-paint')[0]?.startTime || 0;
     
-    // Calculate render time from navigation
+    // Calculate render time from navigation - fix: use fetchStart instead of navigationStart
     const renderTime = navigationEntries[0] ? 
       (navigationEntries[0] as PerformanceNavigationTiming).loadEventEnd - 
-      (navigationEntries[0] as PerformanceNavigationTiming).navigationStart : 0;
+      (navigationEntries[0] as PerformanceNavigationTiming).fetchStart : 0;
 
     const newMetrics: PerformanceMetrics = {
       renderTime,

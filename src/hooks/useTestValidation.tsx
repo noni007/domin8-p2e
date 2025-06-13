@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback } from 'react';
 
 interface ValidationRule {
@@ -27,7 +26,9 @@ export const useTestValidation = () => {
       name: 'Bundle Size Check',
       test: () => {
         // Check if bundle size is reasonable (mock implementation)
-        const bundleSize = performance.getEntriesByType('navigation')[0]?.transferSize || 0;
+        // Fix: Cast to PerformanceNavigationTiming to access transferSize
+        const navEntry = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
+        const bundleSize = navEntry?.transferSize || 0;
         return bundleSize < 1024 * 1024; // Less than 1MB
       },
       description: 'Ensures bundle size is optimized for fast loading',

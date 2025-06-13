@@ -98,10 +98,10 @@ export const createMockUser = (overrides = {}) => ({
   ...overrides
 });
 
-// Accessibility testing helper
+// Accessibility testing helper - Fix: Use correct import from @axe-core/react
 export const testAccessibility = async (component: HTMLElement) => {
-  const { axe } = await import('@axe-core/react');
-  const results = await axe(component);
+  const axeCore = await import('@axe-core/react');
+  const results = await axeCore.default(component);
   return results;
 };
 

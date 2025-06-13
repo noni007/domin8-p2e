@@ -1,3 +1,4 @@
+import React from 'react';
 
 // Performance monitoring and optimization utilities
 
