@@ -11,7 +11,7 @@ const Activity = () => {
   if (!user) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
-        <Navigation isAuthenticated={false} />
+        <Navigation />
         <div className="flex items-center justify-center min-h-screen">
           <Card className="bg-black/40 border-blue-800/30 backdrop-blur-sm">
             <CardContent className="p-12 text-center">
@@ -27,7 +27,7 @@ const Activity = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
-      <Navigation isAuthenticated={true} />
+      <Navigation />
       
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="space-y-6">
