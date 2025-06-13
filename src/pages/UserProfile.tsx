@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -6,10 +5,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { ProfileHeader } from "@/components/profile/ProfileHeader";
-import { ProfileStats } from "@/components/profile/ProfileStats";
+import { EnhancedProfileStats } from "@/components/profile/EnhancedProfileStats";
 import { TournamentHistory } from "@/components/profile/TournamentHistory";
 import { MatchHistory } from "@/components/profile/MatchHistory";
 import { Achievements } from "@/components/profile/Achievements";
+import { RealTimeUpdates } from "@/components/notifications/RealTimeUpdates";
 import type { Tables } from "@/integrations/supabase/types";
 
 type Profile = Tables<'profiles'>;
@@ -22,6 +22,10 @@ interface UserStats {
   matchesWon: number;
   winRate: number;
   rank: number;
+  currentStreak: number;
+  longestStreak: number;
+  averageRoundsReached: number;
+  favoriteGame: string;
 }
 
 export const UserProfile = () => {
@@ -66,7 +70,7 @@ export const UserProfile = () => {
       const userTournaments = participationsData?.map(p => p.tournaments).filter(Boolean) || [];
       setTournaments(userTournaments as Tournament[]);
 
-      // Calculate stats
+      // Calculate enhanced stats
       const tournamentsPlayed = participationsData?.length || 0;
       
       // Count tournament wins (simplified - in a real app you'd check final standings)
@@ -84,13 +88,63 @@ export const UserProfile = () => {
       const matchesWon = matchesData?.filter(m => m.winner_id === userId).length || 0;
       const winRate = matchesPlayed > 0 ? (matchesWon / matchesPlayed) * 100 : 0;
 
+      // Calculate streaks
+      const sortedMatches = matchesData?.sort((a, b) => 
+        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      ) || [];
+      
+      let currentStreak = 0;
+      let longestStreak = 0;
+      let tempStreak = 0;
+      
+      for (const match of sortedMatches) {
+        if (match.winner_id === userId) {
+          tempStreak++;
+          if (currentStreak === 0) currentStreak = tempStreak;
+        } else if (match.status === 'completed') {
+          longestStreak = Math.max(longestStreak, tempStreak);
+          tempStreak = 0;
+          if (currentStreak > 0) currentStreak = 0;
+        }
+      }
+      longestStreak = Math.max(longestStreak, tempStreak);
+
+      // Calculate average rounds reached
+      const roundsReached = participationsData?.map(p => {
+        const userMatches = matchesData?.filter(m => 
+          m.tournament_id === p.tournament_id && 
+          (m.player1_id === userId || m.player2_id === userId)
+        ) || [];
+        return Math.max(...userMatches.map(m => m.round), 0);
+      }) || [];
+      
+      const averageRoundsReached = roundsReached.length > 0 
+        ? roundsReached.reduce((a, b) => a + b, 0) / roundsReached.length 
+        : 0;
+
+      // Find favorite game
+      const gameStats: Record<string, number> = {};
+      userTournaments.forEach(t => {
+        if (t && t.game) {
+          gameStats[t.game] = (gameStats[t.game] || 0) + 1;
+        }
+      });
+      
+      const favoriteGame = Object.keys(gameStats).reduce((a, b) => 
+        gameStats[a] > gameStats[b] ? a : b, 'N/A'
+      );
+
       setStats({
         tournamentsPlayed,
         tournamentsWon,
         matchesPlayed,
         matchesWon,
         winRate,
-        rank: Math.floor(Math.random() * 1000) + 1 // Placeholder ranking
+        rank: Math.floor(Math.random() * 1000) + 1, // Placeholder ranking
+        currentStreak,
+        longestStreak,
+        averageRoundsReached,
+        favoriteGame
       });
 
     } catch (error) {
@@ -155,6 +209,9 @@ export const UserProfile = () => {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="space-y-8">
+          {/* Real-time Updates */}
+          <RealTimeUpdates userId={userId} />
+
           {/* Profile Header */}
           <ProfileHeader 
             profile={profile}
@@ -163,8 +220,8 @@ export const UserProfile = () => {
             onEditProfile={isOwnProfile ? handleEditProfile : undefined}
           />
 
-          {/* Stats Overview */}
-          {stats && <ProfileStats stats={stats} />}
+          {/* Enhanced Stats Overview */}
+          {stats && <EnhancedProfileStats stats={stats} />}
 
           {/* Detailed Information */}
           <Tabs defaultValue="tournaments" className="space-y-4">

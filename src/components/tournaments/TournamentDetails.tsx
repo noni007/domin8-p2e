@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Users, Calendar, Trophy, DollarSign } from "lucide-react";
 import { TournamentBracket } from "./TournamentBracket";
 import { TournamentRegistration } from "./TournamentRegistration";
+import { RealTimeUpdates } from "@/components/notifications/RealTimeUpdates";
 import { useAuth } from "@/hooks/useAuth";
 import { useRealTimeTournament } from "@/hooks/useRealTimeTournament";
 
@@ -83,6 +84,9 @@ export const TournamentDetails = ({ tournamentId, onBack }: TournamentDetailsPro
           Back to Tournaments
         </Button>
       </div>
+
+      {/* Real-time Updates */}
+      <RealTimeUpdates tournamentId={tournamentId} userId={user?.id} />
 
       {/* Tournament Info */}
       <Card className="bg-black/40 border-blue-800/30 backdrop-blur-sm">

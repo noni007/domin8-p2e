@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { TournamentForm } from "@/components/tournaments/TournamentForm";
-import { TournamentList } from "@/components/tournaments/TournamentList";
+import { TournamentDiscovery } from "@/components/tournaments/TournamentDiscovery";
 import { useAuth } from "@/hooks/useAuth";
 
 const Tournaments = () => {
@@ -40,10 +40,10 @@ const Tournaments = () => {
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-white via-blue-200 to-teal-200 bg-clip-text text-transparent">
-            Tournaments
+            Tournament Discovery
           </h1>
           <p className="text-xl text-gray-300 max-w-3xl mx-auto mb-8">
-            Compete in professional esports tournaments across Africa. Join existing tournaments or create your own.
+            Discover and join professional esports tournaments across Africa. Advanced search and real-time updates.
           </p>
           
           {user && (
@@ -64,8 +64,8 @@ const Tournaments = () => {
           </div>
         )}
 
-        {/* Tournament List */}
-        <TournamentList />
+        {/* Tournament Discovery */}
+        <TournamentDiscovery />
       </main>
     </div>
   );
