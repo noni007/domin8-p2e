@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, memo, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { AuthModal } from "@/components/auth/AuthModal";
@@ -7,17 +7,25 @@ import { UserMenu } from "@/components/layout/UserMenu";
 import { MobileMenu } from "@/components/layout/MobileMenu";
 import { useAuth } from "@/hooks/useAuth";
 
-const Navigation = () => {
+const Navigation = memo(() => {
   const { user, signOut } = useAuth();
   const [showAuthModal, setShowAuthModal] = useState(false);
 
-  const handleSignOut = async () => {
+  const handleSignOut = useCallback(async () => {
     try {
       await signOut();
     } catch (error) {
       console.error('Error signing out:', error);
     }
-  };
+  }, [signOut]);
+
+  const handleAuthModalOpen = useCallback(() => {
+    setShowAuthModal(true);
+  }, []);
+
+  const handleAuthModalClose = useCallback(() => {
+    setShowAuthModal(false);
+  }, []);
 
   return (
     <>
@@ -34,6 +42,7 @@ const Navigation = () => {
                   src="/lovable-uploads/7754c2e2-2bb1-4a54-92b5-a2a7fc48a8cf.png" 
                   alt="Domin8 Logo" 
                   className="h-8 w-auto"
+                  loading="eager"
                 />
               </Link>
             </div>
@@ -84,7 +93,7 @@ const Navigation = () => {
                   <UserMenu user={user} onSignOut={handleSignOut} />
                 ) : (
                   <Button 
-                    onClick={() => setShowAuthModal(true)}
+                    onClick={handleAuthModalOpen}
                     className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
                     aria-label="Sign in or create account"
                   >
@@ -96,7 +105,7 @@ const Navigation = () => {
               {/* Mobile Menu */}
               <MobileMenu 
                 user={user}
-                onAuthClick={() => setShowAuthModal(true)}
+                onAuthClick={handleAuthModalOpen}
                 onSignOut={handleSignOut}
               />
             </div>
@@ -104,9 +113,11 @@ const Navigation = () => {
         </div>
       </nav>
 
-      <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
+      <AuthModal isOpen={showAuthModal} onClose={handleAuthModalClose} />
     </>
   );
-};
+});
+
+Navigation.displayName = "Navigation";
 
 export default Navigation;

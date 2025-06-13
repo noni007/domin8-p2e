@@ -4,19 +4,23 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider } from "@/hooks/useAuth";
 import { Toaster } from "@/components/ui/toaster";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
+import { LazyComponentWrapper } from "@/components/common/LazyComponentWrapper";
 import Navigation from "@/components/layout/Navigation";
 import { Footer } from "@/components/layout/Footer";
-import Index from "@/pages/Index";
-import Tournaments from "@/pages/Tournaments";
-import Leaderboards from "@/pages/Leaderboards";
-import Rankings from "@/pages/Rankings";
-import Friends from "@/pages/Friends";
-import Profile from "@/pages/Profile";
-import UserProfile from "@/pages/UserProfile";
-import Activity from "@/pages/Activity";
-import Auth from "@/pages/Auth";
-import NotFound from "@/pages/NotFound";
+import { lazy } from "react";
 import "./App.css";
+
+// Lazy load pages for better performance
+const Index = lazy(() => import("@/pages/Index"));
+const Tournaments = lazy(() => import("@/pages/Tournaments"));
+const Leaderboards = lazy(() => import("@/pages/Leaderboards"));
+const Rankings = lazy(() => import("@/pages/Rankings"));
+const Friends = lazy(() => import("@/pages/Friends"));
+const Profile = lazy(() => import("@/pages/Profile"));
+const UserProfile = lazy(() => import("@/pages/UserProfile"));
+const Activity = lazy(() => import("@/pages/Activity"));
+const Auth = lazy(() => import("@/pages/Auth"));
+const NotFound = lazy(() => import("@/pages/NotFound"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -29,7 +33,10 @@ const queryClient = new QueryClient({
         }
         return failureCount < 3;
       },
-      staleTime: 5 * 60 * 1000, // 5 minutes
+      staleTime: 5 * 60 * 1000, // 5 minutes - increased for better caching
+      gcTime: 10 * 60 * 1000, // 10 minutes - keep data longer
+      refetchOnWindowFocus: false, // Reduce unnecessary requests
+      refetchOnMount: false, // Don't refetch on mount if data is fresh
     },
     mutations: {
       retry: false,
@@ -50,54 +57,54 @@ function App() {
               <main>
                 <Routes>
                   <Route path="/" element={
-                    <ErrorBoundary>
+                    <LazyComponentWrapper>
                       <Index />
-                    </ErrorBoundary>
+                    </LazyComponentWrapper>
                   } />
                   <Route path="/tournaments" element={
-                    <ErrorBoundary>
+                    <LazyComponentWrapper>
                       <Tournaments />
-                    </ErrorBoundary>
+                    </LazyComponentWrapper>
                   } />
                   <Route path="/leaderboards" element={
-                    <ErrorBoundary>
+                    <LazyComponentWrapper>
                       <Leaderboards />
-                    </ErrorBoundary>
+                    </LazyComponentWrapper>
                   } />
                   <Route path="/rankings" element={
-                    <ErrorBoundary>
+                    <LazyComponentWrapper>
                       <Rankings />
-                    </ErrorBoundary>
+                    </LazyComponentWrapper>
                   } />
                   <Route path="/friends" element={
-                    <ErrorBoundary>
+                    <LazyComponentWrapper>
                       <Friends />
-                    </ErrorBoundary>
+                    </LazyComponentWrapper>
                   } />
                   <Route path="/profile" element={
-                    <ErrorBoundary>
+                    <LazyComponentWrapper>
                       <Profile />
-                    </ErrorBoundary>
+                    </LazyComponentWrapper>
                   } />
                   <Route path="/user/:userId" element={
-                    <ErrorBoundary>
+                    <LazyComponentWrapper>
                       <UserProfile />
-                    </ErrorBoundary>
+                    </LazyComponentWrapper>
                   } />
                   <Route path="/activity" element={
-                    <ErrorBoundary>
+                    <LazyComponentWrapper>
                       <Activity />
-                    </ErrorBoundary>
+                    </LazyComponentWrapper>
                   } />
                   <Route path="/auth" element={
-                    <ErrorBoundary>
+                    <LazyComponentWrapper>
                       <Auth />
-                    </ErrorBoundary>
+                    </LazyComponentWrapper>
                   } />
                   <Route path="*" element={
-                    <ErrorBoundary>
+                    <LazyComponentWrapper>
                       <NotFound />
-                    </ErrorBoundary>
+                    </LazyComponentWrapper>
                   } />
                 </Routes>
               </main>

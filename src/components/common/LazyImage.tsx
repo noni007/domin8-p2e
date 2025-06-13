@@ -1,0 +1,84 @@
+
+import React, { useState, useEffect, useRef } from 'react';
+import { cn } from '@/lib/utils';
+
+interface LazyImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
+  src: string;
+  alt: string;
+  placeholder?: string;
+  className?: string;
+  onLoad?: () => void;
+  onError?: () => void;
+}
+
+export const LazyImage = ({ 
+  src, 
+  alt, 
+  placeholder = '/placeholder.svg',
+  className,
+  onLoad,
+  onError,
+  ...props 
+}: LazyImageProps) => {
+  const [imageSrc, setImageSrc] = useState(placeholder);
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
+  const imgRef = useRef<HTMLImageElement>(null);
+
+  useEffect(() => {
+    let observer: IntersectionObserver;
+    
+    if (imgRef.current) {
+      observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              setImageSrc(src);
+              observer.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.1 }
+      );
+      
+      observer.observe(imgRef.current);
+    }
+
+    return () => {
+      if (observer) observer.disconnect();
+    };
+  }, [src]);
+
+  const handleLoad = () => {
+    setIsLoading(false);
+    onLoad?.();
+  };
+
+  const handleError = () => {
+    setHasError(true);
+    setIsLoading(false);
+    setImageSrc(placeholder);
+    onError?.();
+  };
+
+  return (
+    <div className={cn("relative overflow-hidden", className)}>
+      <img
+        ref={imgRef}
+        src={imageSrc}
+        alt={alt}
+        onLoad={handleLoad}
+        onError={handleError}
+        className={cn(
+          "transition-opacity duration-300",
+          isLoading && "opacity-50",
+          hasError && "opacity-75"
+        )}
+        {...props}
+      />
+      {isLoading && imageSrc !== placeholder && (
+        <div className="absolute inset-0 bg-gray-800 animate-pulse" />
+      )}
+    </div>
+  );
+};
