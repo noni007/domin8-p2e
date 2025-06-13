@@ -19,6 +19,7 @@ export const MobileMenu = ({ isOpen, onClose, onAuthClick }: MobileMenuProps) =>
   const navItems = [
     { to: '/tournaments', label: 'Tournaments' },
     { to: '/rankings', label: 'Rankings' },
+    { to: '/leaderboards', label: 'Leaderboards' },
     { to: '/teams', label: 'Teams' },
     { to: '/activity', label: 'Activity' },
   ]
