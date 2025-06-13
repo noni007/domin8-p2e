@@ -7,6 +7,7 @@ import { EnhancedProfileStats } from "@/components/profile/EnhancedProfileStats"
 import { TournamentHistory } from "@/components/profile/TournamentHistory";
 import { MatchHistory } from "@/components/profile/MatchHistory";
 import { Achievements } from "@/components/profile/Achievements";
+import { RecentActivities } from "@/components/activity/RecentActivities";
 import { RealTimeUpdates } from "@/components/notifications/RealTimeUpdates";
 import type { Tables } from "@/integrations/supabase/types";
 
@@ -67,6 +68,14 @@ export const UserProfileContent = ({
 
         {/* Enhanced Stats Overview */}
         <EnhancedProfileStats stats={stats} />
+
+        {/* Recent Activity Preview */}
+        <RecentActivities 
+          userId={userId}
+          title={isOwnProfile ? "Your Recent Activity" : `${profile.username}'s Recent Activity`}
+          maxItems={5}
+          showViewAll={true}
+        />
 
         {/* Detailed Information */}
         <Tabs defaultValue="tournaments" className="space-y-4">

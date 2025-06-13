@@ -1,5 +1,6 @@
 
 import { supabase } from '@/integrations/supabase/client';
+import { createActivityBasedNotifications, shouldNotifyFriends } from '@/utils/notificationActivityTriggers';
 
 export type ActivityType = 
   | 'tournament_join'
@@ -41,6 +42,17 @@ export const createActivity = async ({
       return null;
     }
 
+    // Create friend notifications for significant activities
+    if (shouldNotifyFriends(activityType, metadata)) {
+      await createActivityBasedNotifications({
+        activityUserId: userId,
+        activityType,
+        title,
+        description: description || '',
+        metadata
+      });
+    }
+
     return data;
   } catch (error) {
     console.error('Error creating activity:', error);
@@ -49,33 +61,33 @@ export const createActivity = async ({
 };
 
 // Helper functions for specific activity types
-export const logTournamentJoin = async (userId: string, tournamentTitle: string, tournamentId: string) => {
+export const logTournamentJoin = async (userId: string, tournamentTitle: string, tournamentId: string, prizePool?: number) => {
   return createActivity({
     userId,
     activityType: 'tournament_join',
     title: 'Joined Tournament',
     description: `Joined "${tournamentTitle}"`,
-    metadata: { tournamentId, tournamentTitle }
+    metadata: { tournamentId, tournamentTitle, prizePool }
   });
 };
 
-export const logTournamentWin = async (userId: string, tournamentTitle: string, tournamentId: string) => {
+export const logTournamentWin = async (userId: string, tournamentTitle: string, tournamentId: string, prizePool?: number) => {
   return createActivity({
     userId,
     activityType: 'tournament_win',
     title: 'Tournament Victory!',
     description: `Won "${tournamentTitle}"`,
-    metadata: { tournamentId, tournamentTitle }
+    metadata: { tournamentId, tournamentTitle, prizePool }
   });
 };
 
-export const logMatchWin = async (userId: string, opponent: string, score: string, matchId: string) => {
+export const logMatchWin = async (userId: string, opponent: string, score: string, matchId: string, winStreak?: number) => {
   return createActivity({
     userId,
     activityType: 'match_win',
     title: 'Match Victory',
     description: `Defeated ${opponent} (${score})`,
-    metadata: { matchId, opponent, score }
+    metadata: { matchId, opponent, score, streak: winStreak }
   });
 };
 

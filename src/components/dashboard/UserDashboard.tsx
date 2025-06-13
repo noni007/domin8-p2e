@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/hooks/useAuth";
 import { Trophy, Users, Calendar, TrendingUp, Activity, UserPlus } from "lucide-react";
 import { ActivityFeed } from "@/components/activity/ActivityFeed";
+import { SocialActivityFeed } from "@/components/activity/SocialActivityFeed";
 import { RecentActivities } from "@/components/activity/RecentActivities";
 
 export const UserDashboard = () => {
@@ -159,40 +160,7 @@ export const UserDashboard = () => {
         </TabsContent>
 
         <TabsContent value="social" className="space-y-6">
-          <div className="grid gap-6 lg:grid-cols-2">
-            <RecentActivities 
-              title="Friends Activity"
-              maxItems={5}
-              showViewAll={true}
-            />
-            
-            <Card className="bg-black/40 border-blue-800/30 backdrop-blur-sm">
-              <CardHeader>
-                <CardTitle className="text-white">Social Stats</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex justify-between">
-                  <span className="text-gray-400">Total Friends</span>
-                  <span className="text-white font-semibold">28</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-400">Mutual Friends</span>
-                  <span className="text-white font-semibold">12</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-400">Friend Requests</span>
-                  <span className="text-white font-semibold">3</span>
-                </div>
-                <Button 
-                  className="w-full mt-4 bg-gradient-to-r from-blue-600 to-teal-600"
-                  onClick={() => window.location.href = '/friends'}
-                >
-                  <Users className="h-4 w-4 mr-2" />
-                  Manage Friends
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
+          <SocialActivityFeed />
         </TabsContent>
       </Tabs>
     </div>
