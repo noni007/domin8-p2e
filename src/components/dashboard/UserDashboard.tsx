@@ -9,11 +9,13 @@ import { EnhancedActivityFeed } from "@/components/activity/EnhancedActivityFeed
 import { SocialActivityFeed } from "@/components/activity/SocialActivityFeed";
 import { RealTimeUpdates } from "@/components/notifications/RealTimeUpdates";
 import { Trophy, Users, Calendar, TrendingUp } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 export const UserDashboard = () => {
   const { user } = useAuth();
   const { stats } = useUserStats(user?.id);
   const { tournaments } = useTournaments();
+  const { toast } = useToast();
 
   const upcomingTournaments = tournaments
     .filter(t => t.status === 'upcoming')
@@ -22,6 +24,15 @@ export const UserDashboard = () => {
   const activeTournaments = tournaments
     .filter(t => t.status === 'active')
     .slice(0, 2);
+
+  const handleViewTournamentDetails = (tournamentId: string) => {
+    toast({
+      title: "Tournament Details",
+      description: "Tournament details feature coming soon!",
+    });
+    // TODO: Navigate to tournament details page or show modal
+    console.log('View tournament details:', tournamentId);
+  };
 
   return (
     <div className="space-y-8">
@@ -106,7 +117,11 @@ export const UserDashboard = () => {
               </CardHeader>
               <CardContent className="space-y-4">
                 {activeTournaments.map((tournament) => (
-                  <TournamentCard key={tournament.id} tournament={tournament} />
+                  <TournamentCard 
+                    key={tournament.id} 
+                    tournament={tournament} 
+                    onViewDetails={handleViewTournamentDetails}
+                  />
                 ))}
               </CardContent>
             </Card>
@@ -126,7 +141,11 @@ export const UserDashboard = () => {
             <CardContent className="space-y-4">
               {upcomingTournaments.length > 0 ? (
                 upcomingTournaments.map((tournament) => (
-                  <TournamentCard key={tournament.id} tournament={tournament} />
+                  <TournamentCard 
+                    key={tournament.id} 
+                    tournament={tournament} 
+                    onViewDetails={handleViewTournamentDetails}
+                  />
                 ))
               ) : (
                 <p className="text-gray-400 text-center py-4">

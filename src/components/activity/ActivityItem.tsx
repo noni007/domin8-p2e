@@ -11,7 +11,7 @@ interface ActivityItemProps {
     title: string;
     description?: string;
     created_at: string;
-    metadata?: Record<string, any>;
+    metadata?: any; // Changed from Record<string, any> to any to handle Json type
     profile?: {
       id: string;
       username?: string;
@@ -47,6 +47,20 @@ export const ActivityItem = ({ activity, showUserInfo = false }: ActivityItemPro
     ).join(' ');
   };
 
+  // Safely parse metadata if it's a string, otherwise use as-is
+  const parseMetadata = (metadata: any) => {
+    if (typeof metadata === 'string') {
+      try {
+        return JSON.parse(metadata);
+      } catch {
+        return {};
+      }
+    }
+    return metadata || {};
+  };
+
+  const parsedMetadata = parseMetadata(activity.metadata);
+
   return (
     <div className="flex items-start space-x-3 p-3 bg-gray-800/30 rounded-lg border border-gray-700/50 hover:bg-gray-800/50 transition-colors">
       <div className="flex-shrink-0 mt-1">
@@ -75,21 +89,21 @@ export const ActivityItem = ({ activity, showUserInfo = false }: ActivityItemPro
         )}
         
         {/* Enhanced metadata display */}
-        {activity.metadata && Object.keys(activity.metadata).length > 0 && (
+        {parsedMetadata && Object.keys(parsedMetadata).length > 0 && (
           <div className="mt-2 flex flex-wrap gap-1">
-            {activity.metadata.streak && (
+            {parsedMetadata.streak && (
               <Badge className="bg-orange-600 text-white text-xs">
-                🔥 {activity.metadata.streak} streak
+                🔥 {parsedMetadata.streak} streak
               </Badge>
             )}
-            {activity.metadata.prizePool && (
+            {parsedMetadata.prizePool && (
               <Badge className="bg-green-600 text-white text-xs">
-                💰 ${activity.metadata.prizePool}
+                💰 ${parsedMetadata.prizePool}
               </Badge>
             )}
-            {activity.metadata.achievementName && (
+            {parsedMetadata.achievementName && (
               <Badge className="bg-purple-600 text-white text-xs">
-                🏆 {activity.metadata.achievementName}
+                🏆 {parsedMetadata.achievementName}
               </Badge>
             )}
           </div>
