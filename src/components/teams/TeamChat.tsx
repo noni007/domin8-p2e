@@ -42,7 +42,7 @@ export const TeamChat = ({ teamId }: TeamChatProps) => {
         .from('team_messages')
         .select(`
           *,
-          sender_profile:profiles!team_messages_sender_id_fkey(*)
+          sender_profile:profiles(*)
         `)
         .eq('team_id', teamId)
         .order('created_at', { ascending: true })
@@ -79,7 +79,7 @@ export const TeamChat = ({ teamId }: TeamChatProps) => {
             .from('team_messages')
             .select(`
               *,
-              sender_profile:profiles!team_messages_sender_id_fkey(*)
+              sender_profile:profiles(*)
             `)
             .eq('id', payload.new.id)
             .single();

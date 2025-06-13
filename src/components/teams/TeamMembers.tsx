@@ -38,7 +38,7 @@ export const TeamMembers = ({ teamId, userRole, onUpdate }: TeamMembersProps) =>
         .from('team_members')
         .select(`
           *,
-          member_profile:profiles!team_members_user_id_fkey(*)
+          member_profile:profiles(*)
         `)
         .eq('team_id', teamId)
         .order('joined_at', { ascending: true });
