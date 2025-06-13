@@ -1,77 +1,31 @@
 
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
 import { useAuth } from "@/hooks/useAuth";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "@/hooks/use-toast";
-import { User, Settings, ArrowLeft, ExternalLink } from "lucide-react";
+import { User } from "lucide-react";
+import { ProfileNavigation } from "@/components/profile/ProfileNavigation";
+import { ProfileCard } from "@/components/profile/ProfileCard";
+import { ProfileForm } from "@/components/profile/ProfileForm";
 
 const Profile = () => {
   const { user, profile, refreshProfile } = useAuth();
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
   const [editing, setEditing] = useState(false);
-  const [formData, setFormData] = useState({
-    username: profile?.username || "",
-    bio: profile?.bio || "",
-    user_type: profile?.user_type || "player"
-  });
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    setFormData(prev => ({
-      ...prev,
-      [e.target.name]: e.target.value
-    }));
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!user) return;
-
-    setLoading(true);
-    
-    try {
-      const { error } = await supabase
-        .from('profiles')
-        .update({
-          username: formData.username,
-          bio: formData.bio,
-          user_type: formData.user_type,
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', user.id);
-
-      if (error) throw error;
-
-      await refreshProfile();
-      setEditing(false);
-      
-      toast({
-        title: "Profile Updated!",
-        description: "Your profile has been successfully updated.",
-      });
-    } catch (error) {
-      console.error('Error updating profile:', error);
-      toast({
-        title: "Error",
-        description: "Failed to update profile. Please try again.",
-        variant: "destructive"
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleViewPublicProfile = () => {
     if (user?.id) {
       navigate(`/profile/${user.id}`);
     }
+  };
+
+  const handleEditProfile = () => {
+    setEditing(!editing);
+  };
+
+  const handleProfileUpdated = async () => {
+    await refreshProfile();
+    setEditing(false);
   };
 
   if (!user) {
@@ -90,144 +44,27 @@ const Profile = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
-      {/* Navigation */}
-      <nav className="border-b border-blue-800/30 bg-black/20 backdrop-blur-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-2">
-              <img src="https://images.unsplash.com/photo-1616389884404-2ab423ebddae?w=32&h=32&fit=crop&crop=center" alt="Domin8 Logo" className="h-8 w-8" />
-              <span className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-teal-400 bg-clip-text text-transparent">
-                Domin8
-              </span>
-            </div>
-            <div className="flex items-center space-x-4">
-              <Button 
-                variant="outline" 
-                className="border-blue-400 text-blue-400 hover:bg-blue-400 hover:text-black"
-                onClick={() => navigate('/')}
-              >
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Back to Home
-              </Button>
-            </div>
-          </div>
-        </div>
-      </nav>
+      <ProfileNavigation />
 
-      {/* Main Content */}
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid gap-8 md:grid-cols-3">
-          {/* Profile Card */}
           <div className="md:col-span-1">
-            <Card className="bg-black/40 border-blue-800/30 backdrop-blur-sm">
-              <CardHeader className="text-center">
-                <div className="w-24 h-24 bg-gradient-to-r from-blue-600 to-teal-600 rounded-full mx-auto mb-4 flex items-center justify-center">
-                  <User className="h-12 w-12 text-white" />
-                </div>
-                <CardTitle className="text-white">{profile?.username || user.email}</CardTitle>
-                <Badge className={`mx-auto ${
-                  profile?.user_type === 'player' ? 'bg-blue-600' :
-                  profile?.user_type === 'creator' ? 'bg-purple-600' :
-                  profile?.user_type === 'organizer' ? 'bg-green-600' :
-                  'bg-orange-600'
-                } text-white capitalize`}>
-                  {profile?.user_type || 'Player'}
-                </Badge>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <p className="text-gray-300 text-center mb-4">
-                  {profile?.bio || "No bio added yet."}
-                </p>
-                <Button 
-                  onClick={() => setEditing(!editing)}
-                  className="w-full bg-gradient-to-r from-blue-600 to-teal-600 hover:from-blue-700 hover:to-teal-700"
-                >
-                  <Settings className="h-4 w-4 mr-2" />
-                  {editing ? 'Cancel Edit' : 'Edit Profile'}
-                </Button>
-                <Button 
-                  onClick={handleViewPublicProfile}
-                  variant="outline"
-                  className="w-full border-blue-400 text-blue-400 hover:bg-blue-400 hover:text-black"
-                >
-                  <ExternalLink className="h-4 w-4 mr-2" />
-                  View Public Profile
-                </Button>
-              </CardContent>
-            </Card>
+            <ProfileCard
+              profile={profile}
+              user={user}
+              onEditProfile={handleEditProfile}
+              onViewPublicProfile={handleViewPublicProfile}
+              editing={editing}
+            />
           </div>
 
-          {/* Profile Form */}
           <div className="md:col-span-2">
-            <Card className="bg-black/40 border-blue-800/30 backdrop-blur-sm">
-              <CardHeader>
-                <CardTitle className="text-white">
-                  {editing ? 'Edit Profile' : 'Profile Settings'}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                {editing ? (
-                  <form onSubmit={handleSubmit} className="space-y-4">
-                    <div>
-                      <Label htmlFor="username" className="text-gray-300">Username</Label>
-                      <Input
-                        id="username"
-                        name="username"
-                        value={formData.username}
-                        onChange={handleChange}
-                        placeholder="Enter your username"
-                        required
-                        className="bg-black/20 border-blue-800/50 text-white placeholder:text-gray-400"
-                      />
-                    </div>
-                    
-                    <div>
-                      <Label htmlFor="user_type" className="text-gray-300">User Type</Label>
-                      <select
-                        id="user_type"
-                        name="user_type"
-                        value={formData.user_type}
-                        onChange={handleChange}
-                        className="w-full bg-black/20 border border-blue-800/50 text-white rounded-md px-3 py-2"
-                      >
-                        <option value="player">Player</option>
-                        <option value="creator">Creator</option>
-                        <option value="organizer">Organizer</option>
-                        <option value="brand">Brand</option>
-                      </select>
-                    </div>
-                    
-                    <div>
-                      <Label htmlFor="bio" className="text-gray-300">Bio</Label>
-                      <Textarea
-                        id="bio"
-                        name="bio"
-                        value={formData.bio}
-                        onChange={handleChange}
-                        placeholder="Tell us about yourself"
-                        className="bg-black/20 border-blue-800/50 text-white placeholder:text-gray-400"
-                      />
-                    </div>
-                    
-                    <Button 
-                      type="submit" 
-                      className="w-full bg-gradient-to-r from-blue-600 to-teal-600 hover:from-blue-700 hover:to-teal-700"
-                      disabled={loading}
-                    >
-                      {loading ? "Updating..." : "Update Profile"}
-                    </Button>
-                  </form>
-                ) : (
-                  <div className="space-y-6">
-                    <div className="text-center py-8">
-                      <p className="text-gray-400 mb-4">
-                        Click "Edit Profile" to update your information or "View Public Profile" to see how others see your profile.
-                      </p>
-                    </div>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+            <ProfileForm
+              profile={profile}
+              user={user}
+              editing={editing}
+              onProfileUpdated={handleProfileUpdated}
+            />
           </div>
         </div>
       </main>
