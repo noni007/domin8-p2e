@@ -4,9 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Users, Calendar, Trophy, DollarSign } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
 import { TournamentBracket } from "./TournamentBracket";
-import { toast } from "@/hooks/use-toast";
+import { TournamentRegistration } from "./TournamentRegistration";
 import { useAuth } from "@/hooks/useAuth";
 import { useRealTimeTournament } from "@/hooks/useRealTimeTournament";
 
@@ -26,66 +25,14 @@ export const TournamentDetails = ({ tournamentId, onBack }: TournamentDetailsPro
     }
   });
 
-  const handleRegister = async () => {
-    if (!user) {
-      toast({
-        title: "Authentication Required",
-        description: "Please sign in to register for tournaments.",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    if (!tournament) return;
-
-    if (participants.length >= tournament.max_participants) {
-      toast({
-        title: "Tournament Full",
-        description: "This tournament has reached its maximum capacity.",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    try {
-      const { error } = await supabase
-        .from('tournament_participants')
-        .insert({
-          tournament_id: tournamentId,
-          user_id: user.id,
-          status: 'registered'
-        });
-
-      if (error) {
-        if (error.code === '23505') {
-          toast({
-            title: "Already Registered",
-            description: "You are already registered for this tournament.",
-            variant: "destructive"
-          });
-        } else {
-          throw error;
-        }
-        return;
-      }
-      
-      toast({
-        title: "Registration Successful!",
-        description: "You have been registered for this tournament.",
-      });
-    } catch (error) {
-      console.error('Error registering:', error);
-      toast({
-        title: "Registration Failed",
-        description: "Failed to register for tournament.",
-        variant: "destructive"
-      });
-    }
-  };
-
   const handleBracketUpdate = () => {
     // Real-time hooks will automatically update the data
     console.log('Bracket update triggered');
+  };
+
+  const handleRegistrationChange = () => {
+    // Real-time hooks will automatically update the data
+    console.log('Registration changed');
   };
 
   if (loading || !tournament) {
@@ -122,12 +69,6 @@ export const TournamentDetails = ({ tournamentId, onBack }: TournamentDetailsPro
 
   const isRegistered = participants.some(p => p.user_id === user?.id);
 
-  const canRegister = tournament.status === 'registration_open' && 
-                     !isRegistered && 
-                     user && 
-                     participants.length < tournament.max_participants &&
-                     new Date(tournament.registration_deadline) > new Date();
-
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -149,7 +90,7 @@ export const TournamentDetails = ({ tournamentId, onBack }: TournamentDetailsPro
           <div className="flex justify-between items-start">
             <div>
               <CardTitle className="text-white text-2xl mb-2">{tournament.title}</CardTitle>
-              <div className="flex gap-2">
+              <div className="flex gap-2 flex-wrap">
                 <Badge className={`${getStatusColor(tournament.status)} text-white capitalize`}>
                   {tournament.status.replace('_', ' ')}
                 </Badge>
@@ -175,7 +116,7 @@ export const TournamentDetails = ({ tournamentId, onBack }: TournamentDetailsPro
         <CardContent>
           <p className="text-gray-300 mb-6">{tournament.description}</p>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <div className="flex items-center gap-3">
               <Trophy className="h-5 w-5 text-blue-400" />
               <div>
@@ -214,17 +155,16 @@ export const TournamentDetails = ({ tournamentId, onBack }: TournamentDetailsPro
               </div>
             </div>
           </div>
-
-          {canRegister && (
-            <Button 
-              onClick={handleRegister}
-              className="bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700"
-            >
-              Register for Tournament
-            </Button>
-          )}
         </CardContent>
       </Card>
+
+      {/* Registration Section */}
+      <TournamentRegistration
+        tournament={tournament}
+        participants={participants}
+        isRegistered={isRegistered}
+        onRegistrationChange={handleRegistrationChange}
+      />
 
       {/* Tournament Bracket */}
       <TournamentBracket
