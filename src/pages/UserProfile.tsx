@@ -6,7 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { UserProfileHeader } from "@/components/profile/UserProfileHeader";
 import { UserProfileContent } from "@/components/profile/UserProfileContent";
-import { useUserStats } from "@/hooks/useUserStats";
+import { useEnhancedUserStats } from "@/hooks/useEnhancedUserStats";
 import type { Tables } from "@/integrations/supabase/types";
 
 type Profile = Tables<'profiles'>;
@@ -17,7 +17,7 @@ export const UserProfile = () => {
   const { user } = useAuth();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
-  const { stats, tournaments } = useUserStats(userId);
+  const { stats, tournaments, loading: statsLoading } = useEnhancedUserStats(userId);
   const isOwnProfile = user?.id === userId;
 
   useEffect(() => {
@@ -43,7 +43,7 @@ export const UserProfile = () => {
     }
   };
 
-  if (loading) {
+  if (loading || statsLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 flex items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-400"></div>

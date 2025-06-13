@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useNavigate } from "react-router-dom";
 import { ProfileHeader } from "@/components/profile/ProfileHeader";
-import { EnhancedProfileStats } from "@/components/profile/EnhancedProfileStats";
+import { DetailedStatsCard } from "@/components/profile/DetailedStatsCard";
 import { TournamentHistory } from "@/components/profile/TournamentHistory";
 import { MatchHistory } from "@/components/profile/MatchHistory";
 import { Achievements } from "@/components/profile/Achievements";
@@ -14,23 +14,28 @@ import type { Tables } from "@/integrations/supabase/types";
 type Profile = Tables<'profiles'>;
 type Tournament = Tables<'tournaments'>;
 
-interface UserStats {
+interface EnhancedUserStats {
   tournamentsPlayed: number;
   tournamentsWon: number;
   matchesPlayed: number;
   matchesWon: number;
   winRate: number;
-  rank: number;
   currentStreak: number;
   longestStreak: number;
   averageRoundsReached: number;
   favoriteGame: string;
+  recentPerformance: number;
+  rank: number;
+  tier: 'Bronze' | 'Silver' | 'Gold' | 'Platinum' | 'Diamond' | 'Master';
+  averageMatchesPerDay: number;
+  totalPlayTime: number;
+  lastActiveDate: string;
 }
 
 interface UserProfileContentProps {
   userId: string;
   profile: Profile;
-  stats: UserStats;
+  stats: EnhancedUserStats;
   tournaments: Tournament[];
   isOwnProfile: boolean;
 }
@@ -66,8 +71,11 @@ export const UserProfileContent = ({
           onEditProfile={isOwnProfile ? handleEditProfile : undefined}
         />
 
-        {/* Enhanced Stats Overview */}
-        <EnhancedProfileStats stats={stats} />
+        {/* Detailed Stats Overview */}
+        <div className="space-y-4">
+          <h2 className="text-2xl font-bold text-white">Detailed Statistics</h2>
+          <DetailedStatsCard stats={stats} />
+        </div>
 
         {/* Recent Activity Preview */}
         <RecentActivities 
