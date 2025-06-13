@@ -55,52 +55,68 @@ export const TournamentBracket = ({
   );
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" role="region" aria-label="Tournament bracket section">
       {/* Tournament Statistics */}
-      <TournamentStats 
-        tournament={tournament}
-        participants={participants}
-        matches={matches}
-      />
+      <section aria-labelledby="tournament-stats-heading">
+        <h2 id="tournament-stats-heading" className="sr-only">Tournament Statistics</h2>
+        <TournamentStats 
+          tournament={tournament}
+          participants={participants}
+          matches={matches}
+        />
+      </section>
 
       {/* Tournament Management (Organizer Only) */}
       {isOrganizer && (
-        <TournamentManagement
-          tournament={tournament}
-          participants={participants}
-          isOrganizer={isOrganizer}
-          onUpdate={handleBracketChange}
-        />
+        <section aria-labelledby="tournament-management-heading">
+          <h2 id="tournament-management-heading" className="sr-only">Tournament Management</h2>
+          <TournamentManagement
+            tournament={tournament}
+            participants={participants}
+            isOrganizer={isOrganizer}
+            onUpdate={handleBracketChange}
+          />
+        </section>
       )}
 
       {/* Bracket Controls */}
-      <BracketControls
-        tournamentId={tournament.id}
-        participants={participants}
-        bracketGenerated={bracketGenerated}
-        onBracketChange={handleBracketChange}
-        isOrganizer={isOrganizer}
-      />
+      <section aria-labelledby="bracket-controls-heading">
+        <h2 id="bracket-controls-heading" className="sr-only">Bracket Controls</h2>
+        <BracketControls
+          tournamentId={tournament.id}
+          participants={participants}
+          bracketGenerated={bracketGenerated}
+          onBracketChange={handleBracketChange}
+          isOrganizer={isOrganizer}
+        />
+      </section>
       
       {/* Bracket Display */}
-      {!bracketGenerated ? (
-        <BracketEmptyState 
-          participants={participants} 
-          isOrganizer={isOrganizer} 
-        />
-      ) : loading ? (
-        <BracketLoadingState />
-      ) : (
-        <Card className="bg-black/40 border-blue-800/30 backdrop-blur-sm">
-          <BracketHeader />
-          <BracketRounds
-            matches={matches}
-            participants={participants}
-            canEditResult={canEditResult}
-            onMatchUpdate={handleMatchUpdate}
+      <section aria-labelledby="bracket-display-heading">
+        <h2 id="bracket-display-heading" className="sr-only">Tournament Bracket</h2>
+        {!bracketGenerated ? (
+          <BracketEmptyState 
+            participants={participants} 
+            isOrganizer={isOrganizer} 
           />
-        </Card>
-      )}
+        ) : loading ? (
+          <BracketLoadingState />
+        ) : (
+          <Card 
+            className="bg-black/40 border-blue-800/30 backdrop-blur-sm"
+            role="region"
+            aria-label="Interactive tournament bracket"
+          >
+            <BracketHeader />
+            <BracketRounds
+              matches={matches}
+              participants={participants}
+              canEditResult={canEditResult}
+              onMatchUpdate={handleMatchUpdate}
+            />
+          </Card>
+        )}
+      </section>
     </div>
   );
 };
