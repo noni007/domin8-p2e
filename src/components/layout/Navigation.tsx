@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -24,13 +23,12 @@ const Navigation = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
-              <Link to="/" className="flex items-center space-x-3">
+              <Link to="/" className="flex items-center">
                 <img 
-                  src="/lovable-uploads/03e7851f-34bb-4ea5-947f-08410efe50ce.png" 
+                  src="/lovable-uploads/7754c2e2-2bb1-4a54-92b5-a2a7fc48a8cf.png" 
                   alt="Logo" 
-                  className="h-8 w-8"
+                  className="h-8 w-auto"
                 />
-                <span className="text-white font-bold text-xl">Domin8</span>
               </Link>
             </div>
 
