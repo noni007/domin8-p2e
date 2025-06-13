@@ -1,107 +1,102 @@
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
-import { Trophy, Users, Target, Award, UserPlus } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
-import type { Tables } from '@/integrations/supabase/types';
-
-type UserActivity = Tables<'user_activities'>;
-type Profile = Tables<'profiles'>;
-
-interface ActivityWithProfile extends UserActivity {
-  profile?: Profile;
-}
+import { Badge } from "@/components/ui/badge";
+import { ActivityTypeIcon } from "./ActivityTypeIcon";
+import type { ActivityType } from "@/utils/activityHelpers";
 
 interface ActivityItemProps {
-  activity: ActivityWithProfile;
+  activity: {
+    id: string;
+    activity_type: string;
+    title: string;
+    description?: string;
+    created_at: string;
+    metadata?: Record<string, any>;
+    profile?: {
+      id: string;
+      username?: string;
+      avatar_url?: string;
+    };
+  };
   showUserInfo?: boolean;
 }
 
-export const ActivityItem = ({ activity, showUserInfo = true }: ActivityItemProps) => {
-  const getActivityIcon = (type: string) => {
-    switch (type) {
-      case 'tournament_join':
-        return <Users className="h-4 w-4" />;
-      case 'tournament_win':
-        return <Trophy className="h-4 w-4 text-yellow-500" />;
-      case 'match_win':
-        return <Target className="h-4 w-4 text-green-500" />;
-      case 'achievement_unlock':
-        return <Award className="h-4 w-4 text-purple-500" />;
-      case 'friend_added':
-        return <UserPlus className="h-4 w-4 text-blue-500" />;
-      default:
-        return <Trophy className="h-4 w-4" />;
-    }
-  };
-
+export const ActivityItem = ({ activity, showUserInfo = false }: ActivityItemProps) => {
+  const timeAgo = formatDistanceToNow(new Date(activity.created_at), { addSuffix: true });
+  
   const getActivityColor = (type: string) => {
     switch (type) {
       case 'tournament_win':
         return 'bg-yellow-600';
+      case 'tournament_join':
+        return 'bg-blue-600';
       case 'match_win':
         return 'bg-green-600';
       case 'achievement_unlock':
         return 'bg-purple-600';
       case 'friend_added':
-        return 'bg-blue-600';
+        return 'bg-cyan-600';
       default:
         return 'bg-gray-600';
     }
   };
 
-  const getUserInitials = () => {
-    if (activity.profile?.username) {
-      return activity.profile.username.slice(0, 2).toUpperCase();
-    }
-    return "U";
+  const formatActivityType = (type: string) => {
+    return type.split('_').map(word => 
+      word.charAt(0).toUpperCase() + word.slice(1)
+    ).join(' ');
   };
 
   return (
-    <Card className="bg-black/40 border-blue-800/30 backdrop-blur-sm">
-      <CardContent className="p-4">
-        <div className="flex items-start space-x-3">
-          {showUserInfo && (
-            <Avatar className="h-10 w-10 border-2 border-blue-400">
-              <AvatarImage 
-                src={activity.profile?.avatar_url || undefined} 
-                alt={activity.profile?.username || "User"} 
-              />
-              <AvatarFallback className="bg-blue-600 text-white text-sm">
-                {getUserInitials()}
-              </AvatarFallback>
-            </Avatar>
+    <div className="flex items-start space-x-3 p-3 bg-gray-800/30 rounded-lg border border-gray-700/50 hover:bg-gray-800/50 transition-colors">
+      <div className="flex-shrink-0 mt-1">
+        <ActivityTypeIcon 
+          activityType={activity.activity_type as ActivityType} 
+          className="h-5 w-5" 
+        />
+      </div>
+      
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center space-x-2 mb-1">
+          {showUserInfo && activity.profile && (
+            <span className="text-sm font-medium text-blue-400">
+              {activity.profile.username || 'Unknown User'}
+            </span>
           )}
-          
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center space-x-2 mb-1">
-              <Badge 
-                className={`${getActivityColor(activity.activity_type)} text-white`}
-                variant="secondary"
-              >
-                {getActivityIcon(activity.activity_type)}
-                <span className="ml-1 text-xs">{activity.title}</span>
+          <Badge className={`${getActivityColor(activity.activity_type)} text-white text-xs`}>
+            {formatActivityType(activity.activity_type)}
+          </Badge>
+        </div>
+        
+        <h4 className="text-white font-medium text-sm">{activity.title}</h4>
+        
+        {activity.description && (
+          <p className="text-gray-400 text-sm mt-1">{activity.description}</p>
+        )}
+        
+        {/* Enhanced metadata display */}
+        {activity.metadata && Object.keys(activity.metadata).length > 0 && (
+          <div className="mt-2 flex flex-wrap gap-1">
+            {activity.metadata.streak && (
+              <Badge className="bg-orange-600 text-white text-xs">
+                🔥 {activity.metadata.streak} streak
               </Badge>
-              <span className="text-xs text-gray-400">
-                {formatDistanceToNow(new Date(activity.created_at), { addSuffix: true })}
-              </span>
-            </div>
-            
-            {showUserInfo && activity.profile?.username && (
-              <p className="text-sm text-blue-400 mb-1">
-                {activity.profile.username}
-              </p>
             )}
-            
-            {activity.description && (
-              <p className="text-sm text-gray-300">
-                {activity.description}
-              </p>
+            {activity.metadata.prizePool && (
+              <Badge className="bg-green-600 text-white text-xs">
+                💰 ${activity.metadata.prizePool}
+              </Badge>
+            )}
+            {activity.metadata.achievementName && (
+              <Badge className="bg-purple-600 text-white text-xs">
+                🏆 {activity.metadata.achievementName}
+              </Badge>
             )}
           </div>
-        </div>
-      </CardContent>
-    </Card>
+        )}
+        
+        <p className="text-xs text-gray-500 mt-2">{timeAgo}</p>
+      </div>
+    </div>
   );
 };
