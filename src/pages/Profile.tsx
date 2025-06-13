@@ -1,4 +1,6 @@
+
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -8,10 +10,11 @@ import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
-import { User, Settings, Trophy, Calendar } from "lucide-react";
+import { User, Settings, ArrowLeft, ExternalLink } from "lucide-react";
 
 const Profile = () => {
   const { user, profile, refreshProfile } = useAuth();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [editing, setEditing] = useState(false);
   const [formData, setFormData] = useState({
@@ -65,6 +68,12 @@ const Profile = () => {
     }
   };
 
+  const handleViewPublicProfile = () => {
+    if (user?.id) {
+      navigate(`/profile/${user.id}`);
+    }
+  };
+
   if (!user) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 flex items-center justify-center">
@@ -95,8 +104,9 @@ const Profile = () => {
               <Button 
                 variant="outline" 
                 className="border-blue-400 text-blue-400 hover:bg-blue-400 hover:text-black"
-                onClick={() => window.location.href = '/'}
+                onClick={() => navigate('/')}
               >
+                <ArrowLeft className="h-4 w-4 mr-2" />
                 Back to Home
               </Button>
             </div>
@@ -124,7 +134,7 @@ const Profile = () => {
                   {profile?.user_type || 'Player'}
                 </Badge>
               </CardHeader>
-              <CardContent>
+              <CardContent className="space-y-3">
                 <p className="text-gray-300 text-center mb-4">
                   {profile?.bio || "No bio added yet."}
                 </p>
@@ -135,18 +145,28 @@ const Profile = () => {
                   <Settings className="h-4 w-4 mr-2" />
                   {editing ? 'Cancel Edit' : 'Edit Profile'}
                 </Button>
+                <Button 
+                  onClick={handleViewPublicProfile}
+                  variant="outline"
+                  className="w-full border-blue-400 text-blue-400 hover:bg-blue-400 hover:text-black"
+                >
+                  <ExternalLink className="h-4 w-4 mr-2" />
+                  View Public Profile
+                </Button>
               </CardContent>
             </Card>
           </div>
 
-          {/* Profile Form / Dashboard */}
+          {/* Profile Form */}
           <div className="md:col-span-2">
-            {editing ? (
-              <Card className="bg-black/40 border-blue-800/30 backdrop-blur-sm">
-                <CardHeader>
-                  <CardTitle className="text-white">Edit Profile</CardTitle>
-                </CardHeader>
-                <CardContent>
+            <Card className="bg-black/40 border-blue-800/30 backdrop-blur-sm">
+              <CardHeader>
+                <CardTitle className="text-white">
+                  {editing ? 'Edit Profile' : 'Profile Settings'}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {editing ? (
                   <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
                       <Label htmlFor="username" className="text-gray-300">Username</Label>
@@ -197,46 +217,17 @@ const Profile = () => {
                       {loading ? "Updating..." : "Update Profile"}
                     </Button>
                   </form>
-                </CardContent>
-              </Card>
-            ) : (
-              <div className="space-y-6">
-                {/* Stats Cards */}
-                <div className="grid grid-cols-2 gap-4">
-                  <Card className="bg-black/40 border-blue-800/30 backdrop-blur-sm">
-                    <CardContent className="p-6 text-center">
-                      <Trophy className="h-8 w-8 text-yellow-400 mx-auto mb-2" />
-                      <h3 className="text-2xl font-bold text-white">0</h3>
-                      <p className="text-gray-400">Tournaments Won</p>
-                    </CardContent>
-                  </Card>
-                  
-                  <Card className="bg-black/40 border-blue-800/30 backdrop-blur-sm">
-                    <CardContent className="p-6 text-center">
-                      <Calendar className="h-8 w-8 text-blue-400 mx-auto mb-2" />
-                      <h3 className="text-2xl font-bold text-white">0</h3>
-                      <p className="text-gray-400">Tournaments Joined</p>
-                    </CardContent>
-                  </Card>
-                </div>
-
-                {/* Recent Activity */}
-                <Card className="bg-black/40 border-blue-800/30 backdrop-blur-sm">
-                  <CardHeader>
-                    <CardTitle className="text-white">Recent Activity</CardTitle>
-                  </CardHeader>
-                  <CardContent>
+                ) : (
+                  <div className="space-y-6">
                     <div className="text-center py-8">
-                      <Calendar className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                      <p className="text-gray-400">No recent activity</p>
-                      <p className="text-sm text-gray-500 mt-2">
-                        Join a tournament to see your activity here!
+                      <p className="text-gray-400 mb-4">
+                        Click "Edit Profile" to update your information or "View Public Profile" to see how others see your profile.
                       </p>
                     </div>
-                  </CardContent>
-                </Card>
-              </div>
-            )}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
           </div>
         </div>
       </main>
