@@ -1,13 +1,16 @@
 
 import { useState, useMemo } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { ActivityItem } from "./ActivityItem";
 import { ActivityFilters } from "./ActivityFilters";
 import { ActivityPagination } from "./ActivityPagination";
+import { ActivitySearchBar } from "./ActivitySearchBar";
+import { ActivityStats } from "./ActivityStats";
+import { ActivityLoadMore } from "./ActivityLoadMore";
+import { ActivityEmptyState } from "./ActivityEmptyState";
+import { ActivityHeader } from "./ActivityHeader";
 import { usePaginatedActivityFeed } from "@/hooks/usePaginatedActivityFeed";
-import { Activity, Search, Filter, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import type { ActivityType } from "@/utils/activityHelpers";
 
 interface EnhancedActivityFeedProps {
@@ -101,8 +104,13 @@ export const EnhancedActivityFeed = ({
     return counts;
   }, [allActivities]);
 
+  const handleClearFilters = () => {
+    setSearchQuery("");
+    setSelectedFilters([]);
+  };
+
+  const hasFilters = searchQuery || selectedFilters.length > 0;
   const totalItems = filteredActivities.length;
-  const totalPages = Math.ceil(totalItems / pageSize);
 
   if (loading) {
     return (
@@ -118,36 +126,18 @@ export const EnhancedActivityFeed = ({
   return (
     <Card className="bg-black/40 border-blue-800/30 backdrop-blur-sm">
       <CardHeader className="space-y-4">
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-white flex items-center text-lg">
-            <Activity className="h-4 w-4 mr-2 text-blue-400" />
-            {title}
-          </CardTitle>
-          {showFilters && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setShowFilterPanel(!showFilterPanel)}
-              className="text-gray-400 hover:text-gray-300"
-            >
-              <Filter className="h-4 w-4 mr-1" />
-              Filters
-            </Button>
-          )}
-        </div>
+        <ActivityHeader
+          title={title}
+          showFilters={showFilters}
+          showFilterPanel={showFilterPanel}
+          onToggleFilterPanel={() => setShowFilterPanel(!showFilterPanel)}
+        />
 
-        {/* Search Bar */}
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-          <Input
-            placeholder="Search activities..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10 bg-gray-800/50 border-gray-600 text-white placeholder-gray-400"
-          />
-        </div>
+        <ActivitySearchBar
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+        />
 
-        {/* Filter Panel */}
         {showFilters && showFilterPanel && (
           <ActivityFilters
             selectedFilters={selectedFilters}
@@ -168,33 +158,15 @@ export const EnhancedActivityFeed = ({
               />
             ))}
             
-            {/* Load More Buttons for Infinite Scroll Alternative */}
             {!showPagination && !maxItems && (
-              <div className="flex gap-2 justify-center pt-4">
-                {hasMorePersonal && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={loadMorePersonal}
-                    className="bg-gray-800 border-gray-600 text-white hover:bg-gray-700"
-                  >
-                    Load More Personal
-                  </Button>
-                )}
-                {hasMoreFriends && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={loadMoreFriends}
-                    className="bg-gray-800 border-gray-600 text-white hover:bg-gray-700"
-                  >
-                    Load More Friends
-                  </Button>
-                )}
-              </div>
+              <ActivityLoadMore
+                hasMorePersonal={hasMorePersonal}
+                hasMoreFriends={hasMoreFriends}
+                onLoadMorePersonal={loadMorePersonal}
+                onLoadMoreFriends={loadMoreFriends}
+              />
             )}
 
-            {/* Pagination */}
             {showPagination && !maxItems && (
               <ActivityPagination
                 currentPage={currentPage}
@@ -205,37 +177,17 @@ export const EnhancedActivityFeed = ({
               />
             )}
 
-            {maxItems && allActivities.length > maxItems && (
-              <div className="text-center pt-4">
-                <p className="text-sm text-gray-400">
-                  Showing {Math.min(filteredActivities.length, maxItems)} of {allActivities.length} activities
-                </p>
-              </div>
-            )}
+            <ActivityStats
+              totalItems={allActivities.length}
+              displayedItems={filteredActivities.length}
+              maxItems={maxItems}
+            />
           </>
         ) : (
-          <div className="text-center py-8">
-            <Activity className="h-12 w-12 text-gray-500 mx-auto mb-2" />
-            <p className="text-gray-400">
-              {searchQuery || selectedFilters.length > 0 
-                ? "No activities match your filters" 
-                : "No activities yet"
-              }
-            </p>
-            {(searchQuery || selectedFilters.length > 0) && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => {
-                  setSearchQuery("");
-                  setSelectedFilters([]);
-                }}
-                className="mt-2 text-blue-400 hover:text-blue-300"
-              >
-                Clear filters
-              </Button>
-            )}
-          </div>
+          <ActivityEmptyState
+            hasFilters={hasFilters}
+            onClearFilters={handleClearFilters}
+          />
         )}
       </CardContent>
     </Card>
