@@ -11,7 +11,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/hooks/useAuth";
 import { AuthModal } from "./AuthModal";
-import { User, Settings, LogOut, Trophy, BarChart3 } from "lucide-react";
+import { User, Settings, LogOut, Trophy, BarChart3, Users } from "lucide-react";
 
 export const UserMenu = () => {
   const { user, profile, signOut } = useAuth();
@@ -76,6 +76,13 @@ export const UserMenu = () => {
         >
           <User className="mr-2 h-4 w-4" />
           Profile
+        </DropdownMenuItem>
+        <DropdownMenuItem 
+          className="text-white hover:bg-blue-900/50 cursor-pointer"
+          onClick={() => window.location.href = '/friends'}
+        >
+          <Users className="mr-2 h-4 w-4" />
+          Friends
         </DropdownMenuItem>
         <DropdownMenuItem className="text-white hover:bg-blue-900/50 cursor-pointer">
           <Trophy className="mr-2 h-4 w-4" />

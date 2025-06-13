@@ -10,6 +10,7 @@ import Tournaments from "./pages/Tournaments";
 import Rankings from "./pages/Rankings";
 import Profile from "./pages/Profile";
 import UserProfile from "./pages/UserProfile";
+import Friends from "./pages/Friends";
 import Leaderboards from "./pages/Leaderboards";
 import NotFound from "./pages/NotFound";
 
@@ -29,6 +30,7 @@ const App = () => (
             <Route path="/leaderboards" element={<Leaderboards />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/profile/:userId" element={<UserProfile />} />
+            <Route path="/friends" element={<Friends />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
