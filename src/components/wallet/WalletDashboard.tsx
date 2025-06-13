@@ -1,17 +1,36 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Wallet, DollarSign, TrendingUp, TrendingDown, Plus, Minus } from "lucide-react";
 import { useWallet } from "@/hooks/useWallet";
 import { WalletTransactionHistory } from "./WalletTransactionHistory";
-import { StripePayment } from "./StripePayment";
+import { RealStripePayment } from "./RealStripePayment";
+import { PaymentVerification } from "./PaymentVerification";
 
 export const WalletDashboard = () => {
   const { wallet, transactions, loading, formatAmount } = useWallet();
   const [showDeposit, setShowDeposit] = useState(false);
   const [showWithdrawal, setShowWithdrawal] = useState(false);
+  const [verifyingPayment, setVerifyingPayment] = useState<string | null>(null);
+
+  // Check for payment success/cancellation from URL params
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const success = urlParams.get('success');
+    const cancelled = urlParams.get('cancelled');
+    const sessionId = urlParams.get('session_id');
+
+    if (success === 'true' && sessionId) {
+      setVerifyingPayment(sessionId);
+      // Clean up URL
+      window.history.replaceState({}, '', window.location.pathname);
+    } else if (cancelled === 'true') {
+      // Clean up URL
+      window.history.replaceState({}, '', window.location.pathname);
+    }
+  }, []);
 
   if (loading) {
     return <div className="text-center text-gray-400">Loading wallet...</div>;
@@ -35,11 +54,23 @@ export const WalletDashboard = () => {
     .filter(t => t.transaction_type === 'withdrawal' && t.status === 'completed')
     .reduce((sum, t) => sum + Math.abs(t.amount), 0);
 
+  // Show payment verification if needed
+  if (verifyingPayment) {
+    return (
+      <div className="space-y-6">
+        <PaymentVerification
+          sessionId={verifyingPayment}
+          onComplete={() => setVerifyingPayment(null)}
+        />
+      </div>
+    );
+  }
+
   // Show payment form if either deposit or withdrawal is active
   if (showDeposit || showWithdrawal) {
     return (
       <div className="space-y-6">
-        <StripePayment
+        <RealStripePayment
           type={showDeposit ? 'deposit' : 'withdrawal'}
           onSuccess={() => {
             setShowDeposit(false);
@@ -123,7 +154,7 @@ export const WalletDashboard = () => {
             </Button>
           </div>
           <p className="text-xs text-gray-400 mt-2">
-            Minimum withdrawal: $1.00
+            Minimum withdrawal: $1.00 • Supports USD and NGN
           </p>
         </CardContent>
       </Card>
