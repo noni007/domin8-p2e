@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -12,7 +11,8 @@ import {
   Settings, 
   Activity,
   AlertTriangle,
-  TrendingUp
+  TrendingUp,
+  ToggleLeft
 } from "lucide-react";
 import { useAdmin } from "@/hooks/useAdmin";
 import { AdminUserManagement } from "./AdminUserManagement";
@@ -20,6 +20,7 @@ import { AdminTournamentManagement } from "./AdminTournamentManagement";
 import { AdminWalletManagement } from "./AdminWalletManagement";
 import { AdminPlatformConfig } from "./AdminPlatformConfig";
 import { AdminAuditLog } from "./AdminAuditLog";
+import { AdminFeatureToggles } from "./AdminFeatureToggles";
 import { supabase } from "@/integrations/supabase/client";
 
 export const AdminDashboard = () => {
@@ -156,8 +157,12 @@ export const AdminDashboard = () => {
       </div>
 
       {/* Admin Tabs */}
-      <Tabs defaultValue="users" className="space-y-6">
+      <Tabs defaultValue="features" className="space-y-6">
         <TabsList className="bg-black/40 border-blue-800/30">
+          <TabsTrigger value="features" className="data-[state=active]:bg-blue-600">
+            <ToggleLeft className="h-4 w-4 mr-2" />
+            Features
+          </TabsTrigger>
           <TabsTrigger value="users" className="data-[state=active]:bg-blue-600">
             <Users className="h-4 w-4 mr-2" />
             Users
@@ -179,6 +184,10 @@ export const AdminDashboard = () => {
             Audit Log
           </TabsTrigger>
         </TabsList>
+
+        <TabsContent value="features">
+          <AdminFeatureToggles />
+        </TabsContent>
 
         <TabsContent value="users">
           <AdminUserManagement />
