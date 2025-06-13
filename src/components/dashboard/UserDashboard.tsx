@@ -1,213 +1,200 @@
 
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/hooks/useAuth";
-import { Trophy, TrendingUp, Calendar, Users, Star, Medal, Target, Zap } from "lucide-react";
+import { Trophy, Users, Calendar, TrendingUp, Activity, UserPlus } from "lucide-react";
+import { ActivityFeed } from "@/components/activity/ActivityFeed";
+import { RecentActivities } from "@/components/activity/RecentActivities";
 
 export const UserDashboard = () => {
   const { user, profile } = useAuth();
+  const [activeTab, setActiveTab] = useState("overview");
 
-  const playerStats = {
-    currentRank: "Gold III",
-    aerPoints: 1247,
-    tournamentsWon: 3,
-    winRate: 68,
-    gamesPlayed: 127,
-    currentStreak: 5
-  };
-
-  const upcomingTournaments = [
-    { name: "AER Weekly Championship", date: "Dec 15", prize: "$500", status: "Registered" },
-    { name: "EA Sports FC 24 Masters", date: "Dec 20", prize: "$1,000", status: "Open" },
-    { name: "Street Fighter 6 Cup", date: "Dec 22", prize: "$750", status: "Open" }
-  ];
-
-  const recentMatches = [
-    { opponent: "GamerX_ZA", result: "Win", game: "EA FC 24", points: "+25" },
-    { opponent: "ProPlayer_NG", result: "Win", game: "Street Fighter 6", points: "+18" },
-    { opponent: "EsportsKing", result: "Loss", game: "EA FC 24", points: "-12" },
-    { opponent: "AfricaChamp", result: "Win", game: "Street Fighter 6", points: "+22" }
+  const stats = [
+    { label: "Tournaments Played", value: "12", icon: Trophy, color: "text-yellow-500" },
+    { label: "Matches Won", value: "45", icon: TrendingUp, color: "text-green-500" },
+    { label: "Friends", value: "28", icon: Users, color: "text-blue-500" },
+    { label: "Upcoming Events", value: "3", icon: Calendar, color: "text-purple-500" },
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Welcome Section */}
-      <div className="text-center mb-8">
-        <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
-          Welcome back, {profile?.username || "Gamer"}!
+      <div className="text-center">
+        <h1 className="text-4xl font-bold text-white mb-2">
+          Welcome back, {profile?.username || user?.email?.split('@')[0] || 'Champion'}!
         </h1>
-        <p className="text-gray-300 text-lg">
-          Ready to dominate the African esports scene?
-        </p>
+        <p className="text-gray-300">Ready to dominate the leaderboards?</p>
       </div>
 
-      {/* Stats Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="bg-black/40 border-blue-800/30 backdrop-blur-sm">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-300 flex items-center gap-2">
-              <Medal className="h-4 w-4 text-yellow-400" />
-              Current Rank
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-white">{playerStats.currentRank}</div>
-            <Badge className="mt-1 bg-gradient-to-r from-yellow-500 to-orange-500 text-white">
-              {playerStats.aerPoints} AER Points
-            </Badge>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-black/40 border-blue-800/30 backdrop-blur-sm">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-300 flex items-center gap-2">
-              <Trophy className="h-4 w-4 text-blue-400" />
-              Tournaments Won
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-white">{playerStats.tournamentsWon}</div>
-            <p className="text-xs text-gray-400 mt-1">+1 this month</p>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-black/40 border-blue-800/30 backdrop-blur-sm">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-300 flex items-center gap-2">
-              <Target className="h-4 w-4 text-green-400" />
-              Win Rate
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-white">{playerStats.winRate}%</div>
-            <p className="text-xs text-gray-400 mt-1">{playerStats.gamesPlayed} games played</p>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-black/40 border-blue-800/30 backdrop-blur-sm">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-300 flex items-center gap-2">
-              <Zap className="h-4 w-4 text-purple-400" />
-              Current Streak
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-white">{playerStats.currentStreak}</div>
-            <p className="text-xs text-gray-400 mt-1">wins in a row</p>
-          </CardContent>
-        </Card>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Upcoming Tournaments */}
-        <Card className="bg-black/40 border-blue-800/30 backdrop-blur-sm">
-          <CardHeader>
-            <CardTitle className="text-white flex items-center gap-2">
-              <Calendar className="h-5 w-5 text-blue-400" />
-              Upcoming Tournaments
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              {upcomingTournaments.map((tournament, index) => (
-                <div key={index} className="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg">
-                  <div>
-                    <h4 className="text-white font-medium">{tournament.name}</h4>
-                    <p className="text-sm text-gray-400">{tournament.date} • {tournament.prize}</p>
-                  </div>
-                  <Badge variant={tournament.status === "Registered" ? "default" : "outline"}>
-                    {tournament.status}
-                  </Badge>
+      {/* Quick Stats */}
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        {stats.map((stat, index) => (
+          <Card key={index} className="bg-black/40 border-blue-800/30 backdrop-blur-sm">
+            <CardContent className="p-6">
+              <div className="flex items-center">
+                <stat.icon className={`h-8 w-8 ${stat.color}`} />
+                <div className="ml-4">
+                  <p className="text-sm font-medium text-gray-400">{stat.label}</p>
+                  <p className="text-2xl font-bold text-white">{stat.value}</p>
                 </div>
-              ))}
-            </div>
-            <Button 
-              className="w-full mt-4 bg-gradient-to-r from-blue-600 to-teal-600 hover:from-blue-700 hover:to-teal-700"
-              onClick={() => window.location.href = '/tournaments'}
-            >
-              View All Tournaments
-            </Button>
-          </CardContent>
-        </Card>
-
-        {/* Recent Matches */}
-        <Card className="bg-black/40 border-blue-800/30 backdrop-blur-sm">
-          <CardHeader>
-            <CardTitle className="text-white flex items-center gap-2">
-              <TrendingUp className="h-5 w-5 text-green-400" />
-              Recent Matches
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              {recentMatches.map((match, index) => (
-                <div key={index} className="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg">
-                  <div>
-                    <h4 className="text-white font-medium">vs {match.opponent}</h4>
-                    <p className="text-sm text-gray-400">{match.game}</p>
-                  </div>
-                  <div className="text-right">
-                    <Badge variant={match.result === "Win" ? "default" : "destructive"}>
-                      {match.result}
-                    </Badge>
-                    <p className={`text-sm mt-1 ${match.result === "Win" ? "text-green-400" : "text-red-400"}`}>
-                      {match.points}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <Button 
-              variant="outline" 
-              className="w-full mt-4 border-gray-600 text-gray-300 hover:bg-gray-800"
-              onClick={() => window.location.href = '/rankings'}
-            >
-              View Full History
-            </Button>
-          </CardContent>
-        </Card>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
       </div>
 
-      {/* Quick Actions */}
-      <Card className="bg-black/40 border-blue-800/30 backdrop-blur-sm">
-        <CardHeader>
-          <CardTitle className="text-white">Quick Actions</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Button 
-              className="h-16 bg-gradient-to-r from-blue-600 to-teal-600 hover:from-blue-700 hover:to-teal-700"
-              onClick={() => window.location.href = '/tournaments'}
-            >
-              <div className="flex flex-col items-center">
-                <Trophy className="h-6 w-6 mb-1" />
-                Join Tournament
-              </div>
-            </Button>
-            <Button 
-              variant="outline" 
-              className="h-16 border-yellow-400 text-yellow-400 hover:bg-yellow-400 hover:text-black"
-              onClick={() => window.location.href = '/rankings'}
-            >
-              <div className="flex flex-col items-center">
-                <Star className="h-6 w-6 mb-1" />
-                Check Rankings
-              </div>
-            </Button>
-            <Button 
-              variant="outline" 
-              className="h-16 border-purple-400 text-purple-400 hover:bg-purple-400 hover:text-black"
-              onClick={() => window.location.href = '/profile'}
-            >
-              <div className="flex flex-col items-center">
-                <Users className="h-6 w-6 mb-1" />
-                Edit Profile
-              </div>
-            </Button>
+      {/* Main Dashboard Content */}
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+        <TabsList className="bg-black/40 border-blue-800/30">
+          <TabsTrigger value="overview" className="data-[state=active]:bg-blue-600">
+            <TrendingUp className="h-4 w-4 mr-2" />
+            Overview
+          </TabsTrigger>
+          <TabsTrigger value="activity" className="data-[state=active]:bg-blue-600">
+            <Activity className="h-4 w-4 mr-2" />
+            Activity Feed
+          </TabsTrigger>
+          <TabsTrigger value="social" className="data-[state=active]:bg-blue-600">
+            <Users className="h-4 w-4 mr-2" />
+            Social
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="overview" className="space-y-6">
+          <div className="grid gap-6 lg:grid-cols-3">
+            {/* Quick Actions */}
+            <Card className="bg-black/40 border-blue-800/30 backdrop-blur-sm">
+              <CardHeader>
+                <CardTitle className="text-white">Quick Actions</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <Button 
+                  className="w-full bg-gradient-to-r from-blue-600 to-teal-600 hover:from-blue-700 hover:to-teal-700"
+                  onClick={() => window.location.href = '/tournaments'}
+                >
+                  <Trophy className="h-4 w-4 mr-2" />
+                  Browse Tournaments
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="w-full border-blue-400 text-blue-400 hover:bg-blue-400 hover:text-black"
+                  onClick={() => window.location.href = '/rankings'}
+                >
+                  <TrendingUp className="h-4 w-4 mr-2" />
+                  View Rankings
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="w-full border-teal-400 text-teal-400 hover:bg-teal-400 hover:text-black"
+                  onClick={() => window.location.href = '/friends'}
+                >
+                  <UserPlus className="h-4 w-4 mr-2" />
+                  Find Friends
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Recent Activity Preview */}
+            <div className="lg:col-span-2">
+              <RecentActivities 
+                userId={user?.id}
+                title="Your Recent Activity"
+                maxItems={3}
+              />
+            </div>
           </div>
-        </CardContent>
-      </Card>
+
+          {/* Current Rank & Achievements */}
+          <div className="grid gap-6 lg:grid-cols-2">
+            <Card className="bg-black/40 border-blue-800/30 backdrop-blur-sm">
+              <CardHeader>
+                <CardTitle className="text-white">Current Rank</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center space-x-4">
+                  <div className="w-16 h-16 bg-gradient-to-br from-yellow-600 to-yellow-400 rounded-full flex items-center justify-center">
+                    <Trophy className="h-8 w-8 text-black" />
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-bold text-white">Gold III</h3>
+                    <p className="text-gray-400">1,247 AER Points</p>
+                    <Badge className="mt-1 bg-yellow-600 text-black">
+                      Rank #1,234
+                    </Badge>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-black/40 border-blue-800/30 backdrop-blur-sm">
+              <CardHeader>
+                <CardTitle className="text-white">Recent Achievements</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  <div className="flex items-center space-x-2">
+                    <Trophy className="h-4 w-4 text-yellow-500" />
+                    <span className="text-sm text-gray-300">Tournament Winner</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <TrendingUp className="h-4 w-4 text-green-500" />
+                    <span className="text-sm text-gray-300">5-Game Win Streak</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Users className="h-4 w-4 text-blue-500" />
+                    <span className="text-sm text-gray-300">Social Butterfly</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="activity">
+          <ActivityFeed />
+        </TabsContent>
+
+        <TabsContent value="social" className="space-y-6">
+          <div className="grid gap-6 lg:grid-cols-2">
+            <RecentActivities 
+              title="Friends Activity"
+              maxItems={5}
+              showViewAll={true}
+            />
+            
+            <Card className="bg-black/40 border-blue-800/30 backdrop-blur-sm">
+              <CardHeader>
+                <CardTitle className="text-white">Social Stats</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex justify-between">
+                  <span className="text-gray-400">Total Friends</span>
+                  <span className="text-white font-semibold">28</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-400">Mutual Friends</span>
+                  <span className="text-white font-semibold">12</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-400">Friend Requests</span>
+                  <span className="text-white font-semibold">3</span>
+                </div>
+                <Button 
+                  className="w-full mt-4 bg-gradient-to-r from-blue-600 to-teal-600"
+                  onClick={() => window.location.href = '/friends'}
+                >
+                  <Users className="h-4 w-4 mr-2" />
+                  Manage Friends
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };

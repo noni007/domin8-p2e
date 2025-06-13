@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
+import { logFriendAdded } from '@/utils/activityHelpers';
 import type { Tables } from '@/integrations/supabase/types';
 
 type Friendship = Tables<'friendships'>;
@@ -184,6 +185,21 @@ export const useFriends = () => {
         ]);
 
       if (friendshipError) throw friendshipError;
+
+      // Get friend's profile for activity logging
+      const { data: friendProfile } = await supabase
+        .from('profiles')
+        .select('username')
+        .eq('id', senderId)
+        .single();
+
+      // Log activity for both users
+      if (friendProfile) {
+        await Promise.all([
+          logFriendAdded(user.id, friendProfile.username || 'Unknown', senderId),
+          logFriendAdded(senderId, user.email || 'Unknown', user.id)
+        ]);
+      }
 
       toast({
         title: "Friend Request Accepted",
