@@ -17,7 +17,7 @@ interface GamedWaitlistProps {
 export const GamedWaitlist = ({ 
   feature = 'historical_stats_upload',
   title = 'Historical Stats Upload',
-  description = 'Import your gaming history and see how you've progressed over time'
+  description = "Import your gaming history and see how you've progressed over time"
 }: GamedWaitlistProps) => {
   const [email, setEmail] = useState('');
   const { stats, milestones, loading, joining, joinWaitlist } = useFeatureWaitlist(feature);
