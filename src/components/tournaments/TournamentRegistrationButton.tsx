@@ -1,12 +1,13 @@
 
 import { Button } from "@/components/ui/button";
-import { useTournamentRegistration } from "@/hooks/useTournamentRegistration";
+import { useTournamentRegistrationWithFees } from "@/hooks/useTournamentRegistrationWithFees";
 import { useAuth } from "@/hooks/useAuth";
-import { Trophy, Loader2 } from "lucide-react";
+import { Trophy, Loader2, DollarSign } from "lucide-react";
 
 interface TournamentRegistrationButtonProps {
   tournamentId: string;
   tournamentTitle: string;
+  entryFee?: number;
   isRegistered: boolean;
   onRegistrationChange: () => void;
 }
@@ -14,20 +15,21 @@ interface TournamentRegistrationButtonProps {
 export const TournamentRegistrationButton = ({
   tournamentId,
   tournamentTitle,
+  entryFee = 0,
   isRegistered,
   onRegistrationChange
 }: TournamentRegistrationButtonProps) => {
   const { user } = useAuth();
-  const { registerForTournament, unregisterFromTournament, loading } = useTournamentRegistration();
+  const { registerForTournament, unregisterFromTournament, loading } = useTournamentRegistrationWithFees();
 
   const handleRegistration = async () => {
     if (isRegistered) {
-      const success = await unregisterFromTournament(tournamentId);
+      const success = await unregisterFromTournament(tournamentId, entryFee, tournamentTitle);
       if (success) {
         onRegistrationChange();
       }
     } else {
-      const success = await registerForTournament(tournamentId, tournamentTitle);
+      const success = await registerForTournament(tournamentId, tournamentTitle, entryFee);
       if (success) {
         onRegistrationChange();
       }
@@ -37,6 +39,8 @@ export const TournamentRegistrationButton = ({
   if (!user) {
     return null;
   }
+
+  const formatFee = (cents: number) => (cents / 100).toFixed(2);
 
   return (
     <Button
@@ -51,10 +55,21 @@ export const TournamentRegistrationButton = ({
     >
       {loading ? (
         <Loader2 className="h-4 w-4 animate-spin mr-2" />
+      ) : isRegistered ? (
+        <Trophy className="h-4 w-4 mr-2" />
+      ) : entryFee > 0 ? (
+        <DollarSign className="h-4 w-4 mr-2" />
       ) : (
         <Trophy className="h-4 w-4 mr-2" />
       )}
-      {loading ? "Processing..." : isRegistered ? "Unregister" : "Register"}
+      {loading 
+        ? "Processing..." 
+        : isRegistered 
+          ? "Unregister" 
+          : entryFee > 0 
+            ? `Pay $${formatFee(entryFee)}` 
+            : "Register"
+      }
     </Button>
   );
 };
