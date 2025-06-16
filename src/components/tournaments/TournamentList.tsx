@@ -12,7 +12,9 @@ import { TournamentDetails } from "./TournamentDetails";
 import { TournamentCardSkeleton } from "./TournamentCardSkeleton";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 
-type Tournament = Tables<'tournaments'>;
+type Tournament = Tables<'tournaments'> & {
+  entry_fee?: number;
+};
 
 export const TournamentList = () => {
   const { user } = useAuth();
@@ -21,11 +23,13 @@ export const TournamentList = () => {
   const [selectedTournament, setSelectedTournament] = useState<string | null>(null);
   const [userRegistrations, setUserRegistrations] = useState<string[]>([]);
   const [registrationsLoading, setRegistrationsLoading] = useState(false);
+  const [tournamentParticipants, setTournamentParticipants] = useState<Record<string, any[]>>({});
 
   useEffect(() => {
     fetchTournaments();
     if (user) {
       fetchUserRegistrations();
+      fetchTournamentParticipants();
     }
   }, [user]);
 
@@ -69,17 +73,41 @@ export const TournamentList = () => {
     }
   };
 
-  const handleViewDetails = (tournamentId: string) => {
-    setSelectedTournament(tournamentId);
+  const fetchTournamentParticipants = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('tournament_participants')
+        .select('*');
+
+      if (error) throw error;
+      
+      const participantsByTournament = (data || []).reduce((acc, participant) => {
+        if (!acc[participant.tournament_id]) {
+          acc[participant.tournament_id] = [];
+        }
+        acc[participant.tournament_id].push(participant);
+        return acc;
+      }, {} as Record<string, any[]>);
+
+      setTournamentParticipants(participantsByTournament);
+    } catch (error) {
+      console.error('Error fetching tournament participants:', error);
+    }
+  };
+
+  const handleViewDetails = (tournament: Tournament) => {
+    setSelectedTournament(tournament.id);
   };
 
   const handleBackToList = () => {
     setSelectedTournament(null);
     fetchUserRegistrations();
+    fetchTournamentParticipants();
   };
 
   const handleRegistrationChange = () => {
     fetchUserRegistrations();
+    fetchTournamentParticipants();
   };
 
   if (selectedTournament) {
@@ -137,6 +165,7 @@ export const TournamentList = () => {
             <TournamentCard
               key={tournament.id}
               tournament={tournament}
+              participants={tournamentParticipants[tournament.id] || []}
               onViewDetails={handleViewDetails}
               isRegistered={userRegistrations.includes(tournament.id)}
               onRegistrationChange={handleRegistrationChange}

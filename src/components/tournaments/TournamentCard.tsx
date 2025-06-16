@@ -15,7 +15,9 @@ import {
 import { TournamentRegistrationButton } from "./TournamentRegistrationButton";
 import type { Tables } from "@/integrations/supabase/types";
 
-type Tournament = Tables<'tournaments'>;
+type Tournament = Tables<'tournaments'> & {
+  entry_fee?: number;
+};
 type TournamentParticipant = Tables<'tournament_participants'>;
 
 interface TournamentCardProps {
@@ -36,6 +38,7 @@ export const TournamentCard = ({
   const spotsRemaining = tournament.max_participants - participants.length;
   const isFull = spotsRemaining <= 0;
   const isUpcoming = tournament.status === 'upcoming' || tournament.status === 'registration_open';
+  const entryFee = tournament.entry_fee || 0;
   
   const formatMoney = (cents: number) => {
     return (cents / 100).toFixed(2);
@@ -87,11 +90,11 @@ export const TournamentCard = ({
               </Badge>
             </div>
           </div>
-          {tournament.entry_fee > 0 && (
+          {entryFee > 0 && (
             <div className="flex items-center gap-1 bg-green-900/30 px-2 py-1 rounded border border-green-700/50">
               <DollarSign className="h-3 w-3 text-green-400" />
               <span className="text-green-400 text-xs font-semibold">
-                ${formatMoney(tournament.entry_fee)}
+                ${formatMoney(entryFee)}
               </span>
             </div>
           )}
@@ -126,11 +129,11 @@ export const TournamentCard = ({
         </div>
 
         {/* Entry Fee Info */}
-        {tournament.entry_fee > 0 ? (
+        {entryFee > 0 ? (
           <div className="flex items-center justify-between p-3 bg-blue-900/20 rounded-lg border border-blue-700/30">
             <span className="text-blue-400 font-medium">Entry Fee</span>
             <span className="text-white font-semibold">
-              ${formatMoney(tournament.entry_fee)}
+              ${formatMoney(entryFee)}
             </span>
           </div>
         ) : (
@@ -185,7 +188,7 @@ export const TournamentCard = ({
             <TournamentRegistrationButton
               tournamentId={tournament.id}
               tournamentTitle={tournament.title}
-              entryFee={tournament.entry_fee}
+              entryFee={entryFee}
               isRegistered={isRegistered}
               onRegistrationChange={onRegistrationChange}
             />

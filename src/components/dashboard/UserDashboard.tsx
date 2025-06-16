@@ -10,12 +10,66 @@ import { SocialActivityFeed } from "@/components/activity/SocialActivityFeed";
 import { RealTimeUpdates } from "@/components/notifications/RealTimeUpdates";
 import { Trophy, Users, Calendar, TrendingUp } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import type { Tables } from "@/integrations/supabase/types";
+
+type Tournament = Tables<'tournaments'> & {
+  entry_fee?: number;
+};
 
 export const UserDashboard = () => {
   const { user } = useAuth();
   const { stats } = useUserStats(user?.id);
   const { tournaments } = useTournaments();
   const { toast } = useToast();
+  const [userRegistrations, setUserRegistrations] = useState<string[]>([]);
+  const [tournamentParticipants, setTournamentParticipants] = useState<Record<string, any[]>>({});
+
+  useEffect(() => {
+    if (user) {
+      fetchUserRegistrations();
+      fetchTournamentParticipants();
+    }
+  }, [user, tournaments]);
+
+  const fetchUserRegistrations = async () => {
+    if (!user) return;
+
+    try {
+      const { data, error } = await supabase
+        .from('tournament_participants')
+        .select('tournament_id')
+        .eq('user_id', user.id);
+
+      if (error) throw error;
+      setUserRegistrations(data?.map(reg => reg.tournament_id) || []);
+    } catch (error) {
+      console.error('Error fetching user registrations:', error);
+    }
+  };
+
+  const fetchTournamentParticipants = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('tournament_participants')
+        .select('*');
+
+      if (error) throw error;
+      
+      const participantsByTournament = (data || []).reduce((acc, participant) => {
+        if (!acc[participant.tournament_id]) {
+          acc[participant.tournament_id] = [];
+        }
+        acc[participant.tournament_id].push(participant);
+        return acc;
+      }, {} as Record<string, any[]>);
+
+      setTournamentParticipants(participantsByTournament);
+    } catch (error) {
+      console.error('Error fetching tournament participants:', error);
+    }
+  };
 
   const upcomingTournaments = tournaments
     .filter(t => t.status === 'upcoming')
@@ -25,13 +79,17 @@ export const UserDashboard = () => {
     .filter(t => t.status === 'active')
     .slice(0, 2);
 
-  const handleViewTournamentDetails = (tournamentId: string) => {
+  const handleViewTournamentDetails = (tournament: Tournament) => {
     toast({
       title: "Tournament Details",
       description: "Tournament details feature coming soon!",
     });
-    // TODO: Navigate to tournament details page or show modal
-    console.log('View tournament details:', tournamentId);
+    console.log('View tournament details:', tournament.id);
+  };
+
+  const handleRegistrationChange = () => {
+    fetchUserRegistrations();
+    fetchTournamentParticipants();
   };
 
   return (
@@ -119,7 +177,10 @@ export const UserDashboard = () => {
                 {activeTournaments.map((tournament) => (
                   <TournamentCard 
                     key={tournament.id} 
-                    tournament={tournament} 
+                    tournament={tournament}
+                    participants={tournamentParticipants[tournament.id] || []}
+                    isRegistered={userRegistrations.includes(tournament.id)}
+                    onRegistrationChange={handleRegistrationChange}
                     onViewDetails={handleViewTournamentDetails}
                   />
                 ))}
@@ -143,7 +204,10 @@ export const UserDashboard = () => {
                 upcomingTournaments.map((tournament) => (
                   <TournamentCard 
                     key={tournament.id} 
-                    tournament={tournament} 
+                    tournament={tournament}
+                    participants={tournamentParticipants[tournament.id] || []}
+                    isRegistered={userRegistrations.includes(tournament.id)}
+                    onRegistrationChange={handleRegistrationChange}
                     onViewDetails={handleViewTournamentDetails}
                   />
                 ))
