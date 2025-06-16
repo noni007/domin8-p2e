@@ -22,6 +22,7 @@ import { AdminPlatformConfig } from "./AdminPlatformConfig";
 import { AdminAuditLog } from "./AdminAuditLog";
 import { AdminFeatureToggles } from "./AdminFeatureToggles";
 import { supabase } from "@/integrations/supabase/client";
+import { PrizeDistributionPanel } from "./PrizeDistributionPanel";
 
 export const AdminDashboard = () => {
   const { isAdmin, adminRole, loading } = useAdmin();
@@ -92,7 +93,7 @@ export const AdminDashboard = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -113,102 +114,112 @@ export const AdminDashboard = () => {
         </Button>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card className="bg-black/40 border-blue-800/30 backdrop-blur-sm">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-300">Total Users</CardTitle>
-            <Users className="h-4 w-4 text-blue-400" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-white">{stats.totalUsers.toLocaleString()}</div>
-          </CardContent>
-        </Card>
+      {/* Main Admin Sections */}
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+        {/* Left Column */}
+        <div className="space-y-6">
+          {/* Stats Cards */}
+          <Card className="bg-black/40 border-blue-800/30 backdrop-blur-sm">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-gray-300">Total Users</CardTitle>
+              <Users className="h-4 w-4 text-blue-400" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-white">{stats.totalUsers.toLocaleString()}</div>
+            </CardContent>
+          </Card>
 
-        <Card className="bg-black/40 border-blue-800/30 backdrop-blur-sm">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-300">Active Tournaments</CardTitle>
-            <Trophy className="h-4 w-4 text-yellow-400" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-white">{stats.activeTournaments}</div>
-          </CardContent>
-        </Card>
+          <Card className="bg-black/40 border-blue-800/30 backdrop-blur-sm">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-gray-300">Active Tournaments</CardTitle>
+              <Trophy className="h-4 w-4 text-yellow-400" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-white">{stats.activeTournaments}</div>
+            </CardContent>
+          </Card>
 
-        <Card className="bg-black/40 border-blue-800/30 backdrop-blur-sm">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-300">Platform Revenue</CardTitle>
-            <DollarSign className="h-4 w-4 text-green-400" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-white">${(stats.totalRevenue / 100).toFixed(2)}</div>
-          </CardContent>
-        </Card>
+          <Card className="bg-black/40 border-blue-800/30 backdrop-blur-sm">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-gray-300">Platform Revenue</CardTitle>
+              <DollarSign className="h-4 w-4 text-green-400" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-white">${(stats.totalRevenue / 100).toFixed(2)}</div>
+            </CardContent>
+          </Card>
 
-        <Card className="bg-black/40 border-blue-800/30 backdrop-blur-sm">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-300">Pending Transactions</CardTitle>
-            <TrendingUp className="h-4 w-4 text-orange-400" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-white">{stats.pendingTransactions}</div>
-          </CardContent>
-        </Card>
+          <Card className="bg-black/40 border-blue-800/30 backdrop-blur-sm">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-gray-300">Pending Transactions</CardTitle>
+              <TrendingUp className="h-4 w-4 text-orange-400" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-white">{stats.pendingTransactions}</div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Right Column */}
+        <div className="space-y-6">
+          {/* Prize Distribution Panel */}
+          <PrizeDistributionPanel />
+          
+          {/* Admin Tabs */}
+          <Tabs defaultValue="features" className="space-y-6">
+            <TabsList className="bg-black/40 border-blue-800/30">
+              <TabsTrigger value="features" className="data-[state=active]:bg-blue-600">
+                <ToggleLeft className="h-4 w-4 mr-2" />
+                Features
+              </TabsTrigger>
+              <TabsTrigger value="users" className="data-[state=active]:bg-blue-600">
+                <Users className="h-4 w-4 mr-2" />
+                Users
+              </TabsTrigger>
+              <TabsTrigger value="tournaments" className="data-[state=active]:bg-blue-600">
+                <Trophy className="h-4 w-4 mr-2" />
+                Tournaments
+              </TabsTrigger>
+              <TabsTrigger value="wallets" className="data-[state=active]:bg-blue-600">
+                <DollarSign className="h-4 w-4 mr-2" />
+                Wallets
+              </TabsTrigger>
+              <TabsTrigger value="config" className="data-[state=active]:bg-blue-600">
+                <Settings className="h-4 w-4 mr-2" />
+                Config
+              </TabsTrigger>
+              <TabsTrigger value="audit" className="data-[state=active]:bg-blue-600">
+                <Activity className="h-4 w-4 mr-2" />
+                Audit Log
+              </TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="features">
+              <AdminFeatureToggles />
+            </TabsContent>
+
+            <TabsContent value="users">
+              <AdminUserManagement />
+            </TabsContent>
+
+            <TabsContent value="tournaments">
+              <AdminTournamentManagement />
+            </TabsContent>
+
+            <TabsContent value="wallets">
+              <AdminWalletManagement />
+            </TabsContent>
+
+            <TabsContent value="config">
+              <AdminPlatformConfig />
+            </TabsContent>
+
+            <TabsContent value="audit">
+              <AdminAuditLog />
+            </TabsContent>
+          </Tabs>
+        </div>
       </div>
-
-      {/* Admin Tabs */}
-      <Tabs defaultValue="features" className="space-y-6">
-        <TabsList className="bg-black/40 border-blue-800/30">
-          <TabsTrigger value="features" className="data-[state=active]:bg-blue-600">
-            <ToggleLeft className="h-4 w-4 mr-2" />
-            Features
-          </TabsTrigger>
-          <TabsTrigger value="users" className="data-[state=active]:bg-blue-600">
-            <Users className="h-4 w-4 mr-2" />
-            Users
-          </TabsTrigger>
-          <TabsTrigger value="tournaments" className="data-[state=active]:bg-blue-600">
-            <Trophy className="h-4 w-4 mr-2" />
-            Tournaments
-          </TabsTrigger>
-          <TabsTrigger value="wallets" className="data-[state=active]:bg-blue-600">
-            <DollarSign className="h-4 w-4 mr-2" />
-            Wallets
-          </TabsTrigger>
-          <TabsTrigger value="config" className="data-[state=active]:bg-blue-600">
-            <Settings className="h-4 w-4 mr-2" />
-            Config
-          </TabsTrigger>
-          <TabsTrigger value="audit" className="data-[state=active]:bg-blue-600">
-            <Activity className="h-4 w-4 mr-2" />
-            Audit Log
-          </TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="features">
-          <AdminFeatureToggles />
-        </TabsContent>
-
-        <TabsContent value="users">
-          <AdminUserManagement />
-        </TabsContent>
-
-        <TabsContent value="tournaments">
-          <AdminTournamentManagement />
-        </TabsContent>
-
-        <TabsContent value="wallets">
-          <AdminWalletManagement />
-        </TabsContent>
-
-        <TabsContent value="config">
-          <AdminPlatformConfig />
-        </TabsContent>
-
-        <TabsContent value="audit">
-          <AdminAuditLog />
-        </TabsContent>
-      </Tabs>
     </div>
   );
 };

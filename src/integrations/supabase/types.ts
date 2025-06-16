@@ -9,6 +9,48 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      achievements: {
+        Row: {
+          category: string
+          condition_data: Json | null
+          condition_type: string
+          created_at: string
+          description: string
+          icon: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          reward_amount: number
+          updated_at: string
+        }
+        Insert: {
+          category?: string
+          condition_data?: Json | null
+          condition_type: string
+          created_at?: string
+          description: string
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          reward_amount?: number
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          condition_data?: Json | null
+          condition_type?: string
+          created_at?: string
+          description?: string
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          reward_amount?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       admin_audit_log: {
         Row: {
           action: string
@@ -553,6 +595,7 @@ export type Database = {
           created_at: string
           description: string
           end_date: string
+          entry_fee: number | null
           game: string
           id: string
           max_participants: number
@@ -571,6 +614,7 @@ export type Database = {
           created_at?: string
           description: string
           end_date: string
+          entry_fee?: number | null
           game: string
           id?: string
           max_participants: number
@@ -589,6 +633,7 @@ export type Database = {
           created_at?: string
           description?: string
           end_date?: string
+          entry_fee?: number | null
           game?: string
           id?: string
           max_participants?: number
@@ -608,6 +653,41 @@ export type Database = {
             columns: ["team_id"]
             isOneToOne: false
             referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_achievements: {
+        Row: {
+          achievement_id: string
+          id: string
+          reward_claimed: boolean | null
+          reward_claimed_at: string | null
+          unlocked_at: string
+          user_id: string
+        }
+        Insert: {
+          achievement_id: string
+          id?: string
+          reward_claimed?: boolean | null
+          reward_claimed_at?: string | null
+          unlocked_at?: string
+          user_id: string
+        }
+        Update: {
+          achievement_id?: string
+          id?: string
+          reward_claimed?: boolean | null
+          reward_claimed_at?: string | null
+          unlocked_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_achievements_achievement_id_fkey"
+            columns: ["achievement_id"]
+            isOneToOne: false
+            referencedRelation: "achievements"
             referencedColumns: ["id"]
           },
         ]
@@ -757,6 +837,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      check_user_achievements: {
+        Args: { user_id_param: string }
+        Returns: undefined
+      }
+      distribute_tournament_prizes: {
+        Args: { tournament_id_param: string }
+        Returns: undefined
+      }
       get_waitlist_position: {
         Args: { user_email: string; feature?: string }
         Returns: number
