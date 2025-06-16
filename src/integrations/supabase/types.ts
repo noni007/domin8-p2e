@@ -862,6 +862,10 @@ export type Database = {
         Args: { user_id: string }
         Returns: boolean
       }
+      update_tournament_prize_pool: {
+        Args: { tournament_id: string; amount: number }
+        Returns: undefined
+      }
     }
     Enums: {
       team_role: "owner" | "admin" | "member"

@@ -3,13 +3,10 @@ import { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useWallet } from '@/hooks/useWallet';
 import { useAchievements } from '@/hooks/useAchievements';
-import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
-
-interface RegistrationResult {
-  success: boolean;
-  message: string;
-}
+import { TournamentRegistrationService } from '@/services/tournamentRegistrationService';
+import { WalletTransactionService } from '@/services/walletTransactionService';
+import type { RegistrationResult } from '@/types/tournamentRegistration';
 
 export const useTournamentRegistrationWithFees = () => {
   const { user } = useAuth();
@@ -40,74 +37,41 @@ export const useTournamentRegistrationWithFees = () => {
 
     try {
       // Check if already registered
-      const { data: existingRegistration } = await supabase
-        .from('tournament_participants')
-        .select('id')
-        .eq('tournament_id', tournamentId)
-        .eq('user_id', user.id)
-        .single();
+      const existingRegistration = await TournamentRegistrationService.checkExistingRegistration(
+        tournamentId, 
+        user.id
+      );
 
       if (existingRegistration) {
         return { success: false, message: "You are already registered for this tournament" };
       }
 
       // Register for tournament
-      const { error: registrationError } = await supabase
-        .from('tournament_participants')
-        .insert({
-          tournament_id: tournamentId,
-          user_id: user.id,
-          status: 'registered'
-        });
-
-      if (registrationError) throw registrationError;
+      await TournamentRegistrationService.registerParticipant(tournamentId, user.id);
 
       // Handle entry fee if applicable
       if (entryFee > 0) {
         // Create withdrawal transaction
-        const { error: withdrawalError } = await supabase
-          .from('wallet_transactions')
-          .insert({
-            wallet_id: wallet.id,
-            user_id: user.id,
-            transaction_type: 'tournament_fee',
-            amount: -entryFee,
-            description: 'Tournament Entry Fee',
-            status: 'completed',
-            metadata: { tournament_id: tournamentId }
-          });
-
-        if (withdrawalError) throw withdrawalError;
+        await WalletTransactionService.createWithdrawalTransaction({
+          walletId: wallet.id,
+          userId: user.id,
+          tournamentId,
+          entryFee,
+          description: 'Tournament Entry Fee'
+        });
 
         // Update wallet balance
-        const { error: walletError } = await supabase
-          .from('user_wallets')
-          .update({ 
-            balance: wallet.balance - entryFee,
-            updated_at: new Date().toISOString()
-          })
-          .eq('id', wallet.id);
+        await WalletTransactionService.updateWalletBalance(
+          wallet.id, 
+          wallet.balance - entryFee
+        );
 
-        if (walletError) throw walletError;
-
-        // Add entry fee to tournament prize pool using RPC
-        const { error: prizePoolError } = await supabase
-          .rpc('update_tournament_prize_pool', {
-            tournament_id: tournamentId,
-            amount: entryFee
-          });
-
-        if (prizePoolError) {
-          // Fallback to direct update
-          const { error: fallbackError } = await supabase
-            .from('tournaments')
-            .update({
-              prize_pool: wallet.balance + entryFee
-            })
-            .eq('id', tournamentId);
-          
-          if (fallbackError) throw fallbackError;
-        }
+        // Add entry fee to tournament prize pool
+        await WalletTransactionService.updateTournamentPrizePool(
+          tournamentId,
+          entryFee,
+          wallet.balance
+        );
       }
 
       // Check for new achievements after registration
@@ -130,7 +94,10 @@ export const useTournamentRegistrationWithFees = () => {
     }
   };
 
-  const unregisterFromTournament = async (tournamentId: string, entryFee: number = 0): Promise<RegistrationResult> => {
+  const unregisterFromTournament = async (
+    tournamentId: string, 
+    entryFee: number = 0
+  ): Promise<RegistrationResult> => {
     if (!user) {
       return { success: false, message: "Please log in to unregister" };
     }
@@ -139,60 +106,31 @@ export const useTournamentRegistrationWithFees = () => {
 
     try {
       // Remove registration
-      const { error: unregisterError } = await supabase
-        .from('tournament_participants')
-        .delete()
-        .eq('tournament_id', tournamentId)
-        .eq('user_id', user.id);
-
-      if (unregisterError) throw unregisterError;
+      await TournamentRegistrationService.unregisterParticipant(tournamentId, user.id);
 
       // Refund entry fee if applicable
       if (entryFee > 0 && wallet) {
         // Create refund transaction
-        const { error: refundError } = await supabase
-          .from('wallet_transactions')
-          .insert({
-            wallet_id: wallet.id,
-            user_id: user.id,
-            transaction_type: 'refund',
-            amount: entryFee,
-            description: 'Tournament Entry Fee Refund',
-            status: 'completed',
-            metadata: { tournament_id: tournamentId }
-          });
-
-        if (refundError) throw refundError;
+        await WalletTransactionService.createRefundTransaction({
+          walletId: wallet.id,
+          userId: user.id,
+          tournamentId,
+          entryFee,
+          description: 'Tournament Entry Fee Refund'
+        });
 
         // Update wallet balance
-        const { error: walletError } = await supabase
-          .from('user_wallets')
-          .update({ 
-            balance: wallet.balance + entryFee,
-            updated_at: new Date().toISOString()
-          })
-          .eq('id', wallet.id);
+        await WalletTransactionService.updateWalletBalance(
+          wallet.id, 
+          wallet.balance + entryFee
+        );
 
-        if (walletError) throw walletError;
-
-        // Remove entry fee from tournament prize pool using RPC
-        const { error: prizePoolError } = await supabase
-          .rpc('update_tournament_prize_pool', {
-            tournament_id: tournamentId,
-            amount: -entryFee
-          });
-
-        if (prizePoolError) {
-          // Fallback to direct update
-          const { error: fallbackError } = await supabase
-            .from('tournaments')
-            .update({
-              prize_pool: wallet.balance - entryFee
-            })
-            .eq('id', tournamentId);
-          
-          if (fallbackError) throw fallbackError;
-        }
+        // Remove entry fee from tournament prize pool
+        await WalletTransactionService.updateTournamentPrizePool(
+          tournamentId,
+          -entryFee,
+          wallet.balance
+        );
       }
 
       toast({
