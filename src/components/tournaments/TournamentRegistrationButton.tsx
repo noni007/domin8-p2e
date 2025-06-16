@@ -20,17 +20,17 @@ export const TournamentRegistrationButton = ({
   onRegistrationChange
 }: TournamentRegistrationButtonProps) => {
   const { user } = useAuth();
-  const { registerForTournament, unregisterFromTournament, loading } = useTournamentRegistrationWithFees();
+  const { registerForTournament, unregisterFromTournament, isRegistering } = useTournamentRegistrationWithFees();
 
   const handleRegistration = async () => {
     if (isRegistered) {
-      const success = await unregisterFromTournament(tournamentId, entryFee, tournamentTitle);
-      if (success) {
+      const result = await unregisterFromTournament(tournamentId, entryFee);
+      if (result.success) {
         onRegistrationChange();
       }
     } else {
-      const success = await registerForTournament(tournamentId, tournamentTitle, entryFee);
-      if (success) {
+      const result = await registerForTournament(tournamentId, entryFee);
+      if (result.success) {
         onRegistrationChange();
       }
     }
@@ -45,7 +45,7 @@ export const TournamentRegistrationButton = ({
   return (
     <Button
       onClick={handleRegistration}
-      disabled={loading}
+      disabled={isRegistering}
       variant={isRegistered ? "outline" : "default"}
       className={
         isRegistered
@@ -53,7 +53,7 @@ export const TournamentRegistrationButton = ({
           : "bg-gradient-to-r from-blue-600 to-teal-600 hover:from-blue-700 hover:to-teal-700"
       }
     >
-      {loading ? (
+      {isRegistering ? (
         <Loader2 className="h-4 w-4 animate-spin mr-2" />
       ) : isRegistered ? (
         <Trophy className="h-4 w-4 mr-2" />
@@ -62,7 +62,7 @@ export const TournamentRegistrationButton = ({
       ) : (
         <Trophy className="h-4 w-4 mr-2" />
       )}
-      {loading 
+      {isRegistering 
         ? "Processing..." 
         : isRegistered 
           ? "Unregister" 

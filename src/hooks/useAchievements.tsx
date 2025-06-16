@@ -81,11 +81,13 @@ export const useAchievements = () => {
   };
 
   const getAchievementProgress = (achievement: Achievement) => {
-    // This would be more complex in a real implementation
-    // For now, return basic progress based on user's activity
+    // Cast condition_data to object with count property
+    const conditionData = achievement.condition_data as { count?: number } | null;
+    const targetCount = conditionData?.count || 1;
+    
     return {
       current: 0,
-      target: achievement.condition_data?.count || 1,
+      target: targetCount,
       percentage: 0
     };
   };

@@ -90,15 +90,24 @@ export const useTournamentRegistrationWithFees = () => {
 
         if (walletError) throw walletError;
 
-        // Add entry fee to tournament prize pool
+        // Add entry fee to tournament prize pool using RPC
         const { error: prizePoolError } = await supabase
-          .from('tournaments')
-          .update({
-            prize_pool: supabase.raw(`prize_pool + ${entryFee}`)
-          })
-          .eq('id', tournamentId);
+          .rpc('update_tournament_prize_pool', {
+            tournament_id: tournamentId,
+            amount: entryFee
+          });
 
-        if (prizePoolError) throw prizePoolError;
+        if (prizePoolError) {
+          // Fallback to direct update
+          const { error: fallbackError } = await supabase
+            .from('tournaments')
+            .update({
+              prize_pool: wallet.balance + entryFee
+            })
+            .eq('id', tournamentId);
+          
+          if (fallbackError) throw fallbackError;
+        }
       }
 
       // Check for new achievements after registration
@@ -166,15 +175,24 @@ export const useTournamentRegistrationWithFees = () => {
 
         if (walletError) throw walletError;
 
-        // Remove entry fee from tournament prize pool
+        // Remove entry fee from tournament prize pool using RPC
         const { error: prizePoolError } = await supabase
-          .from('tournaments')
-          .update({
-            prize_pool: supabase.raw(`prize_pool - ${entryFee}`)
-          })
-          .eq('id', tournamentId);
+          .rpc('update_tournament_prize_pool', {
+            tournament_id: tournamentId,
+            amount: -entryFee
+          });
 
-        if (prizePoolError) throw prizePoolError;
+        if (prizePoolError) {
+          // Fallback to direct update
+          const { error: fallbackError } = await supabase
+            .from('tournaments')
+            .update({
+              prize_pool: wallet.balance - entryFee
+            })
+            .eq('id', tournamentId);
+          
+          if (fallbackError) throw fallbackError;
+        }
       }
 
       toast({
