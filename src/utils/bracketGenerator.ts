@@ -1,5 +1,5 @@
-
 import { supabase } from "@/integrations/supabase/client";
+import { TournamentLifecycleService } from "@/services/tournamentLifecycleService";
 import type { Tables } from "@/integrations/supabase/types";
 
 type TournamentParticipant = Tables<'tournament_participants'>;
@@ -138,21 +138,12 @@ export const advanceWinner = async (matchId: string, winnerId: string, scorePlay
   if (!nextMatch) {
     console.log('No next match found - this was the final match');
     
-    // Check if this was the final match and update tournament status
-    const { data: finalCheck } = await supabase
-      .from('matches')
-      .select('round')
-      .eq('tournament_id', match.tournament_id)
-      .order('round', { ascending: false })
-      .limit(1)
-      .single();
-      
-    if (finalCheck && match.round === finalCheck.round) {
-      console.log('Tournament completed, updating status');
-      await supabase
-        .from('tournaments')
-        .update({ status: 'completed' })
-        .eq('id', match.tournament_id);
+    // This was the final match - complete the tournament
+    try {
+      await TournamentLifecycleService.completeTournament(match.tournament_id, winnerId);
+      console.log('Tournament completed automatically');
+    } catch (error) {
+      console.error('Error completing tournament:', error);
     }
     
     return;
