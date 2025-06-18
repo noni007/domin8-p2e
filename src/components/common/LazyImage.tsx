@@ -70,14 +70,14 @@ export const LazyImage = ({
         onLoad={handleLoad}
         onError={handleError}
         className={cn(
-          "transition-opacity duration-300",
+          "transition-opacity duration-300 w-full h-full object-cover",
           isLoading && "opacity-50",
           hasError && "opacity-75"
         )}
         {...props}
       />
       {isLoading && imageSrc !== placeholder && (
-        <div className="absolute inset-0 bg-gray-800 animate-pulse" />
+        <div className="absolute inset-0 bg-gradient-to-r from-gray-800 via-gray-700 to-gray-800 animate-pulse loading-shimmer" />
       )}
     </div>
   );
