@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Trophy } from "lucide-react";
@@ -32,6 +31,45 @@ export const TournamentList = () => {
       fetchTournamentParticipants();
     }
   }, [user]);
+
+  // Real-time subscription for tournaments
+  useEffect(() => {
+    console.log('Setting up real-time subscription for tournaments');
+
+    const channel = supabase
+      .channel('tournaments-list')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'tournaments'
+        },
+        (payload) => {
+          console.log('Tournament list update received:', payload);
+          
+          if (payload.eventType === 'INSERT') {
+            setTournaments(prev => [payload.new as Tournament, ...prev]);
+          } else if (payload.eventType === 'UPDATE') {
+            setTournaments(prev => 
+              prev.map(tournament => 
+                tournament.id === payload.new.id ? payload.new as Tournament : tournament
+              )
+            );
+          } else if (payload.eventType === 'DELETE') {
+            setTournaments(prev => 
+              prev.filter(tournament => tournament.id !== payload.old.id)
+            );
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      console.log('Cleaning up tournaments list subscription');
+      supabase.removeChannel(channel);
+    };
+  }, []);
 
   const fetchTournaments = async () => {
     try {
