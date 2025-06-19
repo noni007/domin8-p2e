@@ -10,9 +10,9 @@ export const ComingSoonSection = () => {
       description: "Import your gaming history from other platforms and see your complete journey",
       benefits: ["Complete match history", "Progress tracking", "Cross-platform analytics", "Personal insights"],
       component: <GamedWaitlist feature="historical_stats_upload" />,
-      gradient: "from-purple-600/20 to-blue-600/20",
-      iconColor: "text-purple-400",
-      accentColor: "text-purple-300"
+      gradient: "from-blue-600/20 to-purple-600/20",
+      iconColor: "text-blue-400",
+      accentColor: "text-blue-300"
     }
   ];
 
@@ -105,18 +105,18 @@ export const ComingSoonSection = () => {
           ))}
         </div>
 
-        {/* Enhanced Call to Action */}
+        {/* Enhanced Call to Action - Reverted Colors */}
         <div className="text-center mt-20 animate-fade-in-up" style={{ animationDelay: '1s' }}>
-          <div className="relative p-12 bg-gradient-to-br from-blue-900/40 via-purple-900/30 to-teal-900/40 rounded-3xl border border-blue-800/30 backdrop-blur-sm overflow-hidden hover-lift">
+          <div className="relative p-12 bg-gradient-to-br from-slate-800/80 via-gray-800/70 to-slate-900/80 rounded-3xl border border-gray-700/50 backdrop-blur-sm overflow-hidden hover-lift">
             {/* Animated background pattern */}
             <div className="absolute inset-0 opacity-5">
-              <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_50%,rgba(59,130,246,0.3),transparent_70%)]" />
+              <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_50%,rgba(156,163,175,0.3),transparent_70%)]" />
             </div>
             
             <div className="relative z-10">
               <div className="flex items-center justify-center gap-3 mb-6">
                 <Sparkles className="h-8 w-8 text-yellow-400 animate-pulse" />
-                <h3 className="text-4xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+                <h3 className="text-4xl font-bold bg-gradient-to-r from-gray-200 to-white bg-clip-text text-transparent">
                   Your Voice Matters
                 </h3>
                 <Sparkles className="h-8 w-8 text-yellow-400 animate-pulse" style={{ animationDelay: '0.5s' }} />
@@ -128,17 +128,17 @@ export const ComingSoonSection = () => {
               
               {/* Progress indicators */}
               <div className="flex justify-center items-center gap-6 text-sm">
-                <div className="flex items-center gap-2 px-4 py-2 bg-green-500/20 rounded-full border border-green-500/30">
-                  <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-                  <span className="text-green-300 font-medium">Community Driven</span>
+                <div className="flex items-center gap-2 px-4 py-2 bg-gray-700/30 rounded-full border border-gray-600/30">
+                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-pulse" />
+                  <span className="text-gray-300 font-medium">Community Driven</span>
                 </div>
-                <div className="flex items-center gap-2 px-4 py-2 bg-blue-500/20 rounded-full border border-blue-500/30">
-                  <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse" style={{ animationDelay: '0.3s' }} />
-                  <span className="text-blue-300 font-medium">Milestone Based</span>
+                <div className="flex items-center gap-2 px-4 py-2 bg-gray-700/30 rounded-full border border-gray-600/30">
+                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-pulse" style={{ animationDelay: '0.3s' }} />
+                  <span className="text-gray-300 font-medium">Milestone Based</span>
                 </div>
-                <div className="flex items-center gap-2 px-4 py-2 bg-purple-500/20 rounded-full border border-purple-500/30">
-                  <div className="w-2 h-2 bg-purple-400 rounded-full animate-pulse" style={{ animationDelay: '0.6s' }} />
-                  <span className="text-purple-300 font-medium">Early Access</span>
+                <div className="flex items-center gap-2 px-4 py-2 bg-gray-700/30 rounded-full border border-gray-600/30">
+                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-pulse" style={{ animationDelay: '0.6s' }} />
+                  <span className="text-gray-300 font-medium">Early Access</span>
                 </div>
               </div>
             </div>
