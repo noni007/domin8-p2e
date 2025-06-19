@@ -1,4 +1,5 @@
 
+import { GamedWaitlist } from '@/components/waitlist/GamedWaitlist';
 import { Rocket, TrendingUp, BarChart3, Sparkles, Users, Clock } from 'lucide-react';
 
 export const ComingSoonSection = () => {
@@ -58,9 +59,9 @@ export const ComingSoonSection = () => {
 
         <div className="space-y-20">
           {upcomingFeatures.map((feature, index) => (
-            <div key={index} className="flex justify-center">
-              {/* Single Feature Card - Left Style Only */}
-              <div className="max-w-lg animate-fade-in-up" style={{ animationDelay: `${0.6 + index * 0.2}s` }}>
+            <div key={index} className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+              {/* Feature Details */}
+              <div className="space-y-8 animate-fade-in-up" style={{ animationDelay: `${0.6 + index * 0.2}s` }}>
                 <div className={`p-8 rounded-2xl bg-gradient-to-br ${feature.gradient} backdrop-blur-sm border border-white/10 hover-lift`}>
                   <div className="flex items-center gap-4 mb-6">
                     <div className={`p-3 rounded-xl bg-gradient-to-br from-slate-800 to-slate-900 border border-white/10`}>
@@ -86,6 +87,20 @@ export const ComingSoonSection = () => {
                         </div>
                       ))}
                     </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Waitlist Component */}
+              <div className="animate-fade-in-up" style={{ animationDelay: `${0.8 + index * 0.2}s` }}>
+                <div className="relative">
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-purple-600/20 rounded-2xl blur-xl" />
+                  <div className="relative">
+                    <GamedWaitlist 
+                      feature="historical_stats_upload"
+                      title="Historical Stats Upload"
+                      description="Join the waitlist to get early access and help us prioritize development!"
+                    />
                   </div>
                 </div>
               </div>
