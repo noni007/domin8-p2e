@@ -1,5 +1,4 @@
 
-import { GamedWaitlist } from '@/components/waitlist/GamedWaitlist';
 import { Rocket, TrendingUp, BarChart3, Sparkles, Users, Clock } from 'lucide-react';
 
 export const ComingSoonSection = () => {
@@ -9,7 +8,6 @@ export const ComingSoonSection = () => {
       title: "Historical Stats Upload",
       description: "Import your gaming history from other platforms and see your complete journey",
       benefits: ["Complete match history", "Progress tracking", "Cross-platform analytics", "Personal insights"],
-      component: <GamedWaitlist feature="historical_stats_upload" />,
       gradient: "from-blue-600/20 to-purple-600/20",
       iconColor: "text-blue-400",
       accentColor: "text-blue-300"
@@ -30,7 +28,7 @@ export const ComingSoonSection = () => {
               <Rocket className="h-10 w-10 text-blue-400 animate-bounce" />
               <Sparkles className="h-4 w-4 text-yellow-400 absolute -top-1 -right-1 animate-pulse" />
             </div>
-            <h2 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-teal-400 bg-clip-text text-transparent animate-fade-in-up">
+            <h2 className="text-4xl md:text-6xl font-bold text-white animate-fade-in-up">
               Coming Soon
             </h2>
           </div>
@@ -60,9 +58,9 @@ export const ComingSoonSection = () => {
 
         <div className="space-y-20">
           {upcomingFeatures.map((feature, index) => (
-            <div key={index} className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-              {/* Feature Details */}
-              <div className={`space-y-8 ${index % 2 === 1 ? 'lg:order-2' : ''} animate-fade-in-up`} style={{ animationDelay: `${0.6 + index * 0.2}s` }}>
+            <div key={index} className="flex justify-center">
+              {/* Single Feature Card - Left Style Only */}
+              <div className="max-w-lg animate-fade-in-up" style={{ animationDelay: `${0.6 + index * 0.2}s` }}>
                 <div className={`p-8 rounded-2xl bg-gradient-to-br ${feature.gradient} backdrop-blur-sm border border-white/10 hover-lift`}>
                   <div className="flex items-center gap-4 mb-6">
                     <div className={`p-3 rounded-xl bg-gradient-to-br from-slate-800 to-slate-900 border border-white/10`}>
@@ -88,16 +86,6 @@ export const ComingSoonSection = () => {
                         </div>
                       ))}
                     </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Waitlist Component */}
-              <div className={`${index % 2 === 1 ? 'lg:order-1' : ''} animate-fade-in-up`} style={{ animationDelay: `${0.8 + index * 0.2}s` }}>
-                <div className="relative">
-                  <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-purple-600/20 rounded-2xl blur-xl" />
-                  <div className="relative">
-                    {feature.component}
                   </div>
                 </div>
               </div>
