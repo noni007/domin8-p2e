@@ -47,7 +47,7 @@ export const GamedWaitlist = ({
 
   if (loading) {
     return (
-      <Card className="w-full max-w-2xl mx-auto bg-black/40 backdrop-blur-sm border-blue-800/30">
+      <Card className="w-full max-w-2xl mx-auto bg-black/40 backdrop-blur-sm border-blue-800/30 h-full">
         <CardContent className="p-6">
           <div className="animate-pulse space-y-4">
             <div className="h-4 bg-gray-700 rounded w-3/4"></div>
@@ -71,7 +71,7 @@ export const GamedWaitlist = ({
     Math.max(stats.next_milestone_target - stats.total_count, 0) : 0;
 
   return (
-    <Card className="w-full max-w-2xl mx-auto bg-black/40 backdrop-blur-sm border-blue-800/30 hover:border-blue-600/50 transition-all duration-300">
+    <Card className="w-full max-w-2xl mx-auto bg-black/40 backdrop-blur-sm border-blue-800/30 hover:border-blue-600/50 transition-all duration-300 h-full flex flex-col">
       <CardHeader className="text-center">
         <CardTitle className="text-2xl font-bold text-white flex items-center justify-center gap-2">
           <Target className="h-6 w-6 text-blue-400" />
@@ -82,7 +82,7 @@ export const GamedWaitlist = ({
         </CardDescription>
       </CardHeader>
 
-      <CardContent className="space-y-6">
+      <CardContent className="space-y-6 flex-1 flex flex-col">
         {/* Progress Section */}
         <div className="space-y-4">
           <div className="flex items-center justify-between text-sm">
@@ -99,6 +99,19 @@ export const GamedWaitlist = ({
             value={progressPercentage} 
             className="h-3 bg-gray-800"
           />
+
+          {/* Share Button moved under progress bar */}
+          <div className="flex justify-center">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={shareOnTwitter}
+              className="border-blue-400 text-blue-400 hover:bg-blue-400 hover:text-black"
+            >
+              <Share2 className="h-4 w-4 mr-1" />
+              Share & Boost
+            </Button>
+          </div>
           
           {nextMilestone && (
             <div className="text-center">
@@ -130,51 +143,43 @@ export const GamedWaitlist = ({
           })}
         </div>
 
-        {/* Join Form */}
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="flex gap-2">
-            <Input
-              type="email"
-              placeholder="Enter your email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="bg-black/20 border-gray-600 text-white placeholder-gray-400"
-              required
-            />
-            <Button 
-              type="submit" 
-              disabled={joining}
-              className="bg-gradient-to-r from-blue-600 to-teal-600 hover:from-blue-700 hover:to-teal-700 min-w-[120px]"
-            >
-              {joining ? (
-                <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full" />
-              ) : (
-                <>
-                  <Mail className="h-4 w-4 mr-1" />
-                  Join Waitlist
-                </>
-              )}
-            </Button>
-          </div>
-        </form>
+        {/* Join Form - pushed to bottom */}
+        <div className="mt-auto">
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="flex gap-2">
+              <Input
+                type="email"
+                placeholder="Enter your email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="bg-black/20 border-gray-600 text-white placeholder-gray-400"
+                required
+              />
+              <Button 
+                type="submit" 
+                disabled={joining}
+                className="bg-gradient-to-r from-blue-600 to-teal-600 hover:from-blue-700 hover:to-teal-700 min-w-[120px]"
+              >
+                {joining ? (
+                  <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full" />
+                ) : (
+                  <>
+                    <Mail className="h-4 w-4 mr-1" />
+                    Join Waitlist
+                  </>
+                )}
+              </Button>
+            </div>
+          </form>
 
-        {/* Social Sharing */}
-        <div className="flex justify-center space-x-4 pt-4 border-t border-gray-700">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={shareOnTwitter}
-            className="border-blue-400 text-blue-400 hover:bg-blue-400 hover:text-black"
-          >
-            <Share2 className="h-4 w-4 mr-1" />
-            Share & Boost
-          </Button>
-          
+          {/* Early access badge */}
           {stats && stats.total_count > 0 && (
-            <Badge variant="secondary" className="flex items-center gap-1">
-              <Gift className="h-3 w-3" />
-              Early access rewards available!
-            </Badge>
+            <div className="flex justify-center mt-4">
+              <Badge variant="secondary" className="flex items-center gap-1">
+                <Gift className="h-3 w-3" />
+                Early access rewards available!
+              </Badge>
+            </div>
           )}
         </div>
       </CardContent>
