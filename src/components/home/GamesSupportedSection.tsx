@@ -1,4 +1,3 @@
-
 import { Gamepad2 } from "lucide-react";
 
 export const GamesSupportedSection = () => {
@@ -48,9 +47,10 @@ export const GamesSupportedSection = () => {
   ];
 
   const upcomingGames = [
+    { name: "Fortnite", logo: "/lovable-uploads/7520d813-a102-42c5-bfca-50ef6a393ee2.png" },
+    { name: "NBA 2K25", logo: "/lovable-uploads/be9446b1-debc-4971-b92e-08bf68cc0528.png" },
     { name: "League of Legends", logo: "/lovable-uploads/4d65ff21-faf4-4516-9c64-1c1f48ac2800.png" },
-    { name: "Rocket League", logo: "/lovable-uploads/784ca37f-31a2-4ca0-9257-1d14e0ca8c78.png" },
-    { name: "More Games", logo: "🎮" }
+    { name: "Clash of Clans", logo: "/lovable-uploads/36e18c99-2aa2-4048-a3ff-5a845424c135.png" }
   ];
 
   return (
@@ -103,15 +103,11 @@ export const GamesSupportedSection = () => {
                 className="group flex flex-col items-center p-6 bg-gradient-to-br from-gray-800/50 to-gray-900/50 text-gray-300 rounded-xl border border-gray-700/50 backdrop-blur-sm hover:border-blue-500/50 hover:bg-gradient-to-br hover:from-blue-900/30 hover:to-gray-900/50 transition-all duration-300 hover-lift min-w-[140px]"
               >
                 <div className="text-4xl mb-3 group-hover:scale-110 transition-transform duration-300 w-16 h-16 flex items-center justify-center">
-                  {game.logo.startsWith('/') ? (
-                    <img 
-                      src={game.logo} 
-                      alt={game.name} 
-                      className="w-full h-full object-contain rounded"
-                    />
-                  ) : (
-                    <span className="text-4xl">{game.logo}</span>
-                  )}
+                  <img 
+                    src={game.logo} 
+                    alt={game.name} 
+                    className="w-full h-full object-contain rounded"
+                  />
                 </div>
                 <span className="text-sm font-medium group-hover:text-blue-300 transition-colors duration-300">
                   {game.name}
