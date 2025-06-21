@@ -95,21 +95,21 @@ export const GamesSupportedSection = () => {
         </div>
 
         <div className="text-center mt-16">
-          <h3 className="text-2xl font-bold text-white mb-6 animate-fade-in-up">More games coming soon...</h3>
-          <div className="flex justify-center flex-wrap gap-6">
+          <h3 className="text-2xl font-bold text-white mb-8 animate-fade-in-up">More games coming soon...</h3>
+          <div className="flex justify-center flex-wrap gap-8">
             {upcomingGames.map((game, index) => (
               <div 
                 key={index} 
-                className="group flex flex-col items-center p-6 bg-gradient-to-br from-gray-800/50 to-gray-900/50 text-gray-300 rounded-xl border border-gray-700/50 backdrop-blur-sm hover:border-blue-500/50 hover:bg-gradient-to-br hover:from-blue-900/30 hover:to-gray-900/50 transition-all duration-300 hover-lift min-w-[140px]"
+                className="group flex flex-col items-center p-8 bg-gradient-to-br from-gray-800/50 to-gray-900/50 text-gray-300 rounded-xl border border-gray-700/50 backdrop-blur-sm hover:border-blue-500/50 hover:bg-gradient-to-br hover:from-blue-900/30 hover:to-gray-900/50 transition-all duration-300 hover-lift min-w-[180px]"
               >
-                <div className="text-4xl mb-3 group-hover:scale-110 transition-transform duration-300 w-16 h-16 flex items-center justify-center">
+                <div className="mb-4 group-hover:scale-110 transition-transform duration-300 w-24 h-24 flex items-center justify-center">
                   <img 
                     src={game.logo} 
                     alt={game.name} 
                     className="w-full h-full object-contain rounded"
                   />
                 </div>
-                <span className="text-sm font-medium group-hover:text-blue-300 transition-colors duration-300">
+                <span className="text-base font-medium group-hover:text-blue-300 transition-colors duration-300 text-center">
                   {game.name}
                 </span>
               </div>
