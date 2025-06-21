@@ -11,7 +11,7 @@ export const TournamentShowcaseSection = () => {
       participants: "256",
       startDate: "Dec 20, 2024",
       status: "Open",
-      image: "https://images.unsplash.com/photo-1574435493412-e99c977e37e2?w=400&h=250&fit=crop"
+      image: "/lovable-uploads/4e0bfce4-e817-4880-ab58-437d5df53413.png"
     },
     {
       title: "Street Fighter Continental",
@@ -20,16 +20,16 @@ export const TournamentShowcaseSection = () => {
       participants: "128",
       startDate: "Dec 25, 2024",
       status: "Filling Fast",
-      image: "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=400&h=250&fit=crop"
+      image: "/lovable-uploads/7c6c85c3-2e4c-4099-8ff7-2ca3c889de42.png"
     },
     {
-      title: "Call of Duty Masters",
-      game: "Call of Duty",
-      prizePool: "$8,000",
-      participants: "64 Teams",
+      title: "Free Fire Masters",
+      game: "Free Fire",
+      prizePool: "$4,000",
+      participants: "200",
       startDate: "Jan 5, 2025",
       status: "Coming Soon",
-      image: "https://images.unsplash.com/photo-1552820728-8b83bb6b773f?w=400&h=250&fit=crop"
+      image: "/lovable-uploads/18b0c258-aaec-49e6-bf01-b0a75372ad30.png"
     }
   ];
 
