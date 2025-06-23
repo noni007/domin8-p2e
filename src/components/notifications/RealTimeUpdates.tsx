@@ -1,5 +1,5 @@
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Bell, Wifi, WifiOff } from "lucide-react";
@@ -14,63 +14,75 @@ export const RealTimeUpdates = ({ tournamentId, userId }: RealTimeUpdatesProps) 
   const [isConnected, setIsConnected] = useState(false);
   const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
   const [updateCount, setUpdateCount] = useState(0);
+  const channelRef = useRef<any>(null);
 
   useEffect(() => {
     if (!tournamentId && !userId) return;
 
+    // Clean up any existing channel
+    if (channelRef.current) {
+      console.log('Cleaning up existing real-time updates channel');
+      supabase.removeChannel(channelRef.current);
+      channelRef.current = null;
+    }
+
     console.log('Setting up real-time updates for:', { tournamentId, userId });
 
     // Create unique channel name to prevent conflicts
-    const channelName = `realtime-updates-${tournamentId || userId}-${Date.now()}`;
+    const channelName = `realtime-updates-${tournamentId || userId}-${Math.random().toString(36).substr(2, 9)}`;
     
-    const channel = supabase
-      .channel(channelName)
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'tournaments',
-          filter: tournamentId ? `id=eq.${tournamentId}` : undefined
-        },
-        (payload) => {
-          console.log('Tournament update received:', payload);
-          setLastUpdate(new Date());
-          setUpdateCount(prev => prev + 1);
-        }
-      )
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'matches',
-          filter: tournamentId ? `tournament_id=eq.${tournamentId}` : undefined
-        },
-        (payload) => {
-          console.log('Match update received:', payload);
-          setLastUpdate(new Date());
-          setUpdateCount(prev => prev + 1);
-        }
-      )
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'tournament_participants',
-          filter: tournamentId ? `tournament_id=eq.${tournamentId}` : undefined
-        },
-        (payload) => {
-          console.log('Participant update received:', payload);
-          setLastUpdate(new Date());
-          setUpdateCount(prev => prev + 1);
-        }
-      );
+    channelRef.current = supabase.channel(channelName);
+
+    // Add tournament-related subscriptions
+    if (tournamentId) {
+      channelRef.current
+        .on(
+          'postgres_changes',
+          {
+            event: '*',
+            schema: 'public',
+            table: 'tournaments',
+            filter: `id=eq.${tournamentId}`
+          },
+          (payload) => {
+            console.log('Tournament update received:', payload);
+            setLastUpdate(new Date());
+            setUpdateCount(prev => prev + 1);
+          }
+        )
+        .on(
+          'postgres_changes',
+          {
+            event: '*',
+            schema: 'public',
+            table: 'matches',
+            filter: `tournament_id=eq.${tournamentId}`
+          },
+          (payload) => {
+            console.log('Match update received:', payload);
+            setLastUpdate(new Date());
+            setUpdateCount(prev => prev + 1);
+          }
+        )
+        .on(
+          'postgres_changes',
+          {
+            event: '*',
+            schema: 'public',
+            table: 'tournament_participants',
+            filter: `tournament_id=eq.${tournamentId}`
+          },
+          (payload) => {
+            console.log('Participant update received:', payload);
+            setLastUpdate(new Date());
+            setUpdateCount(prev => prev + 1);
+          }
+        );
+    }
 
     // Add notifications subscription if userId is provided
     if (userId) {
-      channel.on(
+      channelRef.current.on(
         'postgres_changes',
         {
           event: '*',
@@ -86,14 +98,17 @@ export const RealTimeUpdates = ({ tournamentId, userId }: RealTimeUpdatesProps) 
       );
     }
 
-    channel.subscribe((status) => {
+    channelRef.current.subscribe((status) => {
       console.log('RealTimeUpdates channel status:', status);
       setIsConnected(status === 'SUBSCRIBED');
     });
 
     return () => {
-      console.log('Cleaning up real-time updates subscription');
-      supabase.removeChannel(channel);
+      if (channelRef.current) {
+        console.log('Cleaning up real-time updates subscription');
+        supabase.removeChannel(channelRef.current);
+        channelRef.current = null;
+      }
     };
   }, [tournamentId, userId]);
 

@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import type { Tables } from '@/integrations/supabase/types';
@@ -13,6 +13,7 @@ export const useNotifications = () => {
   const [preferences, setPreferences] = useState<NotificationPreferences | null>(null);
   const [loading, setLoading] = useState(true);
   const [unreadCount, setUnreadCount] = useState(0);
+  const channelRef = useRef<any>(null);
 
   // Fetch notifications
   const fetchNotifications = async () => {
@@ -138,14 +139,25 @@ export const useNotifications = () => {
 
   // Set up real-time subscription
   useEffect(() => {
-    if (!user) return;
+    if (!user) {
+      setLoading(false);
+      return;
+    }
 
+    // Clean up any existing channel
+    if (channelRef.current) {
+      console.log('Cleaning up existing notifications channel');
+      supabase.removeChannel(channelRef.current);
+      channelRef.current = null;
+    }
+
+    // Fetch initial data
     fetchNotifications();
     fetchPreferences();
 
-    // Subscribe to real-time notifications with unique channel name
-    const channel = supabase
-      .channel(`notifications-${user.id}-${Date.now()}`)
+    // Create new channel with unique name
+    channelRef.current = supabase
+      .channel(`notifications-${user.id}-${Math.random().toString(36).substr(2, 9)}`)
       .on(
         'postgres_changes',
         {
@@ -161,13 +173,18 @@ export const useNotifications = () => {
           setUnreadCount(prev => prev + 1);
         }
       )
-      .subscribe();
+      .subscribe((status) => {
+        console.log('Notifications subscription status:', status);
+      });
 
     return () => {
-      console.log('Cleaning up notifications subscription');
-      supabase.removeChannel(channel);
+      if (channelRef.current) {
+        console.log('Cleaning up notifications subscription');
+        supabase.removeChannel(channelRef.current);
+        channelRef.current = null;
+      }
     };
-  }, [user?.id]); // Only depend on user.id to prevent re-subscriptions
+  }, [user?.id]);
 
   return {
     notifications,
