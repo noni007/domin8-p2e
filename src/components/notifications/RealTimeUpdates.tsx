@@ -21,11 +21,12 @@ export const RealTimeUpdates = ({ tournamentId, userId }: RealTimeUpdatesProps) 
     console.log('Setting up real-time updates for:', { tournamentId, userId });
 
     const channels: any[] = [];
+    const channelId = `updates-${tournamentId || userId}-${Date.now()}`; // Add timestamp to ensure unique channel names
 
     // Tournament updates
     if (tournamentId) {
       const tournamentChannel = supabase
-        .channel(`tournament-updates-${tournamentId}`)
+        .channel(`tournament-${channelId}`)
         .on(
           'postgres_changes',
           {
@@ -79,7 +80,7 @@ export const RealTimeUpdates = ({ tournamentId, userId }: RealTimeUpdatesProps) 
     // User-specific updates
     if (userId) {
       const userChannel = supabase
-        .channel(`user-updates-${userId}`)
+        .channel(`user-${channelId}`)
         .on(
           'postgres_changes',
           {

@@ -37,7 +37,7 @@ export const TournamentList = () => {
     console.log('Setting up real-time subscription for tournaments');
 
     const channel = supabase
-      .channel('tournaments-list')
+      .channel(`tournaments-list-${Date.now()}`) // Add timestamp to ensure unique channel names
       .on(
         'postgres_changes',
         {
@@ -69,7 +69,7 @@ export const TournamentList = () => {
       console.log('Cleaning up tournaments list subscription');
       supabase.removeChannel(channel);
     };
-  }, []);
+  }, []); // Remove user dependency to prevent re-subscriptions
 
   const fetchTournaments = async () => {
     try {

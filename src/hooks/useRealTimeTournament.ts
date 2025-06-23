@@ -56,7 +56,7 @@ export const useRealTimeTournament = ({ tournamentId, onTournamentUpdate }: UseR
     if (!tournamentId) return;
 
     const tournamentChannel = supabase
-      .channel(`tournament-${tournamentId}`)
+      .channel(`tournament-${tournamentId}-${Date.now()}`)
       .on(
         'postgres_changes',
         {
@@ -78,14 +78,14 @@ export const useRealTimeTournament = ({ tournamentId, onTournamentUpdate }: UseR
     return () => {
       supabase.removeChannel(tournamentChannel);
     };
-  }, [tournamentId, onTournamentUpdate]);
+  }, [tournamentId]);
 
   // Real-time subscription for participants
   useEffect(() => {
     if (!tournamentId) return;
 
     const participantsChannel = supabase
-      .channel(`participants-${tournamentId}`)
+      .channel(`participants-${tournamentId}-${Date.now()}`)
       .on(
         'postgres_changes',
         {

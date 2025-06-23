@@ -46,7 +46,7 @@ export const useRealTimeMatches = ({ tournamentId, onMatchUpdate }: UseRealTimeM
     console.log('Setting up real-time subscription for tournament:', tournamentId);
 
     const channel = supabase
-      .channel(`matches-${tournamentId}`)
+      .channel(`matches-${tournamentId}-${Date.now()}`) // Add timestamp to ensure unique channel names
       .on(
         'postgres_changes',
         {
@@ -84,7 +84,7 @@ export const useRealTimeMatches = ({ tournamentId, onMatchUpdate }: UseRealTimeM
       console.log('Cleaning up real-time subscription');
       supabase.removeChannel(channel);
     };
-  }, [tournamentId, onMatchUpdate]);
+  }, [tournamentId]); // Remove onMatchUpdate from dependencies to prevent re-subscriptions
 
   return { matches, loading, setMatches };
 };
