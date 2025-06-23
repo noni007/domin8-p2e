@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -9,6 +8,8 @@ import { PerformanceMonitor } from './PerformanceMonitor';
 import { ErrorBoundaryTester } from './ErrorBoundaryTester';
 import { AccessibilityTester } from './AccessibilityTester';
 import { CoreFunctionalityTester } from './CoreFunctionalityTester';
+import { FunctionalTester } from './FunctionalTester';
+import { DeviceCompatibilityTester } from './DeviceCompatibilityTester';
 
 interface TestSuite {
   id: string;
@@ -500,6 +501,8 @@ export const TestingSuite = () => {
       <ErrorBoundaryTester />
       <AccessibilityTester />
       <CoreFunctionalityTester />
+      <FunctionalTester />
+      <DeviceCompatibilityTester />
     </>
   );
 };
