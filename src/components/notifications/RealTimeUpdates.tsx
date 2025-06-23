@@ -15,22 +15,45 @@ export const RealTimeUpdates = ({ tournamentId, userId }: RealTimeUpdatesProps) 
   const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
   const [updateCount, setUpdateCount] = useState(0);
   const channelRef = useRef<any>(null);
+  const isSubscribedRef = useRef(false);
+
+  // Cleanup function
+  const cleanup = () => {
+    if (channelRef.current) {
+      console.log('Cleaning up real-time updates channel');
+      try {
+        supabase.removeChannel(channelRef.current);
+      } catch (error) {
+        console.error('Error removing channel:', error);
+      }
+      channelRef.current = null;
+      isSubscribedRef.current = false;
+      setIsConnected(false);
+    }
+  };
 
   useEffect(() => {
-    if (!tournamentId && !userId) return;
-
-    // Clean up any existing channel
-    if (channelRef.current) {
-      console.log('Cleaning up existing real-time updates channel');
-      supabase.removeChannel(channelRef.current);
-      channelRef.current = null;
+    if (!tournamentId && !userId) {
+      cleanup();
+      return;
     }
+
+    // Prevent multiple subscriptions
+    if (isSubscribedRef.current) {
+      return;
+    }
+
+    // Clean up any existing channel first
+    cleanup();
 
     console.log('Setting up real-time updates for:', { tournamentId, userId });
 
-    // Create unique channel name to prevent conflicts
-    const channelName = `realtime-updates-${tournamentId || userId}-${Math.random().toString(36).substr(2, 9)}`;
+    // Create unique channel name
+    const timestamp = Date.now();
+    const random = Math.random().toString(36).substr(2, 9);
+    const channelName = `realtime-updates-${tournamentId || userId}-${timestamp}-${random}`;
     
+    console.log('Creating real-time updates channel:', channelName);
     channelRef.current = supabase.channel(channelName);
 
     // Add tournament-related subscriptions
@@ -100,16 +123,12 @@ export const RealTimeUpdates = ({ tournamentId, userId }: RealTimeUpdatesProps) 
 
     channelRef.current.subscribe((status) => {
       console.log('RealTimeUpdates channel status:', status);
-      setIsConnected(status === 'SUBSCRIBED');
+      const connected = status === 'SUBSCRIBED';
+      setIsConnected(connected);
+      isSubscribedRef.current = connected;
     });
 
-    return () => {
-      if (channelRef.current) {
-        console.log('Cleaning up real-time updates subscription');
-        supabase.removeChannel(channelRef.current);
-        channelRef.current = null;
-      }
-    };
+    return cleanup;
   }, [tournamentId, userId]);
 
   if (!tournamentId && !userId) return null;

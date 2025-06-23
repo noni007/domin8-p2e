@@ -14,6 +14,7 @@ export const useNotifications = () => {
   const [loading, setLoading] = useState(true);
   const [unreadCount, setUnreadCount] = useState(0);
   const channelRef = useRef<any>(null);
+  const isSubscribedRef = useRef(false);
 
   // Fetch notifications
   const fetchNotifications = async () => {
@@ -137,27 +138,47 @@ export const useNotifications = () => {
     }
   };
 
+  // Cleanup function
+  const cleanup = () => {
+    if (channelRef.current) {
+      console.log('Cleaning up notifications channel');
+      try {
+        supabase.removeChannel(channelRef.current);
+      } catch (error) {
+        console.error('Error removing channel:', error);
+      }
+      channelRef.current = null;
+      isSubscribedRef.current = false;
+    }
+  };
+
   // Set up real-time subscription
   useEffect(() => {
     if (!user) {
       setLoading(false);
+      cleanup();
       return;
     }
 
-    // Clean up any existing channel
-    if (channelRef.current) {
-      console.log('Cleaning up existing notifications channel');
-      supabase.removeChannel(channelRef.current);
-      channelRef.current = null;
+    // Prevent multiple subscriptions
+    if (isSubscribedRef.current) {
+      return;
     }
+
+    // Clean up any existing channel first
+    cleanup();
 
     // Fetch initial data
     fetchNotifications();
     fetchPreferences();
 
     // Create new channel with unique name
-    channelRef.current = supabase
-      .channel(`notifications-${user.id}-${Math.random().toString(36).substr(2, 9)}`)
+    const channelName = `notifications-${user.id}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    console.log('Creating notifications channel:', channelName);
+    
+    channelRef.current = supabase.channel(channelName);
+    
+    channelRef.current
       .on(
         'postgres_changes',
         {
@@ -175,15 +196,10 @@ export const useNotifications = () => {
       )
       .subscribe((status) => {
         console.log('Notifications subscription status:', status);
+        isSubscribedRef.current = status === 'SUBSCRIBED';
       });
 
-    return () => {
-      if (channelRef.current) {
-        console.log('Cleaning up notifications subscription');
-        supabase.removeChannel(channelRef.current);
-        channelRef.current = null;
-      }
-    };
+    return cleanup;
   }, [user?.id]);
 
   return {
