@@ -143,9 +143,9 @@ export const useNotifications = () => {
     fetchNotifications();
     fetchPreferences();
 
-    // Subscribe to real-time notifications
+    // Subscribe to real-time notifications with unique channel name
     const channel = supabase
-      .channel('notifications')
+      .channel(`notifications-${user.id}-${Date.now()}`)
       .on(
         'postgres_changes',
         {
@@ -164,9 +164,10 @@ export const useNotifications = () => {
       .subscribe();
 
     return () => {
+      console.log('Cleaning up notifications subscription');
       supabase.removeChannel(channel);
     };
-  }, [user]);
+  }, [user?.id]); // Only depend on user.id to prevent re-subscriptions
 
   return {
     notifications,
