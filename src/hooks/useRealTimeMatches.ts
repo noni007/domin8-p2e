@@ -1,6 +1,7 @@
 
 import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { useRealTimeSubscription } from '@/hooks/useRealTimeSubscription';
 import type { Tables } from '@/integrations/supabase/types';
 
 type Match = Tables<'matches'>;
@@ -40,14 +41,11 @@ export const useRealTimeMatches = ({ tournamentId, onMatchUpdate }: UseRealTimeM
   }, [tournamentId]);
 
   // Real-time subscription
-  useEffect(() => {
-    if (!tournamentId) return;
-
-    console.log('Setting up real-time subscription for tournament:', tournamentId);
-
-    const channel = supabase
-      .channel(`matches-${tournamentId}-${Date.now()}`) // Add timestamp to ensure unique channel names
-      .on(
+  const { channel } = useRealTimeSubscription({
+    channelName: `matches-${tournamentId}`,
+    enabled: !!tournamentId,
+    onSubscriptionReady: (channel) => {
+      channel.on(
         'postgres_changes',
         {
           event: '*',
@@ -72,19 +70,13 @@ export const useRealTimeMatches = ({ tournamentId, onMatchUpdate }: UseRealTimeM
             );
           }
 
-          // Trigger callback for additional actions
           if (onMatchUpdate) {
             onMatchUpdate();
           }
         }
-      )
-      .subscribe();
-
-    return () => {
-      console.log('Cleaning up real-time subscription');
-      supabase.removeChannel(channel);
-    };
-  }, [tournamentId]); // Remove onMatchUpdate from dependencies to prevent re-subscriptions
+      );
+    }
+  });
 
   return { matches, loading, setMatches };
 };

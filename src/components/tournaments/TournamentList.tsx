@@ -1,8 +1,10 @@
+
 import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Trophy } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
+import { useRealTimeSubscription } from "@/hooks/useRealTimeSubscription";
 import type { Tables } from "@/integrations/supabase/types";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "@/hooks/use-toast";
@@ -33,12 +35,11 @@ export const TournamentList = () => {
   }, [user]);
 
   // Real-time subscription for tournaments
-  useEffect(() => {
-    console.log('Setting up real-time subscription for tournaments');
-
-    const channel = supabase
-      .channel(`tournaments-list-${Date.now()}`) // Add timestamp to ensure unique channel names
-      .on(
+  const { channel } = useRealTimeSubscription({
+    channelName: 'tournaments-list',
+    enabled: true,
+    onSubscriptionReady: (channel) => {
+      channel.on(
         'postgres_changes',
         {
           event: '*',
@@ -62,14 +63,9 @@ export const TournamentList = () => {
             );
           }
         }
-      )
-      .subscribe();
-
-    return () => {
-      console.log('Cleaning up tournaments list subscription');
-      supabase.removeChannel(channel);
-    };
-  }, []); // Remove user dependency to prevent re-subscriptions
+      );
+    }
+  });
 
   const fetchTournaments = async () => {
     try {

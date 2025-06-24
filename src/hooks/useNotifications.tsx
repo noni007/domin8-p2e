@@ -1,7 +1,8 @@
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
+import { useRealTimeSubscription } from '@/hooks/useRealTimeSubscription';
 import type { Tables } from '@/integrations/supabase/types';
 
 type Notification = Tables<'notifications'>;
@@ -13,8 +14,6 @@ export const useNotifications = () => {
   const [preferences, setPreferences] = useState<NotificationPreferences | null>(null);
   const [loading, setLoading] = useState(true);
   const [unreadCount, setUnreadCount] = useState(0);
-  const channelRef = useRef<any>(null);
-  const isSubscribedRef = useRef(false);
 
   // Fetch notifications
   const fetchNotifications = async () => {
@@ -64,6 +63,40 @@ export const useNotifications = () => {
     }
   };
 
+  // Real-time subscription
+  const { channel } = useRealTimeSubscription({
+    channelName: `notifications-${user?.id || 'anonymous'}`,
+    enabled: !!user,
+    onSubscriptionReady: (channel) => {
+      channel.on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'notifications',
+          filter: `user_id=eq.${user!.id}`
+        },
+        (payload) => {
+          console.log('New notification received:', payload);
+          const newNotification = payload.new as Notification;
+          setNotifications(prev => [newNotification, ...prev]);
+          setUnreadCount(prev => prev + 1);
+        }
+      );
+    }
+  });
+
+  // Initial data fetch
+  useEffect(() => {
+    if (!user) {
+      setLoading(false);
+      return;
+    }
+
+    fetchNotifications();
+    fetchPreferences();
+  }, [user?.id]);
+
   // Mark notification as read
   const markAsRead = async (notificationId: string) => {
     try {
@@ -78,7 +111,6 @@ export const useNotifications = () => {
         return;
       }
 
-      // Update local state
       setNotifications(prev => 
         prev.map(n => n.id === notificationId ? { ...n, read: true } : n)
       );
@@ -104,7 +136,6 @@ export const useNotifications = () => {
         return;
       }
 
-      // Update local state
       setNotifications(prev => prev.map(n => ({ ...n, read: true })));
       setUnreadCount(0);
     } catch (error) {
@@ -137,70 +168,6 @@ export const useNotifications = () => {
       console.error('Error updating preferences:', error);
     }
   };
-
-  // Cleanup function
-  const cleanup = () => {
-    if (channelRef.current) {
-      console.log('Cleaning up notifications channel');
-      try {
-        supabase.removeChannel(channelRef.current);
-      } catch (error) {
-        console.error('Error removing channel:', error);
-      }
-      channelRef.current = null;
-      isSubscribedRef.current = false;
-    }
-  };
-
-  // Set up real-time subscription
-  useEffect(() => {
-    if (!user) {
-      setLoading(false);
-      cleanup();
-      return;
-    }
-
-    // Prevent multiple subscriptions
-    if (isSubscribedRef.current) {
-      return;
-    }
-
-    // Clean up any existing channel first
-    cleanup();
-
-    // Fetch initial data
-    fetchNotifications();
-    fetchPreferences();
-
-    // Create new channel with unique name
-    const channelName = `notifications-${user.id}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-    console.log('Creating notifications channel:', channelName);
-    
-    channelRef.current = supabase.channel(channelName);
-    
-    channelRef.current
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'notifications',
-          filter: `user_id=eq.${user.id}`
-        },
-        (payload) => {
-          console.log('New notification received:', payload);
-          const newNotification = payload.new as Notification;
-          setNotifications(prev => [newNotification, ...prev]);
-          setUnreadCount(prev => prev + 1);
-        }
-      )
-      .subscribe((status) => {
-        console.log('Notifications subscription status:', status);
-        isSubscribedRef.current = status === 'SUBSCRIBED';
-      });
-
-    return cleanup;
-  }, [user?.id]);
 
   return {
     notifications,

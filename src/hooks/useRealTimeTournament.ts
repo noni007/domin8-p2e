@@ -1,6 +1,7 @@
 
 import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { useRealTimeSubscription } from '@/hooks/useRealTimeSubscription';
 import type { Tables } from '@/integrations/supabase/types';
 
 type Tournament = Tables<'tournaments'>;
@@ -52,12 +53,11 @@ export const useRealTimeTournament = ({ tournamentId, onTournamentUpdate }: UseR
   }, [tournamentId]);
 
   // Real-time subscription for tournament updates
-  useEffect(() => {
-    if (!tournamentId) return;
-
-    const tournamentChannel = supabase
-      .channel(`tournament-${tournamentId}-${Date.now()}`)
-      .on(
+  const { channel: tournamentChannel } = useRealTimeSubscription({
+    channelName: `tournament-${tournamentId}`,
+    enabled: !!tournamentId,
+    onSubscriptionReady: (channel) => {
+      channel.on(
         'postgres_changes',
         {
           event: 'UPDATE',
@@ -72,21 +72,16 @@ export const useRealTimeTournament = ({ tournamentId, onTournamentUpdate }: UseR
             onTournamentUpdate();
           }
         }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(tournamentChannel);
-    };
-  }, [tournamentId]);
+      );
+    }
+  });
 
   // Real-time subscription for participants
-  useEffect(() => {
-    if (!tournamentId) return;
-
-    const participantsChannel = supabase
-      .channel(`participants-${tournamentId}-${Date.now()}`)
-      .on(
+  const { channel: participantsChannel } = useRealTimeSubscription({
+    channelName: `participants-${tournamentId}`,
+    enabled: !!tournamentId,
+    onSubscriptionReady: (channel) => {
+      channel.on(
         'postgres_changes',
         {
           event: '*',
@@ -115,13 +110,9 @@ export const useRealTimeTournament = ({ tournamentId, onTournamentUpdate }: UseR
             setParticipants(prev => prev.filter(p => p.id !== payload.old.id));
           }
         }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(participantsChannel);
-    };
-  }, [tournamentId]);
+      );
+    }
+  });
 
   return { tournament, participants, loading, setTournament, setParticipants };
 };
