@@ -35,7 +35,7 @@ export const TournamentList = () => {
   }, [user]);
 
   // Real-time subscription for tournaments
-  const { channel } = useRealTimeSubscription({
+  useRealTimeSubscription({
     channelName: 'tournaments-list',
     enabled: true,
     onSubscriptionReady: (channel) => {

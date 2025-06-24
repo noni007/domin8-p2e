@@ -41,7 +41,7 @@ export const useRealTimeMatches = ({ tournamentId, onMatchUpdate }: UseRealTimeM
   }, [tournamentId]);
 
   // Real-time subscription
-  const { channel } = useRealTimeSubscription({
+  useRealTimeSubscription({
     channelName: `matches-${tournamentId}`,
     enabled: !!tournamentId,
     onSubscriptionReady: (channel) => {

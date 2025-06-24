@@ -1,5 +1,5 @@
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import type { RealtimeChannel } from '@supabase/supabase-js';
 
@@ -17,8 +17,9 @@ export const useRealTimeSubscription = ({
   const channelRef = useRef<RealtimeChannel | null>(null);
   const isSubscribedRef = useRef(false);
   const cleanupTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const subscriptionPromiseRef = useRef<Promise<void> | null>(null);
 
-  const cleanup = () => {
+  const cleanup = useCallback(() => {
     if (cleanupTimeoutRef.current) {
       clearTimeout(cleanupTimeoutRef.current);
       cleanupTimeoutRef.current = null;
@@ -33,11 +34,12 @@ export const useRealTimeSubscription = ({
       }
       channelRef.current = null;
       isSubscribedRef.current = false;
+      subscriptionPromiseRef.current = null;
     }
-  };
+  }, [channelName]);
 
-  const createSubscription = () => {
-    if (!enabled || isSubscribedRef.current) {
+  const createSubscription = useCallback(() => {
+    if (!enabled || isSubscribedRef.current || subscriptionPromiseRef.current) {
       return null;
     }
 
@@ -54,24 +56,49 @@ export const useRealTimeSubscription = ({
     const channel = supabase.channel(uniqueChannelName);
     channelRef.current = channel;
 
-    // Set up subscription status handler
-    const subscribePromise = new Promise<RealtimeChannel>((resolve) => {
-      channel.subscribe((status) => {
+    // Create subscription promise to prevent multiple attempts
+    subscriptionPromiseRef.current = new Promise<void>((resolve, reject) => {
+      let hasResolved = false;
+      
+      const resolveOnce = () => {
+        if (!hasResolved) {
+          hasResolved = true;
+          resolve();
+        }
+      };
+
+      const rejectOnce = (error: any) => {
+        if (!hasResolved) {
+          hasResolved = true;
+          reject(error);
+        }
+      };
+
+      // Set up subscription status handler
+      channel.subscribe((status, error) => {
         console.log(`Channel ${uniqueChannelName} status:`, status);
+        
         if (status === 'SUBSCRIBED') {
           isSubscribedRef.current = true;
-          resolve(channel);
+          resolveOnce();
+          
+          // Call the ready callback when subscription is established
+          if (onSubscriptionReady && channelRef.current) {
+            try {
+              onSubscriptionReady(channelRef.current);
+            } catch (callbackError) {
+              console.error('Error in onSubscriptionReady callback:', callbackError);
+            }
+          }
+        } else if (status === 'CLOSED' || status === 'CHANNEL_ERROR') {
+          isSubscribedRef.current = false;
+          rejectOnce(error || new Error(`Channel subscription failed with status: ${status}`));
         }
       });
     });
 
-    // Call the ready callback when subscription is established
-    if (onSubscriptionReady) {
-      subscribePromise.then(onSubscriptionReady);
-    }
-
-    return channel;
-  };
+    return subscriptionPromiseRef.current;
+  }, [channelName, enabled, onSubscriptionReady, cleanup]);
 
   useEffect(() => {
     if (!enabled) {
@@ -81,11 +108,14 @@ export const useRealTimeSubscription = ({
 
     // Delay subscription to prevent rapid re-subscriptions
     cleanupTimeoutRef.current = setTimeout(() => {
-      createSubscription();
+      createSubscription()?.catch((error) => {
+        console.error('Subscription failed:', error);
+        cleanup();
+      });
     }, 100);
 
     return cleanup;
-  }, [channelName, enabled]);
+  }, [channelName, enabled, createSubscription, cleanup]);
 
   return {
     channel: channelRef.current,

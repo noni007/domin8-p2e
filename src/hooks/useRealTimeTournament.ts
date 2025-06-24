@@ -53,7 +53,7 @@ export const useRealTimeTournament = ({ tournamentId, onTournamentUpdate }: UseR
   }, [tournamentId]);
 
   // Real-time subscription for tournament updates
-  const { channel: tournamentChannel } = useRealTimeSubscription({
+  useRealTimeSubscription({
     channelName: `tournament-${tournamentId}`,
     enabled: !!tournamentId,
     onSubscriptionReady: (channel) => {
@@ -77,7 +77,7 @@ export const useRealTimeTournament = ({ tournamentId, onTournamentUpdate }: UseR
   });
 
   // Real-time subscription for participants
-  const { channel: participantsChannel } = useRealTimeSubscription({
+  useRealTimeSubscription({
     channelName: `participants-${tournamentId}`,
     enabled: !!tournamentId,
     onSubscriptionReady: (channel) => {

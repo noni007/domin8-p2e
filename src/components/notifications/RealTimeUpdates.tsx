@@ -14,7 +14,7 @@ export const RealTimeUpdates = ({ tournamentId, userId }: RealTimeUpdatesProps) 
   const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
   const [updateCount, setUpdateCount] = useState(0);
 
-  const { channel, isSubscribed } = useRealTimeSubscription({
+  const { isSubscribed } = useRealTimeSubscription({
     channelName: `realtime-updates-${tournamentId || userId || 'anonymous'}`,
     enabled: !!(tournamentId || userId),
     onSubscriptionReady: (channel) => {

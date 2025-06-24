@@ -64,7 +64,7 @@ export const useNotifications = () => {
   };
 
   // Real-time subscription
-  const { channel } = useRealTimeSubscription({
+  useRealTimeSubscription({
     channelName: `notifications-${user?.id || 'anonymous'}`,
     enabled: !!user,
     onSubscriptionReady: (channel) => {
