@@ -7,7 +7,7 @@ import { useAdmin } from '@/hooks/useAdmin'
 import { AuthModal } from '@/components/auth/AuthModal'
 import { UserMenu } from './UserMenu'
 import { MobileMenu } from './MobileMenu'
-import { Menu, Trophy, Shield, Wallet } from 'lucide-react'
+import { Menu, Shield, Wallet } from 'lucide-react'
 
 export const Navigation = () => {
   const { user } = useAuth()
@@ -30,9 +30,12 @@ export const Navigation = () => {
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
-            <Link to="/" className="flex items-center space-x-2">
-              <Trophy className="h-8 w-8 text-blue-400" />
-              <span className="text-xl font-bold text-white">TourneyPro</span>
+            <Link to="/" className="flex items-center">
+              <img 
+                src="/lovable-uploads/be31ac20-7045-4c65-bf6f-1dda987cd378.png" 
+                alt="Domin8 Logo" 
+                className="h-10 w-auto"
+              />
             </Link>
 
             {/* Desktop Navigation */}
