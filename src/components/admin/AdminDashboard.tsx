@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -12,7 +13,8 @@ import {
   Activity,
   AlertTriangle,
   TrendingUp,
-  ToggleLeft
+  ToggleLeft,
+  BarChart
 } from "lucide-react";
 import { useAdmin } from "@/hooks/useAdmin";
 import { AdminUserManagement } from "./AdminUserManagement";
@@ -21,6 +23,7 @@ import { AdminWalletManagement } from "./AdminWalletManagement";
 import { AdminPlatformConfig } from "./AdminPlatformConfig";
 import { AdminAuditLog } from "./AdminAuditLog";
 import { AdminFeatureToggles } from "./AdminFeatureToggles";
+import { AdminOnboardingAnalytics } from "./AdminOnboardingAnalytics";
 import { supabase } from "@/integrations/supabase/client";
 import { PrizeDistributionPanel } from "./PrizeDistributionPanel";
 
@@ -46,13 +49,11 @@ export const AdminDashboard = () => {
         .from('profiles')
         .select('*', { count: 'exact', head: true });
 
-      // Fetch active tournaments
       const { count: tournamentCount } = await supabase
         .from('tournaments')
         .select('*', { count: 'exact', head: true })
         .in('status', ['upcoming', 'active']);
 
-      // Fetch total revenue (completed transactions)
       const { data: revenueData } = await supabase
         .from('wallet_transactions')
         .select('amount')
@@ -61,7 +62,6 @@ export const AdminDashboard = () => {
 
       const totalRevenue = revenueData?.reduce((sum, t) => sum + t.amount, 0) || 0;
 
-      // Fetch pending transactions
       const { count: pendingCount } = await supabase
         .from('wallet_transactions')
         .select('*', { count: 'exact', head: true })
@@ -166,8 +166,12 @@ export const AdminDashboard = () => {
           <PrizeDistributionPanel />
           
           {/* Admin Tabs */}
-          <Tabs defaultValue="features" className="space-y-6">
+          <Tabs defaultValue="analytics" className="space-y-6">
             <TabsList className="bg-black/40 border-blue-800/30">
+              <TabsTrigger value="analytics" className="data-[state=active]:bg-blue-600">
+                <BarChart className="h-4 w-4 mr-2" />
+                Analytics
+              </TabsTrigger>
               <TabsTrigger value="features" className="data-[state=active]:bg-blue-600">
                 <ToggleLeft className="h-4 w-4 mr-2" />
                 Features
@@ -193,6 +197,10 @@ export const AdminDashboard = () => {
                 Audit Log
               </TabsTrigger>
             </TabsList>
+
+            <TabsContent value="analytics">
+              <AdminOnboardingAnalytics />
+            </TabsContent>
 
             <TabsContent value="features">
               <AdminFeatureToggles />
