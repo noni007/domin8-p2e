@@ -1,6 +1,7 @@
 
 import { useAuth } from "@/hooks/useAuth";
 import { UserDashboard } from "@/components/dashboard/UserDashboard";
+import { OnboardingFlow } from "@/components/onboarding/OnboardingFlow";
 import { HeroSection } from "@/components/home/HeroSection";
 import { StatisticsSection } from "@/components/home/StatisticsSection";
 import { FeaturesSection } from "@/components/home/FeaturesSection";
@@ -11,16 +12,35 @@ import { ComingSoonSection } from "@/components/home/ComingSoonSection";
 import { CommunitySection } from "@/components/home/CommunitySection";
 import { CTASection } from "@/components/home/CTASection";
 import { CoreFunctionalityTester } from "@/components/testing/CoreFunctionalityTester";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { TestTube } from "lucide-react";
 
 const Index = () => {
-  const { user } = useAuth();
+  const { user, profile, loading } = useAuth();
   const [showTester, setShowTester] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
 
-  // Show dashboard for authenticated users
-  if (user) {
+  useEffect(() => {
+    if (!loading && user && !profile) {
+      // User exists but no profile - trigger onboarding
+      setShowOnboarding(true);
+    } else if (!loading && user && profile) {
+      // Check if user has completed onboarding
+      const hasCompletedOnboarding = localStorage.getItem('onboarding_completed');
+      if (!hasCompletedOnboarding) {
+        setShowOnboarding(true);
+      }
+    }
+  }, [user, profile, loading]);
+
+  // Show onboarding flow for authenticated users who haven't completed it
+  if (user && showOnboarding) {
+    return <OnboardingFlow onComplete={() => setShowOnboarding(false)} />;
+  }
+
+  // Show dashboard for authenticated users who have completed onboarding
+  if (user && !showOnboarding) {
     return (
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <UserDashboard />

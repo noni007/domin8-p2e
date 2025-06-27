@@ -3,8 +3,16 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { CheckCircle, ChevronRight, Trophy, Users, Gamepad2 } from "lucide-react";
+import { CheckCircle, ChevronRight, Trophy, Users, Gamepad2, Star, Wallet, Target } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { ProfileSetupStep } from "./ProfileSetupStep";
+import { FeatureDiscoveryStep } from "./FeatureDiscoveryStep";
+import { FirstTournamentStep } from "./FirstTournamentStep";
+import { toast } from "@/hooks/use-toast";
+
+interface OnboardingFlowProps {
+  onComplete?: () => void;
+}
 
 interface OnboardingStep {
   id: string;
@@ -12,12 +20,19 @@ interface OnboardingStep {
   description: string;
   icon: React.ElementType;
   content: React.ReactNode;
+  canSkip?: boolean;
 }
 
-export const OnboardingFlow = () => {
-  const { user } = useAuth();
+export const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
+  const { user, refreshProfile } = useAuth();
   const [currentStep, setCurrentStep] = useState(0);
   const [completedSteps, setCompletedSteps] = useState<string[]>([]);
+  const [profileData, setProfileData] = useState({
+    username: '',
+    favoriteGames: [] as string[],
+    experienceLevel: '',
+    bio: ''
+  });
 
   const steps: OnboardingStep[] = [
     {
@@ -26,83 +41,117 @@ export const OnboardingFlow = () => {
       description: "Your journey to esports greatness starts here",
       icon: Trophy,
       content: (
-        <div className="text-center space-y-4">
-          <div className="mx-auto w-16 h-16 bg-gradient-to-r from-blue-600 to-teal-600 rounded-full flex items-center justify-center">
-            <Trophy className="h-8 w-8 text-white" />
+        <div className="text-center space-y-6">
+          <div className="mx-auto w-20 h-20 bg-gradient-to-r from-blue-600 to-teal-600 rounded-full flex items-center justify-center">
+            <Trophy className="h-10 w-10 text-white" />
           </div>
-          <h3 className="text-2xl font-bold text-white">Welcome, {user?.user_metadata?.display_name || 'Champion'}!</h3>
-          <p className="text-gray-300 max-w-md mx-auto">
-            Domin8 is Africa's premier esports ranking platform. Let's get you set up to start competing and climbing the ranks.
+          <h3 className="text-3xl font-bold text-white">
+            Welcome to Domin8, {user?.user_metadata?.display_name || user?.email?.split('@')[0] || 'Champion'}!
+          </h3>
+          <p className="text-gray-300 max-w-2xl mx-auto text-lg">
+            You've just joined Africa's premier esports ranking platform. We'll help you set up your profile, 
+            discover amazing tournaments, and connect with the gaming community. Let's get started!
           </p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
+            <div className="p-4 bg-black/40 rounded-lg border border-blue-800/30">
+              <Target className="h-8 w-8 text-blue-400 mx-auto mb-2" />
+              <h4 className="font-medium text-white mb-1">Compete</h4>
+              <p className="text-gray-300 text-sm">Join tournaments and climb the rankings</p>
+            </div>
+            <div className="p-4 bg-black/40 rounded-lg border border-blue-800/30">
+              <Users className="h-8 w-8 text-green-400 mx-auto mb-2" />
+              <h4 className="font-medium text-white mb-1">Connect</h4>
+              <p className="text-gray-300 text-sm">Meet fellow gamers and form teams</p>
+            </div>
+            <div className="p-4 bg-black/40 rounded-lg border border-blue-800/30">
+              <Wallet className="h-8 w-8 text-yellow-400 mx-auto mb-2" />
+              <h4 className="font-medium text-white mb-1">Earn</h4>
+              <p className="text-gray-300 text-sm">Win prizes and build your reputation</p>
+            </div>
+          </div>
         </div>
       )
     },
     {
       id: "profile",
-      title: "Complete Your Profile",
-      description: "Tell other players about yourself",
+      title: "Set Up Your Gaming Profile",
+      description: "Tell the community about your gaming style",
       icon: Users,
       content: (
-        <div className="space-y-4">
-          <h3 className="text-xl font-semibold text-white">Set Up Your Gaming Profile</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="p-4 bg-black/40 rounded-lg border border-blue-800/30">
-              <h4 className="font-medium text-white mb-2">Favorite Games</h4>
-              <p className="text-gray-300 text-sm">Choose your main competitive games</p>
-            </div>
-            <div className="p-4 bg-black/40 rounded-lg border border-blue-800/30">
-              <h4 className="font-medium text-white mb-2">Gaming Experience</h4>
-              <p className="text-gray-300 text-sm">Share your competitive background</p>
-            </div>
-          </div>
-        </div>
+        <ProfileSetupStep 
+          profileData={profileData}
+          setProfileData={setProfileData}
+          userEmail={user?.email || ''}
+        />
       )
     },
     {
+      id: "features",
+      title: "Discover Key Features",
+      description: "Learn what makes Domin8 special",
+      icon: Star,
+      content: <FeatureDiscoveryStep />
+    },
+    {
       id: "tournaments",
-      title: "Discover Tournaments",
-      description: "Find competitions that match your skill level",
+      title: "Your First Tournament",
+      description: "Ready to compete? Let's find you a tournament",
       icon: Gamepad2,
-      content: (
-        <div className="space-y-4">
-          <h3 className="text-xl font-semibold text-white">Ready to Compete?</h3>
-          <div className="space-y-3">
-            <div className="flex items-center space-x-3 p-3 bg-black/40 rounded-lg border border-blue-800/30">
-              <CheckCircle className="h-5 w-5 text-green-400" />
-              <span className="text-white">Browse active tournaments</span>
-            </div>
-            <div className="flex items-center space-x-3 p-3 bg-black/40 rounded-lg border border-blue-800/30">
-              <CheckCircle className="h-5 w-5 text-green-400" />
-              <span className="text-white">Join tournaments in your skill bracket</span>
-            </div>
-            <div className="flex items-center space-x-3 p-3 bg-black/40 rounded-lg border border-blue-800/30">
-              <CheckCircle className="h-5 w-5 text-green-400" />
-              <span className="text-white">Track your AER ranking progress</span>
-            </div>
-          </div>
-        </div>
-      )
+      content: <FirstTournamentStep />,
+      canSkip: true
     }
   ];
 
-  const handleNext = () => {
+  const handleNext = async () => {
     const current = steps[currentStep];
+    
+    // Mark current step as completed
     if (!completedSteps.includes(current.id)) {
       setCompletedSteps([...completedSteps, current.id]);
     }
 
+    // Handle profile setup step
+    if (current.id === 'profile' && profileData.username) {
+      try {
+        // This will be handled by the ProfileSetupStep component
+        await refreshProfile();
+        toast({
+          title: "Profile Updated!",
+          description: "Your gaming profile has been set up successfully.",
+        });
+      } catch (error) {
+        console.error('Error updating profile:', error);
+      }
+    }
+
+    // Move to next step or complete onboarding
     if (currentStep < steps.length - 1) {
       setCurrentStep(currentStep + 1);
     } else {
-      // Onboarding complete
-      localStorage.setItem('onboarding_completed', 'true');
-      window.location.href = '/tournaments';
+      handleComplete();
     }
   };
 
   const handleSkip = () => {
+    const current = steps[currentStep];
+    
+    if (current.canSkip && currentStep < steps.length - 1) {
+      setCurrentStep(currentStep + 1);
+    } else {
+      handleComplete();
+    }
+  };
+
+  const handleComplete = () => {
     localStorage.setItem('onboarding_completed', 'true');
-    window.location.href = '/tournaments';
+    toast({
+      title: "Welcome to Domin8! 🎉",
+      description: "Your account is all set up. Time to dominate some tournaments!",
+    });
+    
+    if (onComplete) {
+      onComplete();
+    }
   };
 
   const progress = ((currentStep + 1) / steps.length) * 100;
@@ -110,45 +159,61 @@ export const OnboardingFlow = () => {
   const Icon = currentStepData.icon;
 
   return (
-    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <Card className="w-full max-w-2xl bg-black/40 border-blue-800/30 backdrop-blur-sm">
-        <div className="p-6 space-y-6">
-          {/* Progress Bar */}
-          <div className="space-y-2">
-            <div className="flex justify-between text-sm">
+    <div className="fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
+      <Card className="w-full max-w-4xl bg-black/60 border-blue-800/30 backdrop-blur-sm my-8">
+        <div className="p-8 space-y-8">
+          {/* Progress Section */}
+          <div className="space-y-4">
+            <div className="flex justify-between items-center text-sm">
               <span className="text-gray-300">Step {currentStep + 1} of {steps.length}</span>
-              <span className="text-blue-400">{Math.round(progress)}% Complete</span>
+              <span className="text-blue-400 font-medium">{Math.round(progress)}% Complete</span>
             </div>
-            <Progress value={progress} className="h-2" />
+            <Progress value={progress} className="h-3" />
           </div>
 
-          {/* Step Indicator */}
-          <div className="flex items-center space-x-2 text-blue-400">
-            <Icon className="h-5 w-5" />
-            <span className="text-sm font-medium">{currentStepData.title}</span>
+          {/* Step Header */}
+          <div className="text-center space-y-2">
+            <div className="inline-flex items-center space-x-3 text-blue-400 bg-blue-400/10 rounded-full px-4 py-2">
+              <Icon className="h-6 w-6" />
+              <span className="font-medium">{currentStepData.title}</span>
+            </div>
+            <p className="text-gray-400">{currentStepData.description}</p>
           </div>
 
-          {/* Content */}
-          <div className="min-h-[300px] flex items-center">
+          {/* Step Content */}
+          <div className="min-h-[400px] flex items-center justify-center">
             {currentStepData.content}
           </div>
 
-          {/* Actions */}
-          <div className="flex justify-between">
+          {/* Navigation Actions */}
+          <div className="flex justify-between pt-6 border-t border-blue-800/30">
             <Button 
               variant="ghost" 
               onClick={handleSkip}
               className="text-gray-400 hover:text-white"
             >
-              Skip for now
+              {currentStepData.canSkip ? 'Skip for now' : 'Skip tour'}
             </Button>
-            <Button 
-              onClick={handleNext}
-              className="bg-gradient-to-r from-blue-600 to-teal-600 hover:from-blue-700 hover:to-teal-700"
-            >
-              {currentStep < steps.length - 1 ? 'Continue' : 'Get Started'}
-              <ChevronRight className="ml-2 h-4 w-4" />
-            </Button>
+            
+            <div className="flex space-x-3">
+              {currentStep > 0 && (
+                <Button 
+                  variant="outline"
+                  onClick={() => setCurrentStep(currentStep - 1)}
+                  className="border-blue-800/50 text-blue-400 hover:bg-blue-400/10"
+                >
+                  Previous
+                </Button>
+              )}
+              <Button 
+                onClick={handleNext}
+                className="bg-gradient-to-r from-blue-600 to-teal-600 hover:from-blue-700 hover:to-teal-700 min-w-[120px]"
+                disabled={currentStep === 1 && !profileData.username} // Require username for profile step
+              >
+                {currentStep < steps.length - 1 ? 'Continue' : 'Get Started'}
+                <ChevronRight className="ml-2 h-4 w-4" />
+              </Button>
+            </div>
           </div>
         </div>
       </Card>
