@@ -113,7 +113,7 @@ export const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
     // Handle profile setup step
     if (current.id === 'profile' && profileData.username) {
       try {
-        // This will be handled by the ProfileSetupStep component
+        // Refresh profile to get latest data
         await refreshProfile();
         toast({
           title: "Profile Updated!",
@@ -143,7 +143,11 @@ export const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
   };
 
   const handleComplete = () => {
-    localStorage.setItem('onboarding_completed', 'true');
+    // Use user-specific localStorage key
+    if (user) {
+      localStorage.setItem(`onboarding_completed_${user.id}`, 'true');
+    }
+    
     toast({
       title: "Welcome to Domin8! 🎉",
       description: "Your account is all set up. Time to dominate some tournaments!",

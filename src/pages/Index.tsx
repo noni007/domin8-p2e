@@ -22,21 +22,52 @@ const Index = () => {
   const [showOnboarding, setShowOnboarding] = useState(false);
 
   useEffect(() => {
-    if (!loading && user && !profile) {
-      // User exists but no profile - trigger onboarding
+    if (loading) return; // Wait for auth to load
+
+    if (user && !profile) {
+      // User exists but no profile - definitely needs onboarding
+      console.log('User exists but no profile found - triggering onboarding');
       setShowOnboarding(true);
-    } else if (!loading && user && profile) {
-      // Check if user has completed onboarding
-      const hasCompletedOnboarding = localStorage.getItem('onboarding_completed');
-      if (!hasCompletedOnboarding) {
+    } else if (user && profile) {
+      // User and profile exist - check if they've completed onboarding
+      const hasCompletedOnboarding = localStorage.getItem(`onboarding_completed_${user.id}`);
+      const profileIsComplete = profile.username && profile.username.trim() !== '';
+      
+      if (!hasCompletedOnboarding && !profileIsComplete) {
+        console.log('User has incomplete profile - triggering onboarding');
         setShowOnboarding(true);
+      } else if (!hasCompletedOnboarding && profileIsComplete) {
+        // Profile exists but onboarding not marked complete - mark it complete
+        localStorage.setItem(`onboarding_completed_${user.id}`, 'true');
+        setShowOnboarding(false);
+      } else {
+        setShowOnboarding(false);
       }
+    } else {
+      // No user - definitely don't show onboarding
+      setShowOnboarding(false);
     }
   }, [user, profile, loading]);
 
-  // Show onboarding flow for authenticated users who haven't completed it
+  const handleOnboardingComplete = () => {
+    if (user) {
+      localStorage.setItem(`onboarding_completed_${user.id}`, 'true');
+    }
+    setShowOnboarding(false);
+  };
+
+  // Show loading state while auth is initializing
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-teal-900 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-400"></div>
+      </div>
+    );
+  }
+
+  // Show onboarding flow for authenticated users who need it
   if (user && showOnboarding) {
-    return <OnboardingFlow onComplete={() => setShowOnboarding(false)} />;
+    return <OnboardingFlow onComplete={handleOnboardingComplete} />;
   }
 
   // Show dashboard for authenticated users who have completed onboarding
