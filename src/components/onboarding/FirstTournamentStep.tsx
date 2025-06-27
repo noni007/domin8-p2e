@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -6,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Trophy, Users, Calendar, DollarSign, Clock, MapPin } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { useOnboardingAnalytics } from "@/hooks/useOnboardingAnalytics";
 import { toast } from "@/hooks/use-toast";
 import type { Tables } from "@/integrations/supabase/types";
 
@@ -13,6 +13,7 @@ type Tournament = Tables<'tournaments'>;
 
 export const FirstTournamentStep = () => {
   const { user } = useAuth();
+  const { trackTournamentRegistration } = useOnboardingAnalytics();
   const [tournaments, setTournaments] = useState<Tournament[]>([]);
   const [loading, setLoading] = useState(true);
   const [registering, setRegistering] = useState<string | null>(null);
@@ -54,6 +55,9 @@ export const FirstTournamentStep = () => {
         });
 
       if (error) throw error;
+
+      // Track tournament registration in analytics
+      trackTournamentRegistration(tournamentId);
 
       toast({
         title: "Registration Successful! 🎉",

@@ -1,13 +1,15 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { CheckCircle, ChevronRight, Trophy, Users, Gamepad2, Star, Wallet, Target } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { useOnboardingAnalytics } from "@/hooks/useOnboardingAnalytics";
 import { ProfileSetupStep } from "./ProfileSetupStep";
 import { FeatureDiscoveryStep } from "./FeatureDiscoveryStep";
 import { FirstTournamentStep } from "./FirstTournamentStep";
+import { OnboardingProgress } from "./OnboardingProgress";
 import { toast } from "@/hooks/use-toast";
 
 interface OnboardingFlowProps {
@@ -27,12 +29,23 @@ export const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
   const { user, refreshProfile } = useAuth();
   const [currentStep, setCurrentStep] = useState(0);
   const [completedSteps, setCompletedSteps] = useState<string[]>([]);
+  const [startTime] = useState(new Date());
+  const [stepStartTime, setStepStartTime] = useState(new Date());
   const [profileData, setProfileData] = useState({
     username: '',
     favoriteGames: [] as string[],
     experienceLevel: '',
     bio: ''
   });
+
+  const {
+    trackStepStart,
+    trackStepComplete,
+    trackStepSkipped,
+    trackOnboardingComplete,
+    trackProfileSetup,
+    trackTournamentRegistration
+  } = useOnboardingAnalytics();
 
   const steps: OnboardingStep[] = [
     {
@@ -102,8 +115,20 @@ export const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
     }
   ];
 
+  // Track step start when step changes
+  useEffect(() => {
+    if (steps[currentStep]) {
+      trackStepStart(steps[currentStep].id);
+      setStepStartTime(new Date());
+    }
+  }, [currentStep]);
+
   const handleNext = async () => {
     const current = steps[currentStep];
+    const timeSpent = Math.floor((new Date().getTime() - stepStartTime.getTime()) / 1000);
+    
+    // Track step completion
+    trackStepComplete(current.id, timeSpent);
     
     // Mark current step as completed
     if (!completedSteps.includes(current.id)) {
@@ -113,7 +138,7 @@ export const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
     // Handle profile setup step
     if (current.id === 'profile' && profileData.username) {
       try {
-        // Refresh profile to get latest data
+        trackProfileSetup(profileData);
         await refreshProfile();
         toast({
           title: "Profile Updated!",
@@ -134,6 +159,7 @@ export const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
 
   const handleSkip = () => {
     const current = steps[currentStep];
+    trackStepSkipped(current.id);
     
     if (current.canSkip && currentStep < steps.length - 1) {
       setCurrentStep(currentStep + 1);
@@ -143,6 +169,9 @@ export const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
   };
 
   const handleComplete = () => {
+    const totalTime = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
+    trackOnboardingComplete(totalTime, completedSteps);
+    
     // Use user-specific localStorage key
     if (user) {
       localStorage.setItem(`onboarding_completed_${user.id}`, 'true');
@@ -165,7 +194,15 @@ export const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
   return (
     <div className="fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
       <Card className="w-full max-w-4xl bg-black/60 border-blue-800/30 backdrop-blur-sm my-8">
-        <div className="p-8 space-y-8">
+        <div className="p-8 space-y-6">
+          {/* Analytics Progress */}
+          <OnboardingProgress
+            currentStep={currentStep}
+            totalSteps={steps.length}
+            completedSteps={completedSteps}
+            startTime={startTime}
+          />
+
           {/* Progress Section */}
           <div className="space-y-4">
             <div className="flex justify-between items-center text-sm">
@@ -212,7 +249,7 @@ export const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
               <Button 
                 onClick={handleNext}
                 className="bg-gradient-to-r from-blue-600 to-teal-600 hover:from-blue-700 hover:to-teal-700 min-w-[120px]"
-                disabled={currentStep === 1 && !profileData.username} // Require username for profile step
+                disabled={currentStep === 1 && !profileData.username}
               >
                 {currentStep < steps.length - 1 ? 'Continue' : 'Get Started'}
                 <ChevronRight className="ml-2 h-4 w-4" />
