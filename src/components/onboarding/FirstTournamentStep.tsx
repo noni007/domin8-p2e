@@ -156,8 +156,8 @@ export const FirstTournamentStep = () => {
                   <div className="flex items-center space-x-2 text-gray-300">
                     <Trophy className="h-4 w-4 text-purple-400" />
                     <div>
-                      <p className="text-xs text-gray-400">Format</p>
-                      <p className="text-sm font-medium capitalize">{tournament.format}</p>
+                      <p className="text-xs text-gray-400">Type</p>
+                      <p className="text-sm font-medium capitalize">{tournament.tournament_type}</p>
                     </div>
                   </div>
                 </div>
