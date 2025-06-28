@@ -138,6 +138,138 @@ export type Database = {
         }
         Relationships: []
       }
+      forum_categories: {
+        Row: {
+          created_at: string
+          description: string | null
+          icon: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          order_index: number | null
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          order_index?: number | null
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          order_index?: number | null
+        }
+        Relationships: []
+      }
+      forum_posts: {
+        Row: {
+          author_id: string
+          category_id: string
+          content: string
+          created_at: string
+          id: string
+          is_locked: boolean | null
+          is_pinned: boolean | null
+          last_reply_at: string | null
+          reply_count: number | null
+          title: string
+          updated_at: string
+          view_count: number | null
+        }
+        Insert: {
+          author_id: string
+          category_id: string
+          content: string
+          created_at?: string
+          id?: string
+          is_locked?: boolean | null
+          is_pinned?: boolean | null
+          last_reply_at?: string | null
+          reply_count?: number | null
+          title: string
+          updated_at?: string
+          view_count?: number | null
+        }
+        Update: {
+          author_id?: string
+          category_id?: string
+          content?: string
+          created_at?: string
+          id?: string
+          is_locked?: boolean | null
+          is_pinned?: boolean | null
+          last_reply_at?: string | null
+          reply_count?: number | null
+          title?: string
+          updated_at?: string
+          view_count?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_post_author"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_post_category"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "forum_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      forum_replies: {
+        Row: {
+          author_id: string
+          content: string
+          created_at: string
+          id: string
+          post_id: string
+          updated_at: string
+        }
+        Insert: {
+          author_id: string
+          content: string
+          created_at?: string
+          id?: string
+          post_id: string
+          updated_at?: string
+        }
+        Update: {
+          author_id?: string
+          content?: string
+          created_at?: string
+          id?: string
+          post_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_reply_author"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_reply_post"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "forum_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       friend_requests: {
         Row: {
           created_at: string
@@ -185,6 +317,127 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      live_match_sessions: {
+        Row: {
+          created_at: string
+          ended_at: string | null
+          id: string
+          match_id: string
+          metadata: Json | null
+          spectator_count: number | null
+          started_at: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          ended_at?: string | null
+          id?: string
+          match_id: string
+          metadata?: Json | null
+          spectator_count?: number | null
+          started_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          ended_at?: string | null
+          id?: string
+          match_id?: string
+          metadata?: Json | null
+          spectator_count?: number | null
+          started_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_live_match"
+            columns: ["match_id"]
+            isOneToOne: false
+            referencedRelation: "matches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      match_events: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          event_data: Json | null
+          event_type: string
+          id: string
+          match_id: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          event_data?: Json | null
+          event_type: string
+          id?: string
+          match_id: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          event_data?: Json | null
+          event_type?: string
+          id?: string
+          match_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_event_match"
+            columns: ["match_id"]
+            isOneToOne: false
+            referencedRelation: "matches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      match_spectators: {
+        Row: {
+          id: string
+          is_active: boolean | null
+          joined_at: string
+          left_at: string | null
+          match_id: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          is_active?: boolean | null
+          joined_at?: string
+          left_at?: string | null
+          match_id: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          is_active?: boolean | null
+          joined_at?: string
+          left_at?: string | null
+          match_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_spectator_match"
+            columns: ["match_id"]
+            isOneToOne: false
+            referencedRelation: "matches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_spectator_user"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       matches: {
         Row: {
@@ -347,35 +600,91 @@ export type Database = {
       profiles: {
         Row: {
           avatar_url: string | null
+          best_streak: number | null
           bio: string | null
           created_at: string
+          current_streak: number | null
           email: string
+          games_played: number | null
           id: string
+          skill_rating: number | null
           updated_at: string
           user_type: string
           username: string | null
+          win_rate: number | null
         }
         Insert: {
           avatar_url?: string | null
+          best_streak?: number | null
           bio?: string | null
           created_at?: string
+          current_streak?: number | null
           email: string
+          games_played?: number | null
           id: string
+          skill_rating?: number | null
           updated_at?: string
           user_type?: string
           username?: string | null
+          win_rate?: number | null
         }
         Update: {
           avatar_url?: string | null
+          best_streak?: number | null
           bio?: string | null
           created_at?: string
+          current_streak?: number | null
           email?: string
+          games_played?: number | null
           id?: string
+          skill_rating?: number | null
           updated_at?: string
           user_type?: string
           username?: string | null
+          win_rate?: number | null
         }
         Relationships: []
+      }
+      skill_rating_history: {
+        Row: {
+          created_at: string
+          id: string
+          match_id: string | null
+          rating_after: number
+          rating_before: number
+          rating_change: number
+          tournament_id: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          match_id?: string | null
+          rating_after: number
+          rating_before: number
+          rating_change: number
+          tournament_id?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          match_id?: string | null
+          rating_after?: number
+          rating_before?: number
+          rating_change?: number
+          tournament_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_skill_rating_user"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       team_invitations: {
         Row: {
@@ -554,6 +863,50 @@ export type Database = {
           },
         ]
       }
+      tournament_analytics: {
+        Row: {
+          average_match_duration: unknown | null
+          completion_rate: number | null
+          created_at: string
+          id: string
+          revenue_generated: number | null
+          spectator_engagement: Json | null
+          total_matches: number | null
+          total_participants: number | null
+          tournament_id: string
+        }
+        Insert: {
+          average_match_duration?: unknown | null
+          completion_rate?: number | null
+          created_at?: string
+          id?: string
+          revenue_generated?: number | null
+          spectator_engagement?: Json | null
+          total_matches?: number | null
+          total_participants?: number | null
+          tournament_id: string
+        }
+        Update: {
+          average_match_duration?: unknown | null
+          completion_rate?: number | null
+          created_at?: string
+          id?: string
+          revenue_generated?: number | null
+          spectator_engagement?: Json | null
+          total_matches?: number | null
+          total_participants?: number | null
+          tournament_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_analytics_tournament"
+            columns: ["tournament_id"]
+            isOneToOne: false
+            referencedRelation: "tournaments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tournament_participants: {
         Row: {
           id: string
@@ -722,6 +1075,50 @@ export type Database = {
         }
         Relationships: []
       }
+      user_session_analytics: {
+        Row: {
+          actions_performed: number | null
+          browser: string | null
+          created_at: string
+          device_type: string | null
+          id: string
+          pages_visited: number | null
+          session_end: string | null
+          session_start: string
+          user_id: string
+        }
+        Insert: {
+          actions_performed?: number | null
+          browser?: string | null
+          created_at?: string
+          device_type?: string | null
+          id?: string
+          pages_visited?: number | null
+          session_end?: string | null
+          session_start: string
+          user_id: string
+        }
+        Update: {
+          actions_performed?: number | null
+          browser?: string | null
+          created_at?: string
+          device_type?: string | null
+          id?: string
+          pages_visited?: number | null
+          session_end?: string | null
+          session_start?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_session_user"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_wallets: {
         Row: {
           balance: number
@@ -861,6 +1258,10 @@ export type Database = {
       is_admin: {
         Args: { user_id: string }
         Returns: boolean
+      }
+      update_skill_rating: {
+        Args: { winner_id: string; loser_id: string; match_id: string }
+        Returns: undefined
       }
       update_tournament_prize_pool: {
         Args: { tournament_id: string; amount: number }

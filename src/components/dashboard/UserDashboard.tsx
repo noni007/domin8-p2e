@@ -1,7 +1,8 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
-import { useUserStats } from "@/hooks/useUserStats";
+import { useEnhancedUserStats } from "@/hooks/useEnhancedUserStats";
 import { useTournaments } from "@/hooks/useTournaments";
 import { TournamentCard } from "@/components/tournaments/TournamentCard";
 import { EnhancedActivityFeed } from "@/components/activity/EnhancedActivityFeed";
@@ -20,7 +21,7 @@ type Tournament = Tables<'tournaments'> & {
 
 export const UserDashboard = () => {
   const { user } = useAuth();
-  const { stats } = useUserStats(user?.id);
+  const { stats } = useEnhancedUserStats(user?.id);
   const { tournaments } = useTournaments();
   const { toast } = useToast();
   const [userRegistrations, setUserRegistrations] = useState<string[]>([]);
@@ -100,7 +101,7 @@ export const UserDashboard = () => {
       {/* Personalized Welcome Section */}
       <PersonalizedWelcome />
 
-      {/* Quick Stats */}
+      {/* Enhanced Quick Stats */}
       {stats && (
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           <Card className="bg-black/40 border-blue-800/30 backdrop-blur-sm">
@@ -108,8 +109,8 @@ export const UserDashboard = () => {
               <div className="flex items-center space-x-2">
                 <Trophy className="h-8 w-8 text-yellow-400" />
                 <div>
-                  <p className="text-2xl font-bold text-white">{stats.tournamentsWon}</p>
-                  <p className="text-sm text-gray-400">Tournaments Won</p>
+                  <p className="text-2xl font-bold text-white">{stats.skill_rating}</p>
+                  <p className="text-sm text-gray-400">Skill Rating</p>
                 </div>
               </div>
             </CardContent>
@@ -120,7 +121,7 @@ export const UserDashboard = () => {
               <div className="flex items-center space-x-2">
                 <TrendingUp className="h-8 w-8 text-green-400" />
                 <div>
-                  <p className="text-2xl font-bold text-white">{stats.winRate.toFixed(1)}%</p>
+                  <p className="text-2xl font-bold text-white">{((stats.win_rate || 0) * 100).toFixed(1)}%</p>
                   <p className="text-sm text-gray-400">Win Rate</p>
                 </div>
               </div>
@@ -144,7 +145,7 @@ export const UserDashboard = () => {
               <div className="flex items-center space-x-2">
                 <Calendar className="h-8 w-8 text-purple-400" />
                 <div>
-                  <p className="text-2xl font-bold text-white">{stats.currentStreak}</p>
+                  <p className="text-2xl font-bold text-white">{stats.current_streak}</p>
                   <p className="text-sm text-gray-400">Current Streak</p>
                 </div>
               </div>
