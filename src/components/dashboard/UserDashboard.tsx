@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
@@ -8,6 +7,7 @@ import { TournamentCard } from "@/components/tournaments/TournamentCard";
 import { EnhancedActivityFeed } from "@/components/activity/EnhancedActivityFeed";
 import { SocialActivityFeed } from "@/components/activity/SocialActivityFeed";
 import { RealTimeUpdates } from "@/components/notifications/RealTimeUpdates";
+import { PersonalizedWelcome } from "./PersonalizedWelcome";
 import { Trophy, Users, Calendar, TrendingUp } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useState, useEffect } from "react";
@@ -97,15 +97,8 @@ export const UserDashboard = () => {
       {/* Real-time Updates */}
       <RealTimeUpdates userId={user?.id || ''} />
 
-      {/* Welcome Section */}
-      <div className="text-center space-y-4">
-        <h1 className="text-4xl font-bold text-white mb-2">
-          Welcome back, {user?.email?.split('@')[0] || 'Gamer'}! 🎮
-        </h1>
-        <p className="text-gray-400">
-          Ready to dominate some tournaments today?
-        </p>
-      </div>
+      {/* Personalized Welcome Section */}
+      <PersonalizedWelcome />
 
       {/* Quick Stats */}
       {stats && (
