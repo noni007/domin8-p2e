@@ -20,6 +20,7 @@ import Leaderboards from '@/pages/Leaderboards'
 import Admin from '@/pages/Admin'
 import Wallet from '@/pages/Wallet'
 import NotFound from '@/pages/NotFound'
+import MobileDevelopmentGuide from '@/pages/MobileDevelopmentGuide'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -52,6 +53,7 @@ function App() {
                   <Route path="/leaderboards" element={<Leaderboards />} />
                   <Route path="/admin" element={<Admin />} />
                   <Route path="/wallet" element={<Wallet />} />
+                  <Route path="/mobile-guide" element={<MobileDevelopmentGuide />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </main>
