@@ -1,7 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, Smartphone, Download, Play, Settings } from "lucide-react";
+import { ArrowLeft, Smartphone, Download, Play, Settings, TestTube } from "lucide-react";
 import { Link } from "react-router-dom";
+import { MobileFeaturesDemo } from "@/components/mobile/MobileFeaturesDemo";
 
 const MobileDevelopmentGuide = () => {
   return (
@@ -112,6 +113,22 @@ const MobileDevelopmentGuide = () => {
               <li><strong>Social Features:</strong> Friend system and team management</li>
               <li><strong>Performance:</strong> Loading times and smooth navigation</li>
             </ul>
+          </CardContent>
+        </Card>
+
+        {/* Native Features Testing */}
+        <Card className="mb-8 bg-black/20 border-blue-800/30">
+          <CardHeader>
+            <CardTitle className="text-white flex items-center">
+              <TestTube className="h-5 w-5 mr-2" />
+              Test Native Features
+            </CardTitle>
+            <CardDescription className="text-gray-300">
+              Test camera, location, push notifications, and haptics. Web version shows graceful fallbacks.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <MobileFeaturesDemo />
           </CardContent>
         </Card>
 
