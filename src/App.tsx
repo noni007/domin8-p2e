@@ -5,6 +5,8 @@ import { Footer } from '@/components/layout/Footer'
 import { AuthProvider } from '@/hooks/useAuth'
 import { Toaster } from '@/components/ui/toaster'
 import { ThemeProvider } from '@/hooks/useTheme'
+import { MobileOptimizations } from '@/components/mobile/MobileOptimizations'
+import { DeviceCompatibilityTester } from '@/components/testing/DeviceCompatibilityTester'
 
 // Pages
 import Index from '@/pages/Index'
@@ -36,31 +38,34 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
         <AuthProvider>
-          <Router>
-            <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-teal-900">
-              <Navigation />
-              <main>
-                <Routes>
-                  <Route path="/" element={<Index />} />
-                  <Route path="/tournaments" element={<Tournaments />} />
-                  <Route path="/rankings" element={<Rankings />} />
-                  <Route path="/teams" element={<Teams />} />
-                  <Route path="/profile" element={<Profile />} />
-                  <Route path="/profile/:userId" element={<UserProfile />} />
-                  <Route path="/activity" element={<Activity />} />
-                  <Route path="/auth" element={<Auth />} />
-                  <Route path="/friends" element={<Friends />} />
-                  <Route path="/leaderboards" element={<Leaderboards />} />
-                  <Route path="/admin" element={<Admin />} />
-                  <Route path="/wallet" element={<Wallet />} />
-                  <Route path="/mobile-guide" element={<MobileDevelopmentGuide />} />
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-              </main>
-              <Footer />
-            </div>
-            <Toaster />
-          </Router>
+          <MobileOptimizations>
+            <Router>
+              <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-teal-900">
+                <Navigation />
+                <main>
+                  <Routes>
+                    <Route path="/" element={<Index />} />
+                    <Route path="/tournaments" element={<Tournaments />} />
+                    <Route path="/rankings" element={<Rankings />} />
+                    <Route path="/teams" element={<Teams />} />
+                    <Route path="/profile" element={<Profile />} />
+                    <Route path="/profile/:userId" element={<UserProfile />} />
+                    <Route path="/activity" element={<Activity />} />
+                    <Route path="/auth" element={<Auth />} />
+                    <Route path="/friends" element={<Friends />} />
+                    <Route path="/leaderboards" element={<Leaderboards />} />
+                    <Route path="/admin" element={<Admin />} />
+                    <Route path="/wallet" element={<Wallet />} />
+                    <Route path="/mobile-guide" element={<MobileDevelopmentGuide />} />
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                </main>
+                <Footer />
+                <DeviceCompatibilityTester />
+              </div>
+              <Toaster />
+            </Router>
+          </MobileOptimizations>
         </AuthProvider>
       </ThemeProvider>
     </QueryClientProvider>
