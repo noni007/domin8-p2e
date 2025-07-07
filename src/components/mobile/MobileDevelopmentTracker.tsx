@@ -96,22 +96,25 @@ const MOBILE_ROADMAP: Milestone[] = [
         id: 'profile-mobile',
         title: 'Profile Pages Mobile',
         description: 'User profiles optimized for mobile viewing',
-        status: 'pending',
-        estimatedHours: 4
+        status: 'completed',
+        estimatedHours: 4,
+        actualHours: 3
       },
       {
         id: 'wallet-mobile',
         title: 'Wallet Mobile Optimization',
         description: 'Mobile-friendly wallet interface',
-        status: 'pending',
-        estimatedHours: 5
+        status: 'completed',
+        estimatedHours: 5,
+        actualHours: 2
       },
       {
         id: 'teams-mobile',
         title: 'Teams & Friends Mobile',
         description: 'Social features mobile optimization',
-        status: 'pending',
-        estimatedHours: 4
+        status: 'completed',
+        estimatedHours: 4,
+        actualHours: 3
       }
     ]
   },

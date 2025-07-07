@@ -38,45 +38,45 @@ export const ProfileHeader = ({ profile, stats, isOwnProfile, onEditProfile }: P
 
   return (
     <Card className="bg-black/40 border-blue-800/30 backdrop-blur-sm">
-      <CardContent className="p-8">
-        <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
-          <Avatar className="h-24 w-24">
+      <CardContent className="p-4 sm:p-6 lg:p-8">
+        <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6">
+          <Avatar className="h-20 w-20 sm:h-24 sm:w-24">
             <AvatarImage src={profile.avatar_url || undefined} />
-            <AvatarFallback className="bg-blue-600 text-white text-2xl">
+            <AvatarFallback className="bg-blue-600 text-white text-xl sm:text-2xl">
               {profile.username?.charAt(0).toUpperCase() || 'U'}
             </AvatarFallback>
           </Avatar>
           
-          <div className="flex-1">
-            <h1 className="text-3xl font-bold text-white mb-2">
+          <div className="flex-1 text-center sm:text-left">
+            <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">
               {profile.username || 'Anonymous Player'}
             </h1>
-            <div className="flex flex-wrap items-center gap-3 mb-4">
-              <Badge className={`${tier.color} text-white`}>
-                <Trophy className="h-4 w-4 mr-1" />
+            <div className="flex flex-wrap justify-center sm:justify-start items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+              <Badge className={`${tier.color} text-white text-xs sm:text-sm`}>
+                <Trophy className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
                 {tier.name}
               </Badge>
               {stats && (
-                <Badge variant="outline" className="border-gray-600 text-gray-300">
-                  <TrendingUp className="h-4 w-4 mr-1" />
+                <Badge variant="outline" className="border-gray-600 text-gray-300 text-xs sm:text-sm">
+                  <TrendingUp className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
                   Rank #{stats.rank}
                 </Badge>
               )}
-              <Badge variant="outline" className="border-gray-600 text-gray-300">
-                <Calendar className="h-4 w-4 mr-1" />
+              <Badge variant="outline" className="border-gray-600 text-gray-300 text-xs sm:text-sm">
+                <Calendar className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
                 Joined {new Date(profile.created_at).toLocaleDateString()}
               </Badge>
             </div>
             {profile.bio && (
-              <p className="text-gray-300 mb-4">{profile.bio}</p>
+              <p className="text-gray-300 mb-3 sm:mb-4 text-sm sm:text-base">{profile.bio}</p>
             )}
             {isOwnProfile && onEditProfile && (
               <Button 
                 onClick={onEditProfile}
                 variant="outline"
-                className="border-blue-400 text-blue-400 hover:bg-blue-400 hover:text-black"
+                className="border-blue-400 text-blue-400 hover:bg-blue-400 hover:text-black touch-manipulation text-sm sm:text-base px-4 sm:px-6 py-2 sm:py-3"
               >
-                <Settings className="h-4 w-4 mr-2" />
+                <Settings className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
                 Edit Profile
               </Button>
             )}
