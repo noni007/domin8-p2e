@@ -27,14 +27,14 @@ export const Navigation = () => {
   return (
     <>
       <nav className="bg-black/20 backdrop-blur-sm border-b border-blue-800/30 sticky top-0 z-50">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between h-16">
+        <div className="container mx-auto px-3 sm:px-4">
+          <div className="flex items-center justify-between h-14 sm:h-16">
             {/* Logo */}
-            <Link to="/" className="flex items-center">
+            <Link to="/" className="flex items-center touch-manipulation">
               <img 
                 src="/lovable-uploads/be31ac20-7045-4c65-bf6f-1dda987cd378.png" 
                 alt="Domin8 Logo" 
-                className="h-10 w-auto"
+                className="h-8 sm:h-10 w-auto"
               />
             </Link>
 
@@ -100,7 +100,7 @@ export const Navigation = () => {
                 variant="ghost"
                 size="sm"
                 onClick={() => setShowMobileMenu(true)}
-                className="text-white"
+                className="text-white touch-manipulation min-h-[44px] min-w-[44px] p-2"
               >
                 <Menu className="h-6 w-6" />
               </Button>

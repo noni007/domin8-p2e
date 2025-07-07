@@ -1,8 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, Smartphone, Download, Play, Settings, TestTube } from "lucide-react";
+import { ArrowLeft, Smartphone, Download, Play, Settings, TestTube, Map } from "lucide-react";
 import { Link } from "react-router-dom";
 import { MobileFeaturesDemo } from "@/components/mobile/MobileFeaturesDemo";
+import { MobileDevelopmentTracker } from "@/components/mobile/MobileDevelopmentTracker";
 
 const MobileDevelopmentGuide = () => {
   return (
@@ -23,6 +24,22 @@ const MobileDevelopmentGuide = () => {
             How to run Domin8 P2E on mobile devices using Capacitor
           </p>
         </div>
+
+        {/* Development Roadmap & Progress */}
+        <Card className="mb-8 bg-black/20 border-blue-800/30">
+          <CardHeader>
+            <CardTitle className="text-white flex items-center">
+              <Map className="h-5 w-5 mr-2" />
+              Development Roadmap & Progress
+            </CardTitle>
+            <CardDescription className="text-gray-300">
+              Track mobile development milestones and current progress
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <MobileDevelopmentTracker />
+          </CardContent>
+        </Card>
 
         {/* Prerequisites */}
         <Card className="mb-8 bg-black/20 border-blue-800/30">
