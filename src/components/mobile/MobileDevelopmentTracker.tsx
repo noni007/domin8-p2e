@@ -88,8 +88,9 @@ const MOBILE_ROADMAP: Milestone[] = [
         id: 'tournaments-mobile',
         title: 'Tournaments Page Mobile',
         description: 'Mobile-optimized tournament browsing and management',
-        status: 'pending',
-        estimatedHours: 6
+        status: 'completed',
+        estimatedHours: 6,
+        actualHours: 4
       },
       {
         id: 'profile-mobile',

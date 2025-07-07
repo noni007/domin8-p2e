@@ -21,10 +21,10 @@ export const HeroSection = () => {
             and dominate the esports scene with AER - Africa Esports Ranking.
           </p>
           
-          <div className="flex flex-col gap-3 sm:gap-4 justify-center px-4 max-w-md sm:max-w-none mx-auto">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-4 max-w-md sm:max-w-none mx-auto">
             <Button 
               size="lg" 
-              className="bg-gradient-to-r from-blue-600 to-teal-600 hover:from-blue-700 hover:to-teal-700 text-sm sm:text-base md:text-lg px-6 sm:px-8 py-3 sm:py-4 h-12 sm:h-auto touch-manipulation"
+              className="bg-gradient-to-r from-blue-600 to-teal-600 hover:from-blue-700 hover:to-teal-700 text-sm sm:text-base lg:text-lg px-6 sm:px-8 py-3 sm:py-4 touch-manipulation w-full sm:w-auto"
               onClick={() => window.location.href = '/tournaments'}
             >
               Join Tournament
@@ -33,7 +33,7 @@ export const HeroSection = () => {
             <Button 
               size="lg" 
               variant="outline" 
-              className="border-yellow-400 text-yellow-400 hover:bg-yellow-400 hover:text-black text-sm sm:text-base md:text-lg px-6 sm:px-8 py-3 sm:py-4 h-12 sm:h-auto touch-manipulation"
+              className="border-yellow-400 text-yellow-400 hover:bg-yellow-400 hover:text-black text-sm sm:text-base lg:text-lg px-6 sm:px-8 py-3 sm:py-4 touch-manipulation w-full sm:w-auto"
               onClick={() => window.location.href = '/leaderboards'}
             >
               View Leaderboards
