@@ -4,6 +4,7 @@ import { ArrowLeft, Smartphone, Download, Play, Settings, TestTube, Map } from "
 import { Link } from "react-router-dom";
 import { MobileFeaturesDemo } from "@/components/mobile/MobileFeaturesDemo";
 import { MobileDevelopmentTracker } from "@/components/mobile/MobileDevelopmentTracker";
+import { MobileTestingSuite } from "@/components/testing/MobileTestingSuite";
 
 const MobileDevelopmentGuide = () => {
   return (
@@ -133,11 +134,27 @@ const MobileDevelopmentGuide = () => {
           </CardContent>
         </Card>
 
-        {/* Native Features Testing */}
+        {/* Mobile Testing Suite */}
         <Card className="mb-8 bg-black/20 border-blue-800/30">
           <CardHeader>
             <CardTitle className="text-white flex items-center">
               <TestTube className="h-5 w-5 mr-2" />
+              Mobile Testing & Validation Suite
+            </CardTitle>
+            <CardDescription className="text-gray-300">
+              Comprehensive testing tools for device compatibility, performance, and accessibility
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <MobileTestingSuite />
+          </CardContent>
+        </Card>
+
+        {/* Native Features Testing */}
+        <Card className="mb-8 bg-black/20 border-blue-800/30">
+          <CardHeader>
+            <CardTitle className="text-white flex items-center">
+              <Smartphone className="h-5 w-5 mr-2" />
               Test Native Features
             </CardTitle>
             <CardDescription className="text-gray-300">

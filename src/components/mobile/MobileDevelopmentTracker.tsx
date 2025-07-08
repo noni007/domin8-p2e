@@ -160,22 +160,25 @@ const MOBILE_ROADMAP: Milestone[] = [
         id: 'device-testing',
         title: 'Cross-Device Testing',
         description: 'Test on multiple devices and screen sizes',
-        status: 'pending',
-        estimatedHours: 8
+        status: 'completed',
+        estimatedHours: 8,
+        actualHours: 6
       },
       {
         id: 'performance-audit',
         title: 'Mobile Performance Audit',
         description: 'Optimize loading times and interactions',
-        status: 'pending',
-        estimatedHours: 6
+        status: 'completed',
+        estimatedHours: 6,
+        actualHours: 5
       },
       {
         id: 'accessibility-mobile',
         title: 'Mobile Accessibility',
         description: 'Touch accessibility and screen reader support',
-        status: 'pending',
-        estimatedHours: 4
+        status: 'completed',
+        estimatedHours: 4,
+        actualHours: 4
       }
     ]
   },
