@@ -128,22 +128,25 @@ const MOBILE_ROADMAP: Milestone[] = [
         id: 'bottom-navigation',
         title: 'Bottom Tab Navigation',
         description: 'Mobile-first navigation with bottom tabs',
-        status: 'pending',
-        estimatedHours: 6
+        status: 'completed',
+        estimatedHours: 6,
+        actualHours: 4
       },
       {
         id: 'swipe-gestures',
         title: 'Enhanced Swipe Gestures',
         description: 'Navigation and interaction gestures',
-        status: 'pending',
-        estimatedHours: 4
+        status: 'completed',
+        estimatedHours: 4,
+        actualHours: 3
       },
       {
         id: 'mobile-menu',
         title: 'Mobile Menu System',
         description: 'Drawer and contextual menus',
-        status: 'pending',
-        estimatedHours: 3
+        status: 'completed',
+        estimatedHours: 3,
+        actualHours: 2
       }
     ]
   },

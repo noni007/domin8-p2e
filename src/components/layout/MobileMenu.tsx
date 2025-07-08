@@ -4,7 +4,8 @@ import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
 import { useAuth } from '@/hooks/useAuth'
 import { useAdmin } from '@/hooks/useAdmin'
-import { Trophy, Shield, Wallet, X } from 'lucide-react'
+import { useSwipeGestures } from '@/hooks/useSwipeGestures'
+import { Trophy, Shield, Wallet, User, Settings } from 'lucide-react'
 
 interface MobileMenuProps {
   isOpen: boolean
@@ -15,6 +16,12 @@ interface MobileMenuProps {
 export const MobileMenu = ({ isOpen, onClose, onAuthClick }: MobileMenuProps) => {
   const { user, signOut } = useAuth()
   const { isAdmin } = useAdmin()
+
+  // Add swipe gesture to close menu
+  const swipeRef = useSwipeGestures({
+    onSwipeRight: onClose,
+    threshold: 100
+  })
 
   const navItems = [
     { to: '/tournaments', label: 'Tournaments' },
@@ -35,11 +42,18 @@ export const MobileMenu = ({ isOpen, onClose, onAuthClick }: MobileMenuProps) =>
 
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
-      <SheetContent side="right" className="w-[300px] bg-slate-900 border-blue-800/30">
+      <SheetContent 
+        ref={swipeRef as any}
+        side="right" 
+        className="w-[300px] bg-slate-900/95 backdrop-blur-md border-blue-800/30"
+      >
         <SheetHeader>
-          <SheetTitle className="text-white flex items-center">
-            <Trophy className="h-5 w-5 mr-2 text-blue-400" />
-            TourneyPro
+          <SheetTitle className="text-white flex items-center justify-between">
+            <div className="flex items-center">
+              <Trophy className="h-5 w-5 mr-2 text-blue-400" />
+              Domin8 P2E
+            </div>
+            <span className="text-xs text-gray-400">Swipe right to close</span>
           </SheetTitle>
         </SheetHeader>
         
@@ -70,9 +84,18 @@ export const MobileMenu = ({ isOpen, onClose, onAuthClick }: MobileMenuProps) =>
               <Link
                 to="/profile"
                 onClick={handleLinkClick}
+                className="text-gray-300 hover:text-white transition-colors py-2 flex items-center"
+              >
+                <User className="h-4 w-4 mr-2" />
+                Profile
+              </Link>
+              
+              <Link
+                to="/friends"
+                onClick={handleLinkClick}
                 className="text-gray-300 hover:text-white transition-colors py-2"
               >
-                Profile
+                Friends
               </Link>
             </>
           )}

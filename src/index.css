@@ -93,6 +93,13 @@
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
+
+  /* Mobile bottom navigation spacing */
+  @media (max-width: 768px) {
+    body {
+      padding-bottom: 80px;
+    }
+  }
 }
 
 @layer utilities {

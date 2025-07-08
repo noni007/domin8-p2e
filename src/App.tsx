@@ -1,6 +1,8 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Navigation } from '@/components/layout/Navigation'
+import { BottomNavigation } from '@/components/layout/BottomNavigation'
+import { SwipeableLayout } from '@/components/layout/SwipeableLayout'
 import { Footer } from '@/components/layout/Footer'
 import { AuthProvider } from '@/hooks/useAuth'
 import { Toaster } from '@/components/ui/toaster'
@@ -42,24 +44,27 @@ function App() {
             <Router>
               <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-teal-900">
                 <Navigation />
-                <main>
-                  <Routes>
-                    <Route path="/" element={<Index />} />
-                    <Route path="/tournaments" element={<Tournaments />} />
-                    <Route path="/rankings" element={<Rankings />} />
-                    <Route path="/teams" element={<Teams />} />
-                    <Route path="/profile" element={<Profile />} />
-                    <Route path="/profile/:userId" element={<UserProfile />} />
-                    <Route path="/activity" element={<Activity />} />
-                    <Route path="/auth" element={<Auth />} />
-                    <Route path="/friends" element={<Friends />} />
-                    <Route path="/leaderboards" element={<Leaderboards />} />
-                    <Route path="/admin" element={<Admin />} />
-                    <Route path="/wallet" element={<Wallet />} />
-                    <Route path="/mobile-guide" element={<MobileDevelopmentGuide />} />
-                    <Route path="*" element={<NotFound />} />
-                  </Routes>
-                </main>
+                <SwipeableLayout>
+                  <main>
+                    <Routes>
+                      <Route path="/" element={<Index />} />
+                      <Route path="/tournaments" element={<Tournaments />} />
+                      <Route path="/rankings" element={<Rankings />} />
+                      <Route path="/teams" element={<Teams />} />
+                      <Route path="/profile" element={<Profile />} />
+                      <Route path="/profile/:userId" element={<UserProfile />} />
+                      <Route path="/activity" element={<Activity />} />
+                      <Route path="/auth" element={<Auth />} />
+                      <Route path="/friends" element={<Friends />} />
+                      <Route path="/leaderboards" element={<Leaderboards />} />
+                      <Route path="/admin" element={<Admin />} />
+                      <Route path="/wallet" element={<Wallet />} />
+                      <Route path="/mobile-guide" element={<MobileDevelopmentGuide />} />
+                      <Route path="*" element={<NotFound />} />
+                    </Routes>
+                  </main>
+                </SwipeableLayout>
+                <BottomNavigation />
                 <Footer />
                 <DeviceCompatibilityTester />
               </div>
