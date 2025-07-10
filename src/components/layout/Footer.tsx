@@ -6,10 +6,7 @@ import {
   Youtube, 
   Mail, 
   MapPin, 
-  Phone,
-  Shield,
-  Lock,
-  Check
+  Phone
 } from "lucide-react";
 
 export const Footer = () => {
@@ -123,54 +120,8 @@ export const Footer = () => {
           </div>
         </div>
 
-        {/* Security & Compliance Badges */}
-        <div className="border-t border-gray-800 mt-12 pt-8 pb-6">
-          <div className="text-center mb-6">
-            <h3 className="text-lg font-semibold text-white mb-2">Security & Compliance</h3>
-            <p className="text-sm text-gray-400">Your data and transactions are protected by industry-leading security standards</p>
-          </div>
-          
-          <div className="flex flex-wrap justify-center items-center gap-6 md:gap-8">
-            {/* GDPR Compliance */}
-            <div className="flex items-center space-x-2 bg-gray-800/50 px-4 py-2 rounded-lg border border-gray-700 hover:border-blue-500 transition-colors">
-              <Shield className="h-5 w-5 text-green-400" />
-              <div className="text-left">
-                <div className="text-sm font-semibold text-white">GDPR</div>
-                <div className="text-xs text-gray-400">Compliant</div>
-              </div>
-            </div>
-
-            {/* PCI DSS Compliance */}
-            <div className="flex items-center space-x-2 bg-gray-800/50 px-4 py-2 rounded-lg border border-gray-700 hover:border-blue-500 transition-colors">
-              <Lock className="h-5 w-5 text-blue-400" />
-              <div className="text-left">
-                <div className="text-sm font-semibold text-white">PCI DSS</div>
-                <div className="text-xs text-gray-400">Level 1</div>
-              </div>
-            </div>
-
-            {/* SSL Encryption */}
-            <div className="flex items-center space-x-2 bg-gray-800/50 px-4 py-2 rounded-lg border border-gray-700 hover:border-blue-500 transition-colors">
-              <Check className="h-5 w-5 text-green-400" />
-              <div className="text-left">
-                <div className="text-sm font-semibold text-white">SSL</div>
-                <div className="text-xs text-gray-400">256-bit</div>
-              </div>
-            </div>
-
-            {/* Data Protection */}
-            <div className="flex items-center space-x-2 bg-gray-800/50 px-4 py-2 rounded-lg border border-gray-700 hover:border-blue-500 transition-colors">
-              <Shield className="h-5 w-5 text-purple-400" />
-              <div className="text-left">
-                <div className="text-sm font-semibold text-white">ISO 27001</div>
-                <div className="text-xs text-gray-400">Certified</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
         {/* Bottom Bar */}
-        <div className="border-t border-gray-800 pt-8">
+        <div className="border-t border-gray-800 mt-12 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <div className="text-sm text-gray-400">
               © {currentYear} Domin8. All rights reserved.

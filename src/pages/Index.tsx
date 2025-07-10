@@ -12,6 +12,7 @@ import { TournamentShowcaseSection } from "@/components/home/TournamentShowcaseS
 import { ComingSoonSection } from "@/components/home/ComingSoonSection";
 import { CommunitySection } from "@/components/home/CommunitySection";
 import { CTASection } from "@/components/home/CTASection";
+import { ComplianceSection } from "@/components/home/ComplianceSection";
 import { CoreFunctionalityTester } from "@/components/testing/CoreFunctionalityTester";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -81,6 +82,7 @@ const Index = () => {
       <ComingSoonSection />
       <CommunitySection />
       <CTASection />
+      <ComplianceSection />
     </>
   );
 };
