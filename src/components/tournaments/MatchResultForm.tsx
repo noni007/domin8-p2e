@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useMatchResults } from "@/hooks/useMatchResults";
 import { Trophy, Loader2 } from "lucide-react";
+import { EnhancedMediaGenerator } from "@/components/social/EnhancedMediaGenerator";
 
 interface MatchResultFormProps {
   matchId: string;
@@ -14,6 +15,7 @@ interface MatchResultFormProps {
   player1Name: string;
   player2Name: string;
   tournamentId: string;
+  tournamentGame?: string;
   onResultSubmitted: () => void;
 }
 
@@ -24,10 +26,12 @@ export const MatchResultForm = ({
   player1Name,
   player2Name,
   tournamentId,
+  tournamentGame = "Tournament",
   onResultSubmitted
 }: MatchResultFormProps) => {
   const [player1Score, setPlayer1Score] = useState(0);
   const [player2Score, setPlayer2Score] = useState(0);
+  const [showImageGenerator, setShowImageGenerator] = useState(false);
   const { submitMatchResult, loading } = useMatchResults();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -43,6 +47,7 @@ export const MatchResultForm = ({
     );
 
     if (success) {
+      setShowImageGenerator(true);
       onResultSubmitted();
     }
   };
@@ -105,6 +110,22 @@ export const MatchResultForm = ({
             {loading ? "Submitting..." : "Submit Result"}
           </Button>
         </form>
+        
+        {showImageGenerator && (
+          <div className="mt-6 pt-6 border-t border-gray-600/30">
+            <EnhancedMediaGenerator
+              type="match_result"
+              data={{
+                game: tournamentGame,
+                player1: player1Name,
+                player2: player2Name,
+                score_player1: player1Score,
+                score_player2: player2Score,
+                winner: player1Score > player2Score ? player1Name : player2Name
+              }}
+            />
+          </div>
+        )}
       </CardContent>
     </Card>
   );

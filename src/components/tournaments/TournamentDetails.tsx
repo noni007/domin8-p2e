@@ -10,7 +10,7 @@ import { RealTimeUpdates } from "@/components/notifications/RealTimeUpdates";
 import { useAuth } from "@/hooks/useAuth";
 import { useRealTimeTournament } from "@/hooks/useRealTimeTournament";
 import { SocialShareButton } from "@/components/social/SocialShareButton";
-import { MediaGenerator } from "@/components/social/MediaGenerator";
+import { EnhancedMediaGenerator } from "@/components/social/EnhancedMediaGenerator";
 import { PlatformEmbeds } from "@/components/social/PlatformEmbeds";
 
 interface TournamentDetailsProps {
@@ -202,11 +202,12 @@ export const TournamentDetails = ({ tournamentId, onBack }: TournamentDetailsPro
           <CardTitle className="text-white">Share Tournament</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <MediaGenerator 
+          <EnhancedMediaGenerator 
             type="tournament_card" 
             data={{ 
-              ...tournament, 
-              participantCount: participants.length 
+              title: tournament.title, 
+              game: tournament.game, 
+              prize_pool: tournament.prize_pool 
             }}
           />
           <div className="flex justify-center">

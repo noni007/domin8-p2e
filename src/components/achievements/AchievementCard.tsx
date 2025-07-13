@@ -5,7 +5,7 @@ import { Progress } from "@/components/ui/progress";
 import { Trophy, Lock, Star, Users, Target, Zap } from "lucide-react";
 import type { Tables } from "@/integrations/supabase/types";
 import { SocialShareButton } from "@/components/social/SocialShareButton";
-import { MediaGenerator } from "@/components/social/MediaGenerator";
+import { EnhancedMediaGenerator } from "@/components/social/EnhancedMediaGenerator";
 
 type Achievement = Tables<'achievements'>;
 
@@ -116,9 +116,9 @@ export const AchievementCard = ({ achievement, isUnlocked, progress }: Achieveme
         {/* Social Share for Unlocked Achievements */}
         {isUnlocked && (
           <div className="mt-4 pt-4 border-t border-gray-600/30 space-y-3">
-            <MediaGenerator 
+            <EnhancedMediaGenerator 
               type="achievement_unlock" 
-              data={achievement}
+              data={{ name: achievement.name, category: achievement.category }}
             />
             <div className="flex justify-center">
               <SocialShareButton
