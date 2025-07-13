@@ -9,6 +9,9 @@ import { TournamentRegistration } from "./TournamentRegistration";
 import { RealTimeUpdates } from "@/components/notifications/RealTimeUpdates";
 import { useAuth } from "@/hooks/useAuth";
 import { useRealTimeTournament } from "@/hooks/useRealTimeTournament";
+import { SocialShareButton } from "@/components/social/SocialShareButton";
+import { MediaGenerator } from "@/components/social/MediaGenerator";
+import { PlatformEmbeds } from "@/components/social/PlatformEmbeds";
 
 interface TournamentDetailsProps {
   tournamentId: string;
@@ -193,6 +196,31 @@ export const TournamentDetails = ({ tournamentId, onBack }: TournamentDetailsPro
         </CardContent>
       </Card>
 
+      {/* Social Media & Sharing */}
+      <Card className="bg-black/40 border-blue-800/30 backdrop-blur-sm">
+        <CardHeader>
+          <CardTitle className="text-white">Share Tournament</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <MediaGenerator 
+            type="tournament_card" 
+            data={{ 
+              ...tournament, 
+              participantCount: participants.length 
+            }}
+          />
+          <div className="flex justify-center">
+            <SocialShareButton
+              title={tournament.title}
+              description={`${tournament.game} tournament with $${tournament.prize_pool.toLocaleString()} prize pool! ${participants.length}/${tournament.max_participants} participants. ${getTimeUntilStart()}`}
+              type="tournament"
+              url={window.location.href}
+              imageUrl={`${window.location.origin}/tournament-${tournament.id}.png`}
+            />
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Registration Section */}
       <TournamentRegistration
         tournament={tournament}
@@ -237,6 +265,9 @@ export const TournamentDetails = ({ tournamentId, onBack }: TournamentDetailsPro
           </div>
         </CardContent>
       </Card>
+
+      {/* Platform Embeds */}
+      <PlatformEmbeds type="tournament" tournamentId={tournamentId} />
 
       {/* Tournament Bracket */}
       <TournamentBracket

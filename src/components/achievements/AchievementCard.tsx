@@ -4,6 +4,8 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Trophy, Lock, Star, Users, Target, Zap } from "lucide-react";
 import type { Tables } from "@/integrations/supabase/types";
+import { SocialShareButton } from "@/components/social/SocialShareButton";
+import { MediaGenerator } from "@/components/social/MediaGenerator";
 
 type Achievement = Tables<'achievements'>;
 
@@ -110,6 +112,24 @@ export const AchievementCard = ({ achievement, isUnlocked, progress }: Achieveme
             )}
           </div>
         </div>
+        
+        {/* Social Share for Unlocked Achievements */}
+        {isUnlocked && (
+          <div className="mt-4 pt-4 border-t border-gray-600/30 space-y-3">
+            <MediaGenerator 
+              type="achievement_unlock" 
+              data={achievement}
+            />
+            <div className="flex justify-center">
+              <SocialShareButton
+                title={`Achievement Unlocked: ${achievement.name}!`}
+                description={`${achievement.description}${achievement.reward_amount > 0 ? ` Earned $${(achievement.reward_amount / 100).toFixed(2)}!` : ''}`}
+                type="achievement"
+                url={`${window.location.origin}/profile?tab=achievements`}
+              />
+            </div>
+          </div>
+        )}
       </CardContent>
     </Card>
   );

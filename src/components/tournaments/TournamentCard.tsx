@@ -12,6 +12,7 @@ import {
   DollarSign,
   Star
 } from "lucide-react";
+import { SocialShareButton } from "@/components/social/SocialShareButton";
 import { TournamentRegistrationButton } from "./TournamentRegistrationButton";
 import type { Tables } from "@/integrations/supabase/types";
 
@@ -175,26 +176,38 @@ export const TournamentCard = ({
         )}
 
         {/* Action Buttons */}
-        <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
-          <Button
-            variant="outline"
-            onClick={() => onViewDetails(tournament)}
-            className="flex-1 border-blue-400 text-blue-400 hover:bg-blue-400 hover:text-black text-sm touch-manipulation h-10"
-          >
-            View Details
-          </Button>
+        <div className="space-y-2">
+          <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
+            <Button
+              variant="outline"
+              onClick={() => onViewDetails(tournament)}
+              className="flex-1 border-blue-400 text-blue-400 hover:bg-blue-400 hover:text-black text-sm touch-manipulation h-10"
+            >
+              View Details
+            </Button>
+            
+            {isUpcoming && (
+              <div className="flex-1">
+                <TournamentRegistrationButton
+                  tournamentId={tournament.id}
+                  tournamentTitle={tournament.title}
+                  entryFee={entryFee}
+                  isRegistered={isRegistered}
+                  onRegistrationChange={onRegistrationChange}
+                />
+              </div>
+            )}
+          </div>
           
-          {isUpcoming && (
-            <div className="flex-1">
-              <TournamentRegistrationButton
-                tournamentId={tournament.id}
-                tournamentTitle={tournament.title}
-                entryFee={entryFee}
-                isRegistered={isRegistered}
-                onRegistrationChange={onRegistrationChange}
-              />
-            </div>
-          )}
+          {/* Social Share Button */}
+          <div className="flex justify-center">
+            <SocialShareButton
+              title={tournament.title}
+              description={`${tournament.game} tournament with $${formatMoney(tournament.prize_pool)} prize pool! ${participants.length}/${tournament.max_participants} participants.`}
+              type="tournament"
+              url={`${window.location.origin}/tournaments?id=${tournament.id}`}
+            />
+          </div>
         </div>
       </CardContent>
     </Card>

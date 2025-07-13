@@ -14,6 +14,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2, Mail, Lock, User, Trophy, ArrowLeft } from "lucide-react";
+import { SocialLoginButtons } from "@/components/social/SocialLoginButtons";
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -337,9 +338,24 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
                   ) : (
                     "Sign In"
                   )}
-                </Button>
-              </form>
-            </TabsContent>
+                 </Button>
+               </form>
+               
+               {/* Social Login Options */}
+               <div className="mt-6">
+                 <div className="relative">
+                   <div className="absolute inset-0 flex items-center">
+                     <span className="w-full border-t border-gray-600" />
+                   </div>
+                   <div className="relative flex justify-center text-xs uppercase">
+                     <span className="bg-black px-2 text-gray-400">Or continue with</span>
+                   </div>
+                 </div>
+                 <div className="mt-6">
+                   <SocialLoginButtons mode="login" onSuccess={onClose} />
+                 </div>
+               </div>
+             </TabsContent>
 
             <TabsContent value="signup" className="space-y-4">
               <form onSubmit={handleSignUp} className="space-y-4">
@@ -444,10 +460,25 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
                   ) : (
                     "Create Account"
                   )}
-                </Button>
-              </form>
-            </TabsContent>
-          </Tabs>
+                 </Button>
+               </form>
+               
+               {/* Social Login Options */}
+               <div className="mt-6">
+                 <div className="relative">
+                   <div className="absolute inset-0 flex items-center">
+                     <span className="w-full border-t border-gray-600" />
+                   </div>
+                   <div className="relative flex justify-center text-xs uppercase">
+                     <span className="bg-black px-2 text-gray-400">Or sign up with</span>
+                   </div>
+                 </div>
+                 <div className="mt-6">
+                   <SocialLoginButtons mode="signup" onSuccess={onClose} />
+                 </div>
+               </div>
+             </TabsContent>
+           </Tabs>
         )}
       </DialogContent>
     </Dialog>
