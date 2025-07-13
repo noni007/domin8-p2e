@@ -323,6 +323,48 @@ export type Database = {
         }
         Relationships: []
       }
+      generated_media: {
+        Row: {
+          created_at: string
+          file_path: string | null
+          generation_data: Json | null
+          generation_model: string | null
+          id: string
+          image_url: string | null
+          media_type: string
+          prompt: string
+          updated_at: string
+          usage_count: number | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          file_path?: string | null
+          generation_data?: Json | null
+          generation_model?: string | null
+          id?: string
+          image_url?: string | null
+          media_type: string
+          prompt: string
+          updated_at?: string
+          usage_count?: number | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          file_path?: string | null
+          generation_data?: Json | null
+          generation_model?: string | null
+          id?: string
+          image_url?: string | null
+          media_type?: string
+          prompt?: string
+          updated_at?: string
+          usage_count?: number | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       live_match_sessions: {
         Row: {
           created_at: string
@@ -690,6 +732,108 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      social_integrations: {
+        Row: {
+          access_token: string | null
+          created_at: string
+          expires_at: string | null
+          id: string
+          integration_data: Json | null
+          is_active: boolean | null
+          platform: string
+          platform_user_id: string | null
+          platform_username: string | null
+          refresh_token: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          access_token?: string | null
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          integration_data?: Json | null
+          is_active?: boolean | null
+          platform: string
+          platform_user_id?: string | null
+          platform_username?: string | null
+          refresh_token?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          access_token?: string | null
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          integration_data?: Json | null
+          is_active?: boolean | null
+          platform?: string
+          platform_user_id?: string | null
+          platform_username?: string | null
+          refresh_token?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      social_posts: {
+        Row: {
+          content_description: string | null
+          content_title: string
+          content_url: string | null
+          created_at: string
+          engagement_data: Json | null
+          error_message: string | null
+          id: string
+          image_url: string | null
+          platform: string
+          platform_post_id: string | null
+          post_status: string | null
+          post_type: string
+          posted_at: string | null
+          scheduled_for: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          content_description?: string | null
+          content_title: string
+          content_url?: string | null
+          created_at?: string
+          engagement_data?: Json | null
+          error_message?: string | null
+          id?: string
+          image_url?: string | null
+          platform: string
+          platform_post_id?: string | null
+          post_status?: string | null
+          post_type: string
+          posted_at?: string | null
+          scheduled_for?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          content_description?: string | null
+          content_title?: string
+          content_url?: string | null
+          created_at?: string
+          engagement_data?: Json | null
+          error_message?: string | null
+          id?: string
+          image_url?: string | null
+          platform?: string
+          platform_post_id?: string | null
+          post_status?: string | null
+          post_type?: string
+          posted_at?: string | null
+          scheduled_for?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       team_invitations: {
         Row: {
