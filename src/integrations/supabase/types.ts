@@ -1387,6 +1387,10 @@ export type Database = {
         Args: { user_id_param: string }
         Returns: undefined
       }
+      decrement_spectator_count: {
+        Args: { match_id: string }
+        Returns: undefined
+      }
       distribute_tournament_prizes: {
         Args: { tournament_id_param: string }
         Returns: undefined
@@ -1403,6 +1407,10 @@ export type Database = {
           next_milestone_target: number
           next_milestone_title: string
         }[]
+      }
+      increment_spectator_count: {
+        Args: { match_id: string }
+        Returns: undefined
       }
       is_admin: {
         Args: { user_id: string }
