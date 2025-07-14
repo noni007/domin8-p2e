@@ -8,6 +8,7 @@ import { useMatchSpectating } from '@/hooks/useMatchSpectating';
 import { useAuth } from '@/hooks/useAuth';
 import { Eye, EyeOff, Users, Clock, Play, Pause, Trophy } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { SocialShareButton } from '@/components/social/SocialShareButton';
 
 interface MatchSpectatingProps {
   matchId: string;
@@ -186,6 +187,12 @@ export const MatchSpectating = ({ matchId }: MatchSpectatingProps) => {
               >
                 Refresh
               </Button>
+
+              <SocialShareButton
+                title={`Live Match Spectating - Match ${matchId}`}
+                description={`Join ${spectatorCount} ${spectatorCount === 1 ? 'spectator' : 'spectators'} watching this ${matchStatus} match live!`}
+                type="match"
+              />
             </div>
           </div>
         </CardContent>
