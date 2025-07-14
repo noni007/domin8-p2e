@@ -22,6 +22,7 @@ export const Navigation = () => {
     { to: '/leaderboards', label: 'Leaderboards' },
     { to: '/teams', label: 'Teams' },
     { to: '/activity', label: 'Activity' },
+    { to: '/match-spectating', label: 'Match Spectating' },
   ]
 
   return (

@@ -25,6 +25,7 @@ import Admin from '@/pages/Admin'
 import Wallet from '@/pages/Wallet'
 import NotFound from '@/pages/NotFound'
 import MobileDevelopmentGuide from '@/pages/MobileDevelopmentGuide'
+import MatchSpectatingDemo from '@/pages/MatchSpectatingDemo'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -60,6 +61,7 @@ function App() {
                       <Route path="/admin" element={<Admin />} />
                       <Route path="/wallet" element={<Wallet />} />
                       <Route path="/mobile-guide" element={<MobileDevelopmentGuide />} />
+                      <Route path="/match-spectating" element={<MatchSpectatingDemo />} />
                       <Route path="*" element={<NotFound />} />
                     </Routes>
                   </main>
