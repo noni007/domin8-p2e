@@ -24,6 +24,7 @@ import Leaderboards from '@/pages/Leaderboards'
 import Admin from '@/pages/Admin'
 import Wallet from '@/pages/Wallet'
 import NotFound from '@/pages/NotFound'
+import ResetPassword from '@/pages/ResetPassword'
 import MobileDevelopmentGuide from '@/pages/MobileDevelopmentGuide'
 import MatchSpectatingDemo from '@/pages/MatchSpectatingDemo'
 
@@ -56,6 +57,7 @@ function App() {
                       <Route path="/profile/:userId" element={<UserProfile />} />
                       <Route path="/activity" element={<Activity />} />
                       <Route path="/auth" element={<Auth />} />
+                      <Route path="/reset-password" element={<ResetPassword />} />
                       <Route path="/friends" element={<Friends />} />
                       <Route path="/leaderboards" element={<Leaderboards />} />
                       <Route path="/admin" element={<Admin />} />
