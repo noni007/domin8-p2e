@@ -55,14 +55,31 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
     setLoading(true);
 
     try {
-      const redirectUrl = `${window.location.origin}/`;
+      // First try Supabase's built-in reset
+      const redirectUrl = `${window.location.origin}/reset-password`;
       
       const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
         redirectTo: redirectUrl,
       });
 
       if (error) {
-        throw error;
+        // If Supabase email fails, send custom email via Resend
+        console.log('Supabase email failed, trying custom email service:', error);
+        
+        const emailResponse = await supabase.functions.invoke('send-notification-email', {
+          body: {
+            to: resetEmail,
+            type: 'password_reset',
+            data: {
+              reset_url: `${window.location.origin}/reset-password?email=${encodeURIComponent(resetEmail)}`,
+              user_email: resetEmail
+            }
+          }
+        });
+
+        if (emailResponse.error) {
+          throw new Error('Failed to send password reset email. Please contact support.');
+        }
       }
 
       toast({

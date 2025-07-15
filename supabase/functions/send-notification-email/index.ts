@@ -12,7 +12,7 @@ const corsHeaders = {
 
 interface EmailRequest {
   to: string;
-  type: 'tournament_registration' | 'match_scheduled' | 'tournament_status' | 'match_results' | 'achievement_unlock';
+  type: 'tournament_registration' | 'match_scheduled' | 'tournament_status' | 'match_results' | 'achievement_unlock' | 'password_reset';
   data: {
     userName?: string;
     tournamentTitle?: string;
@@ -21,6 +21,8 @@ interface EmailRequest {
     status?: string;
     score?: string;
     achievementName?: string;
+    reset_url?: string;
+    user_email?: string;
     [key: string]: any;
   };
 }
@@ -93,7 +95,58 @@ const getEmailTemplate = (type: string, data: any) => {
         <h2>"${data.achievementName}"</h2>
         <p>${data.description || 'Great job on reaching this milestone!'}</p>
         <p>Keep up the excellent work and continue dominating the competition!</p>
-        <p>Best regards,<br>The TourneyPro Team</p>
+        <p>Best regards,<br>The Domin8 Team</p>
+      `
+    },
+    password_reset: {
+      subject: 'Reset Your Domin8 Password',
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+          <div style="text-align: center; margin-bottom: 30px;">
+            <h1 style="color: #1e40af; margin-bottom: 10px;">Reset Your Password</h1>
+            <p style="color: #666; font-size: 16px;">Domin8 - Africa's Premier Esports Platform</p>
+          </div>
+          
+          <div style="background-color: #f8fafc; padding: 30px; border-radius: 8px; margin-bottom: 30px;">
+            <p style="font-size: 16px; line-height: 1.6; margin-bottom: 20px;">
+              We received a request to reset your password for your Domin8 account (${data.user_email}).
+            </p>
+            
+            <p style="font-size: 16px; line-height: 1.6; margin-bottom: 30px;">
+              Click the button below to create a new password:
+            </p>
+            
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="${data.reset_url}" 
+                 style="display: inline-block; 
+                        background: linear-gradient(135deg, #1e40af, #0ea5e9); 
+                        color: white; 
+                        padding: 15px 30px; 
+                        text-decoration: none; 
+                        border-radius: 8px; 
+                        font-weight: bold;
+                        font-size: 16px;">
+                Reset My Password
+              </a>
+            </div>
+            
+            <p style="font-size: 14px; color: #666; margin-top: 20px;">
+              If the button doesn't work, copy and paste this link into your browser:
+            </p>
+            <p style="word-break: break-all; color: #1e40af; font-size: 12px; background-color: #f1f5f9; padding: 10px; border-radius: 4px;">
+              ${data.reset_url}
+            </p>
+          </div>
+          
+          <div style="border-top: 1px solid #e2e8f0; padding-top: 20px; text-align: center;">
+            <p style="color: #666; font-size: 14px; margin-bottom: 10px;">
+              If you didn't request this password reset, you can safely ignore this email.
+            </p>
+            <p style="color: #666; font-size: 12px;">
+              This email was sent from Domin8 - Africa's premier esports ranking platform.
+            </p>
+          </div>
+        </div>
       `
     }
   };
