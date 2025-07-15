@@ -1,165 +1,187 @@
-
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
 const logStep = (step: string, details?: any) => {
-  const detailsStr = details ? ` - ${JSON.stringify(details)}` : '';
-  console.log(`[VERIFY-PAYSTACK-PAYMENT] ${step}${detailsStr}`);
+  console.log(`[PayStack Verify] ${step}`, details ? JSON.stringify(details) : '');
 };
 
 serve(async (req) => {
-  if (req.method === "OPTIONS") {
+  // Handle CORS preflight requests
+  if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    logStep("Function started");
+    logStep('Starting PayStack payment verification');
 
-    const paystackSecretKey = Deno.env.get("PAYSTACK_SECRET_KEY");
-    if (!paystackSecretKey) {
-      throw new Error("PAYSTACK_SECRET_KEY is not set");
-    }
-
-    // Initialize Supabase client
+    // Create Supabase client for user authentication
     const supabaseClient = createClient(
-      Deno.env.get("SUPABASE_URL") ?? "",
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
-      { auth: { persistSession: false } }
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_ANON_KEY') ?? ''
     );
 
-    const authHeader = req.headers.get("Authorization");
+    // Create service role client for database operations
+    const supabaseService = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    );
+
+    // Get user from authorization header
+    const authHeader = req.headers.get('Authorization');
     if (!authHeader) {
-      throw new Error("No authorization header provided");
+      throw new Error('No authorization header provided');
     }
 
-    const token = authHeader.replace("Bearer ", "");
-    const { data: userData, error: userError } = await supabaseClient.auth.getUser(token);
-    if (userError) throw new Error(`Authentication error: ${userError.message}`);
-    
-    const user = userData.user;
-    if (!user?.email) {
-      throw new Error("User not authenticated or email not available");
+    const token = authHeader.replace('Bearer ', '');
+    const { data: { user }, error: userError } = await supabaseClient.auth.getUser(token);
+
+    if (userError || !user) {
+      throw new Error('User not authenticated');
     }
 
+    logStep('User authenticated', { userId: user.id });
+
+    // Parse request body
     const { reference } = await req.json();
+
     if (!reference) {
-      throw new Error("Payment reference is required");
+      throw new Error('Payment reference is required');
     }
 
-    logStep("Verifying payment", { reference, userId: user.id });
+    logStep('Verifying payment with PayStack', { reference });
 
     // Verify payment with PayStack
-    const verifyResponse = await fetch(`https://api.paystack.co/transaction/verify/${reference}`, {
-      method: "GET",
+    const paystackResponse = await fetch(`https://api.paystack.co/transaction/verify/${reference}`, {
+      method: 'GET',
       headers: {
-        "Authorization": `Bearer ${paystackSecretKey}`,
+        'Authorization': `Bearer ${Deno.env.get('PAYSTACK_SECRET_KEY')}`,
+        'Content-Type': 'application/json',
       },
     });
 
-    const verifyData = await verifyResponse.json();
+    const paystackResult = await paystackResponse.json();
 
-    if (!verifyResponse.ok || !verifyData.status) {
-      throw new Error(`PayStack verification failed: ${verifyData.message || 'Unknown error'}`);
+    if (!paystackResponse.ok || !paystackResult.status) {
+      logStep('PayStack verification failed', paystackResult);
+      throw new Error(paystackResult.message || 'Payment verification failed');
     }
 
-    const transaction = verifyData.data;
-
-    if (transaction.status !== 'success') {
-      throw new Error("Payment not successful");
-    }
-
-    if (transaction.metadata?.user_id !== user.id) {
-      throw new Error("Payment does not belong to authenticated user");
-    }
-
-    logStep("Payment verified", { 
-      status: transaction.status,
-      amount: transaction.amount,
-      currency: transaction.currency 
+    const paymentData = paystackResult.data;
+    logStep('PayStack verification response', { 
+      status: paymentData.status, 
+      amount: paymentData.amount,
+      currency: paymentData.currency 
     });
 
+    // Check if payment was successful
+    if (paymentData.status !== 'success') {
+      throw new Error(`Payment not successful. Status: ${paymentData.status}`);
+    }
+
+    // Convert amount from kobo to cents (PayStack uses kobo, we store in cents)
+    const amountInCents = Math.round(paymentData.amount / 100 * 100); // Convert kobo to NGN, then to cents
+
     // Get user's wallet
-    const { data: wallet, error: walletError } = await supabaseClient
+    const { data: wallet, error: walletError } = await supabaseService
       .from('user_wallets')
       .select('*')
       .eq('user_id', user.id)
       .single();
 
     if (walletError) {
-      throw new Error(`Failed to get wallet: ${walletError.message}`);
+      logStep('Wallet fetch error', walletError);
+      throw new Error('Failed to fetch user wallet');
     }
 
-    // Create transaction record
-    const transactionAmount = transaction.metadata?.transaction_type === 'deposit' 
-      ? transaction.amount 
-      : -transaction.amount;
+    logStep('User wallet found', { walletId: wallet.id, currentBalance: wallet.balance });
 
-    const { data: walletTransaction, error: transactionError } = await supabaseClient
+    // Create transaction record
+    const { data: transaction, error: transactionError } = await supabaseService
       .from('wallet_transactions')
       .insert({
-        wallet_id: wallet.id,
         user_id: user.id,
-        transaction_type: transaction.metadata?.transaction_type || 'deposit',
-        amount: transactionAmount,
-        description: `${transaction.metadata?.transaction_type === 'deposit' ? 'Deposit' : 'Withdrawal'} via PayStack - NGN ${(transaction.amount / 100).toFixed(2)}`,
+        wallet_id: wallet.id,
+        transaction_type: 'deposit',
+        amount: amountInCents,
+        description: `PayStack deposit - ${reference}`,
         reference_id: reference,
         status: 'completed',
         metadata: {
-          paystack_reference: reference,
-          paystack_transaction_id: transaction.id,
-          currency: transaction.currency,
-          payment_method: 'paystack',
-        },
+          paystack_data: {
+            reference: paymentData.reference,
+            amount_kobo: paymentData.amount,
+            currency: paymentData.currency,
+            channel: paymentData.channel,
+            paid_at: paymentData.paid_at,
+            transaction_date: paymentData.transaction_date,
+          }
+        }
       })
       .select()
       .single();
 
     if (transactionError) {
-      throw new Error(`Failed to create transaction: ${transactionError.message}`);
+      logStep('Transaction creation error', transactionError);
+      throw new Error('Failed to create transaction record');
     }
 
-    logStep("Transaction created", { transactionId: walletTransaction.id });
+    logStep('Transaction record created', { transactionId: transaction.id });
 
     // Update wallet balance
-    const newBalance = wallet.balance + transactionAmount;
-    const { error: updateError } = await supabaseClient
+    const newBalance = wallet.balance + amountInCents;
+    const { error: updateError } = await supabaseService
       .from('user_wallets')
       .update({ 
         balance: newBalance,
-        updated_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
       })
       .eq('id', wallet.id);
 
     if (updateError) {
-      throw new Error(`Failed to update wallet balance: ${updateError.message}`);
+      logStep('Wallet update error', updateError);
+      throw new Error('Failed to update wallet balance');
     }
 
-    logStep("Wallet updated", { newBalance });
+    logStep('Wallet balance updated', { 
+      oldBalance: wallet.balance, 
+      newBalance, 
+      amountAdded: amountInCents 
+    });
 
     return new Response(
       JSON.stringify({
         success: true,
-        transaction: walletTransaction,
-        newBalance: newBalance,
+        data: {
+          transaction_id: transaction.id,
+          amount_added: amountInCents,
+          new_balance: newBalance,
+          reference,
+          status: 'completed'
+        },
       }),
       {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 200,
       }
     );
+
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : String(error);
-    logStep("ERROR in verify-paystack-payment", { message: errorMessage });
+    logStep('Error in PayStack verification', { error: error.message });
+    console.error('PayStack verification error:', error);
+
     return new Response(
-      JSON.stringify({ error: errorMessage }),
+      JSON.stringify({
+        success: false,
+        error: error.message || 'Payment verification failed',
+      }),
       {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 400,
       }
     );
   }

@@ -15,7 +15,7 @@ export interface PayStackPaymentData {
 }
 
 export class PayStackService {
-  private static readonly PAYSTACK_PUBLIC_KEY = 'pk_test_your_paystack_public_key'; // This should be moved to env
+  private static readonly PAYSTACK_PUBLIC_KEY = 'pk_test_c81ee6045a1c2fa016fc95f26d81a05782163675';
   
   static async initializePayment(paymentData: PayStackPaymentData) {
     try {

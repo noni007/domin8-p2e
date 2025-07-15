@@ -1,117 +1,131 @@
-
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
 const logStep = (step: string, details?: any) => {
-  const detailsStr = details ? ` - ${JSON.stringify(details)}` : '';
-  console.log(`[INITIALIZE-PAYSTACK-PAYMENT] ${step}${detailsStr}`);
+  console.log(`[PayStack Init] ${step}`, details ? JSON.stringify(details) : '');
 };
 
 serve(async (req) => {
-  if (req.method === "OPTIONS") {
+  // Handle CORS preflight requests
+  if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    logStep("Function started");
+    logStep('Starting PayStack payment initialization');
 
-    const paystackSecretKey = Deno.env.get("PAYSTACK_SECRET_KEY");
-    if (!paystackSecretKey) {
-      throw new Error("PAYSTACK_SECRET_KEY is not set");
-    }
-    logStep("PayStack key verified");
-
-    // Initialize Supabase client
+    // Create Supabase client for user authentication
     const supabaseClient = createClient(
-      Deno.env.get("SUPABASE_URL") ?? "",
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
-      { auth: { persistSession: false } }
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_ANON_KEY') ?? ''
     );
 
-    const authHeader = req.headers.get("Authorization");
+    // Get user from authorization header
+    const authHeader = req.headers.get('Authorization');
     if (!authHeader) {
-      throw new Error("No authorization header provided");
+      throw new Error('No authorization header provided');
     }
 
-    const token = authHeader.replace("Bearer ", "");
-    const { data: userData, error: userError } = await supabaseClient.auth.getUser(token);
-    if (userError) throw new Error(`Authentication error: ${userError.message}`);
-    
-    const user = userData.user;
-    if (!user?.email) {
-      throw new Error("User not authenticated or email not available");
+    const token = authHeader.replace('Bearer ', '');
+    const { data: { user }, error: userError } = await supabaseClient.auth.getUser(token);
+
+    if (userError || !user) {
+      throw new Error('User not authenticated');
     }
-    logStep("User authenticated", { userId: user.id, email: user.email });
+
+    logStep('User authenticated', { userId: user.id });
 
     // Parse request body
-    const { email, amount, currency, reference, metadata } = await req.json();
-    
-    if (!amount || amount < 100) {
-      throw new Error("Invalid amount - minimum is 100 kobo (₦1)");
+    const body = await req.json();
+    const { email, amount, currency, reference, metadata } = body;
+
+    logStep('Request body parsed', { email, amount, currency, reference });
+
+    // Validate required fields
+    if (!email || !amount || !currency || !reference) {
+      throw new Error('Missing required fields: email, amount, currency, reference');
     }
 
+    // Validate currency (PayStack primarily supports NGN)
     if (currency !== 'NGN') {
-      throw new Error("PayStack only supports NGN currency");
+      throw new Error('PayStack currently supports NGN currency only');
     }
 
-    logStep("Request validated", { amount, currency, reference });
+    // Validate minimum amount (PayStack requires minimum 100 kobo = 1 NGN)
+    if (amount < 100) {
+      throw new Error('Amount must be at least 100 kobo (1 NGN)');
+    }
 
-    // Initialize PayStack payment
-    const paystackResponse = await fetch("https://api.paystack.co/transaction/initialize", {
-      method: "POST",
+    // Prepare PayStack API request
+    const paystackData = {
+      email,
+      amount: Math.round(amount), // Ensure amount is integer
+      currency,
+      reference,
+      callback_url: `${req.headers.get('origin')}/wallet?payment=success&reference=${reference}`,
+      metadata: {
+        user_id: user.id,
+        transaction_type: 'deposit',
+        ...metadata
+      }
+    };
+
+    logStep('Calling PayStack API', { reference, amount: paystackData.amount });
+
+    // Call PayStack API to initialize transaction
+    const paystackResponse = await fetch('https://api.paystack.co/transaction/initialize', {
+      method: 'POST',
       headers: {
-        "Authorization": `Bearer ${paystackSecretKey}`,
-        "Content-Type": "application/json",
+        'Authorization': `Bearer ${Deno.env.get('PAYSTACK_SECRET_KEY')}`,
+        'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        email: user.email,
-        amount: amount,
-        currency: currency,
-        reference: reference,
-        metadata: {
-          user_id: user.id,
-          ...metadata
-        },
-        callback_url: `${req.headers.get("origin") || "https://localhost:3000"}/wallet?success=true&reference=${reference}`,
-      }),
+      body: JSON.stringify(paystackData),
     });
 
-    const paystackData = await paystackResponse.json();
+    const paystackResult = await paystackResponse.json();
 
-    if (!paystackResponse.ok) {
-      throw new Error(`PayStack API error: ${paystackData.message || 'Unknown error'}`);
+    if (!paystackResponse.ok || !paystackResult.status) {
+      logStep('PayStack API error', paystackResult);
+      throw new Error(paystackResult.message || 'PayStack initialization failed');
     }
 
-    logStep("PayStack payment initialized", { 
-      reference: paystackData.data.reference,
-      authorization_url: paystackData.data.authorization_url 
+    logStep('PayStack payment initialized successfully', { 
+      reference: paystackResult.data.reference,
+      authorizationUrl: paystackResult.data.authorization_url 
     });
 
     return new Response(
       JSON.stringify({
         success: true,
-        data: paystackData.data,
-        reference: paystackData.data.reference,
-        authorization_url: paystackData.data.authorization_url,
+        data: {
+          authorization_url: paystackResult.data.authorization_url,
+          access_code: paystackResult.data.access_code,
+          reference: paystackResult.data.reference,
+        },
       }),
       {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 200,
       }
     );
+
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : String(error);
-    logStep("ERROR in initialize-paystack-payment", { message: errorMessage });
+    logStep('Error in PayStack initialization', { error: error.message });
+    console.error('PayStack initialization error:', error);
+
     return new Response(
-      JSON.stringify({ error: errorMessage }),
+      JSON.stringify({
+        success: false,
+        error: error.message || 'Failed to initialize PayStack payment',
+      }),
       {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 400,
       }
     );
   }
