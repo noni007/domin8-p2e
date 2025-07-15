@@ -62,15 +62,25 @@ serve(async (req) => {
     }
 
     // Prepare PayStack API request
+    const transactionType = metadata?.transaction_type || 'deposit';
+    
+    // Set callback URL based on transaction type
+    let callbackUrl;
+    if (transactionType === 'tournament_fee') {
+      callbackUrl = `${req.headers.get('origin')}/tournaments?payment=success&reference=${reference}`;
+    } else {
+      callbackUrl = `${req.headers.get('origin')}/wallet?payment=success&reference=${reference}`;
+    }
+
     const paystackData = {
       email,
       amount: Math.round(amount), // Ensure amount is integer
       currency,
       reference,
-      callback_url: `${req.headers.get('origin')}/wallet?payment=success&reference=${reference}`,
+      callback_url: callbackUrl,
       metadata: {
         user_id: user.id,
-        transaction_type: 'deposit',
+        transaction_type: transactionType,
         ...metadata
       }
     };

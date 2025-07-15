@@ -40,7 +40,7 @@ export const TournamentRegistrationButton = ({
     return null;
   }
 
-  const formatFee = (cents: number) => (cents / 100).toFixed(2);
+  const formatFee = (kobo: number) => `₦${(kobo / 100).toFixed(2)}`;
 
   return (
     <Button
@@ -67,7 +67,7 @@ export const TournamentRegistrationButton = ({
         : isRegistered 
           ? "Unregister" 
           : entryFee > 0 
-            ? `Pay $${formatFee(entryFee)}` 
+            ? `Pay ${formatFee(entryFee)}` 
             : "Register"
       }
     </Button>

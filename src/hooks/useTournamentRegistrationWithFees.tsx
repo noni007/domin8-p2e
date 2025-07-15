@@ -6,6 +6,7 @@ import { useAchievements } from '@/hooks/useAchievements';
 import { toast } from '@/hooks/use-toast';
 import { TournamentRegistrationService } from '@/services/tournamentRegistrationService';
 import { WalletTransactionService } from '@/services/walletTransactionService';
+import { PayStackService } from '@/services/paystackService';
 import type { RegistrationResult } from '@/types/tournamentRegistration';
 
 export const useTournamentRegistrationWithFees = () => {
@@ -26,13 +27,6 @@ export const useTournamentRegistrationWithFees = () => {
       return { success: false, message: "Wallet not found" };
     }
 
-    if (entryFee > 0 && wallet.balance < entryFee) {
-      return { 
-        success: false, 
-        message: `Insufficient funds. You need $${(entryFee / 100).toFixed(2)} but only have $${(wallet.balance / 100).toFixed(2)}` 
-      };
-    }
-
     setIsRegistering(true);
 
     try {
@@ -46,27 +40,60 @@ export const useTournamentRegistrationWithFees = () => {
         return { success: false, message: "You are already registered for this tournament" };
       }
 
+      // Handle entry fee payment
+      if (entryFee > 0) {
+        // If user has sufficient wallet balance, use wallet
+        if (wallet.balance >= entryFee) {
+          // Use wallet balance
+          await WalletTransactionService.createWithdrawalTransaction({
+            walletId: wallet.id,
+            userId: user.id,
+            tournamentId,
+            entryFee,
+            description: 'Tournament Entry Fee'
+          });
+
+          await WalletTransactionService.updateWalletBalance(
+            wallet.id, 
+            wallet.balance - entryFee
+          );
+        } else {
+          // Use PayStack for payment
+          const paymentData = {
+            email: user.email!,
+            amount: entryFee, // amount in kobo
+            currency: 'NGN' as const,
+            reference: PayStackService.generateReference(),
+            metadata: {
+              user_id: user.id,
+              transaction_type: 'tournament_fee' as const,
+              tournament_id: tournamentId
+            }
+          };
+
+          const paymentResult = await PayStackService.initializePayment(paymentData);
+          
+          if (paymentResult.status === 'success') {
+            // Open PayStack checkout in a new tab
+            window.open(paymentResult.data.authorization_url, '_blank');
+            
+            toast({
+              title: "Payment Required",
+              description: "Please complete the payment in the new tab to register for the tournament."
+            });
+            
+            return { success: true, message: "Payment initiated. Please complete payment to register." };
+          } else {
+            return { success: false, message: "Failed to initialize payment. Please try again." };
+          }
+        }
+      }
+
       // Register for tournament
       await TournamentRegistrationService.registerParticipant(tournamentId, user.id);
 
-      // Handle entry fee if applicable
+      // Add entry fee to tournament prize pool
       if (entryFee > 0) {
-        // Create withdrawal transaction
-        await WalletTransactionService.createWithdrawalTransaction({
-          walletId: wallet.id,
-          userId: user.id,
-          tournamentId,
-          entryFee,
-          description: 'Tournament Entry Fee'
-        });
-
-        // Update wallet balance
-        await WalletTransactionService.updateWalletBalance(
-          wallet.id, 
-          wallet.balance - entryFee
-        );
-
-        // Add entry fee to tournament prize pool
         await WalletTransactionService.updateTournamentPrizePool(
           tournamentId,
           entryFee,
@@ -80,7 +107,7 @@ export const useTournamentRegistrationWithFees = () => {
       toast({
         title: "Registration Successful!",
         description: entryFee > 0 
-          ? `You've registered for the tournament. Entry fee of $${(entryFee / 100).toFixed(2)} has been deducted from your wallet.`
+          ? `You've registered for the tournament. Entry fee of ₦${(entryFee / 100).toFixed(2)} has been processed.`
           : "You've successfully registered for the tournament!"
       });
 

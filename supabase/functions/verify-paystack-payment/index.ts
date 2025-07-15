@@ -100,75 +100,166 @@ serve(async (req) => {
 
     logStep('User wallet found', { walletId: wallet.id, currentBalance: wallet.balance });
 
-    // Create transaction record
-    const { data: transaction, error: transactionError } = await supabaseService
-      .from('wallet_transactions')
-      .insert({
-        user_id: user.id,
-        wallet_id: wallet.id,
-        transaction_type: 'deposit',
-        amount: amountInCents,
-        description: `PayStack deposit - ${reference}`,
-        reference_id: reference,
-        status: 'completed',
-        metadata: {
-          paystack_data: {
-            reference: paymentData.reference,
-            amount_kobo: paymentData.amount,
-            currency: paymentData.currency,
-            channel: paymentData.channel,
-            paid_at: paymentData.paid_at,
-            transaction_date: paymentData.transaction_date,
-          }
-        }
-      })
-      .select()
-      .single();
+    // Get transaction type from PayStack metadata
+    const transactionType = paymentData.metadata?.transaction_type || 'deposit';
+    const tournamentId = paymentData.metadata?.tournament_id;
 
-    if (transactionError) {
-      logStep('Transaction creation error', transactionError);
-      throw new Error('Failed to create transaction record');
-    }
+    logStep('Processing transaction', { transactionType, tournamentId });
 
-    logStep('Transaction record created', { transactionId: transaction.id });
-
-    // Update wallet balance
-    const newBalance = wallet.balance + amountInCents;
-    const { error: updateError } = await supabaseService
-      .from('user_wallets')
-      .update({ 
-        balance: newBalance,
-        updated_at: new Date().toISOString()
-      })
-      .eq('id', wallet.id);
-
-    if (updateError) {
-      logStep('Wallet update error', updateError);
-      throw new Error('Failed to update wallet balance');
-    }
-
-    logStep('Wallet balance updated', { 
-      oldBalance: wallet.balance, 
-      newBalance, 
-      amountAdded: amountInCents 
-    });
-
-    return new Response(
-      JSON.stringify({
-        success: true,
-        data: {
-          transaction_id: transaction.id,
-          amount_added: amountInCents,
-          new_balance: newBalance,
-          reference,
-          status: 'completed'
-        },
-      }),
-      {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 200,
+    if (transactionType === 'tournament_fee') {
+      // Handle tournament fee payment
+      if (!tournamentId) {
+        throw new Error('Tournament ID is required for tournament fee payments');
       }
-    );
+
+      // Create transaction record for tournament fee
+      const { data: transaction, error: transactionError } = await supabaseService
+        .from('wallet_transactions')
+        .insert({
+          user_id: user.id,
+          wallet_id: wallet.id,
+          transaction_type: 'tournament_fee',
+          amount: amountInCents,
+          description: `Tournament entry fee - ${reference}`,
+          reference_id: reference,
+          status: 'completed',
+          metadata: {
+            tournament_id: tournamentId,
+            paystack_data: {
+              reference: paymentData.reference,
+              amount_kobo: paymentData.amount,
+              currency: paymentData.currency,
+              channel: paymentData.channel,
+              paid_at: paymentData.paid_at,
+              transaction_date: paymentData.transaction_date,
+            }
+          }
+        })
+        .select()
+        .single();
+
+      if (transactionError) {
+        logStep('Tournament fee transaction creation error', transactionError);
+        throw new Error('Failed to create tournament fee transaction record');
+      }
+
+      // Register user for tournament
+      const { error: registrationError } = await supabaseService
+        .from('tournament_participants')
+        .insert({
+          tournament_id: tournamentId,
+          user_id: user.id,
+          status: 'registered'
+        });
+
+      if (registrationError) {
+        logStep('Tournament registration error', registrationError);
+        throw new Error('Failed to register user for tournament');
+      }
+
+      // Update tournament prize pool
+      const { error: prizePoolError } = await supabaseService
+        .rpc('update_tournament_prize_pool', {
+          tournament_id: tournamentId,
+          amount: amountInCents
+        });
+
+      if (prizePoolError) {
+        logStep('Prize pool update error', prizePoolError);
+        // Don't throw error here as registration is complete
+      }
+
+      logStep('Tournament registration completed', { tournamentId, userId: user.id });
+
+      return new Response(
+        JSON.stringify({
+          success: true,
+          data: {
+            transaction_id: transaction.id,
+            tournament_id: tournamentId,
+            amount_paid: amountInCents,
+            reference,
+            status: 'tournament_registered'
+          },
+        }),
+        {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 200,
+        }
+      );
+
+    } else {
+      // Handle regular deposit
+      // Create transaction record
+      const { data: transaction, error: transactionError } = await supabaseService
+        .from('wallet_transactions')
+        .insert({
+          user_id: user.id,
+          wallet_id: wallet.id,
+          transaction_type: 'deposit',
+          amount: amountInCents,
+          description: `PayStack deposit - ${reference}`,
+          reference_id: reference,
+          status: 'completed',
+          metadata: {
+            paystack_data: {
+              reference: paymentData.reference,
+              amount_kobo: paymentData.amount,
+              currency: paymentData.currency,
+              channel: paymentData.channel,
+              paid_at: paymentData.paid_at,
+              transaction_date: paymentData.transaction_date,
+            }
+          }
+        })
+        .select()
+        .single();
+
+      if (transactionError) {
+        logStep('Transaction creation error', transactionError);
+        throw new Error('Failed to create transaction record');
+      }
+
+      logStep('Transaction record created', { transactionId: transaction.id });
+
+      // Update wallet balance
+      const newBalance = wallet.balance + amountInCents;
+      const { error: updateError } = await supabaseService
+        .from('user_wallets')
+        .update({ 
+          balance: newBalance,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', wallet.id);
+
+      if (updateError) {
+        logStep('Wallet update error', updateError);
+        throw new Error('Failed to update wallet balance');
+      }
+
+      logStep('Wallet balance updated', { 
+        oldBalance: wallet.balance, 
+        newBalance, 
+        amountAdded: amountInCents 
+      });
+
+      return new Response(
+        JSON.stringify({
+          success: true,
+          data: {
+            transaction_id: transaction.id,
+            amount_added: amountInCents,
+            new_balance: newBalance,
+            reference,
+            status: 'completed'
+          },
+        }),
+        {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 200,
+        }
+      );
+    }
 
   } catch (error) {
     logStep('Error in PayStack verification', { error: error.message });

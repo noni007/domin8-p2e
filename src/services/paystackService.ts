@@ -9,7 +9,8 @@ export interface PayStackPaymentData {
   callback_url?: string;
   metadata?: {
     user_id: string;
-    transaction_type: 'deposit' | 'withdrawal';
+    transaction_type: 'deposit' | 'withdrawal' | 'tournament_fee';
+    tournament_id?: string;
     [key: string]: any;
   };
 }
