@@ -24,6 +24,7 @@ import { useFeatureFlags } from "@/hooks/useFeatureFlags";
 
 export const Navigation = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const { user } = useAuth();
   const { isAdmin } = useAdmin();
   const { isFeatureEnabled } = useFeatureFlags();
@@ -132,7 +133,14 @@ export const Navigation = () => {
 
         {/* Mobile menu */}
         {isMobileMenuOpen && (
-          <MobileMenu onClose={() => setIsMobileMenuOpen(false)} />
+          <MobileMenu 
+            isOpen={isMobileMenuOpen}
+            onClose={() => setIsMobileMenuOpen(false)}
+            onAuthClick={() => {
+              setIsMobileMenuOpen(false);
+              setIsAuthModalOpen(true);
+            }}
+          />
         )}
       </div>
     </nav>

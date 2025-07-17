@@ -22,15 +22,12 @@ export const config = defaultWagmiConfig({
   chains,
   projectId,
   metadata,
-  enableAnalytics: true, // Optional - defaults to your Cloud configuration
 })
 
 // Create modal
 export const web3Modal = createWeb3Modal({
   wagmiConfig: config,
   projectId,
-  chains,
-  enableAnalytics: true // Optional - defaults to your Cloud configuration
 })
 
 // Get Web3 config from platform settings
