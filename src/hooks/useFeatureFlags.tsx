@@ -14,6 +14,13 @@ interface FeatureFlags {
   feature_email_notifications: boolean;
   feature_file_uploads: boolean;
   feature_maintenance_mode: boolean;
+  feature_web3_wallets: boolean;
+  feature_crypto_payments: boolean;
+  feature_polygon_integration: boolean;
+  feature_smart_contracts: boolean;
+  feature_platform_token: boolean;
+  feature_nft_achievements: boolean;
+  feature_token_staking: boolean;
 }
 
 export const useFeatureFlags = () => {
@@ -29,6 +36,13 @@ export const useFeatureFlags = () => {
     feature_email_notifications: false,
     feature_file_uploads: false,
     feature_maintenance_mode: false,
+    feature_web3_wallets: false,
+    feature_crypto_payments: false,
+    feature_polygon_integration: false,
+    feature_smart_contracts: false,
+    feature_platform_token: false,
+    feature_nft_achievements: false,
+    feature_token_staking: false,
   });
   const [loading, setLoading] = useState(true);
 

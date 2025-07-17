@@ -110,6 +110,75 @@ export type Database = {
         }
         Relationships: []
       }
+      crypto_transactions: {
+        Row: {
+          amount_formatted: number
+          amount_wei: string
+          block_number: number | null
+          confirmed_at: string | null
+          created_at: string
+          gas_price_wei: string | null
+          gas_used: number | null
+          id: string
+          metadata: Json | null
+          network_id: number
+          related_match_id: string | null
+          related_tournament_id: string | null
+          status: string
+          token_address: string | null
+          token_symbol: string
+          transaction_hash: string
+          transaction_type: string
+          updated_at: string
+          user_id: string
+          wallet_address: string
+        }
+        Insert: {
+          amount_formatted: number
+          amount_wei: string
+          block_number?: number | null
+          confirmed_at?: string | null
+          created_at?: string
+          gas_price_wei?: string | null
+          gas_used?: number | null
+          id?: string
+          metadata?: Json | null
+          network_id: number
+          related_match_id?: string | null
+          related_tournament_id?: string | null
+          status?: string
+          token_address?: string | null
+          token_symbol?: string
+          transaction_hash: string
+          transaction_type: string
+          updated_at?: string
+          user_id: string
+          wallet_address: string
+        }
+        Update: {
+          amount_formatted?: number
+          amount_wei?: string
+          block_number?: number | null
+          confirmed_at?: string | null
+          created_at?: string
+          gas_price_wei?: string | null
+          gas_used?: number | null
+          id?: string
+          metadata?: Json | null
+          network_id?: number
+          related_match_id?: string | null
+          related_tournament_id?: string | null
+          status?: string
+          token_address?: string | null
+          token_symbol?: string
+          transaction_hash?: string
+          transaction_type?: string
+          updated_at?: string
+          user_id?: string
+          wallet_address?: string
+        }
+        Relationships: []
+      }
       feature_waitlist: {
         Row: {
           created_at: string
@@ -733,6 +802,63 @@ export type Database = {
           },
         ]
       }
+      smart_contracts: {
+        Row: {
+          abi_json: Json
+          bytecode: string | null
+          contract_address: string
+          contract_name: string
+          contract_type: string
+          created_at: string
+          deployed_at: string
+          deployed_by_user_id: string | null
+          deployer_address: string
+          deployment_transaction_hash: string
+          id: string
+          is_active: boolean
+          is_verified: boolean
+          metadata: Json | null
+          network_id: number
+          updated_at: string
+        }
+        Insert: {
+          abi_json: Json
+          bytecode?: string | null
+          contract_address: string
+          contract_name: string
+          contract_type: string
+          created_at?: string
+          deployed_at?: string
+          deployed_by_user_id?: string | null
+          deployer_address: string
+          deployment_transaction_hash: string
+          id?: string
+          is_active?: boolean
+          is_verified?: boolean
+          metadata?: Json | null
+          network_id: number
+          updated_at?: string
+        }
+        Update: {
+          abi_json?: Json
+          bytecode?: string | null
+          contract_address?: string
+          contract_name?: string
+          contract_type?: string
+          created_at?: string
+          deployed_at?: string
+          deployed_by_user_id?: string | null
+          deployer_address?: string
+          deployment_transaction_hash?: string
+          id?: string
+          is_active?: boolean
+          is_verified?: boolean
+          metadata?: Json | null
+          network_id?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       social_integrations: {
         Row: {
           access_token: string | null
@@ -1292,6 +1418,51 @@ export type Database = {
           id?: string
           updated_at?: string
           user_id?: string | null
+        }
+        Relationships: []
+      }
+      user_web3_wallets: {
+        Row: {
+          connected_at: string
+          created_at: string
+          id: string
+          is_active: boolean
+          is_primary: boolean
+          last_used_at: string
+          metadata: Json | null
+          network_id: number
+          updated_at: string
+          user_id: string
+          wallet_address: string
+          wallet_type: string
+        }
+        Insert: {
+          connected_at?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          is_primary?: boolean
+          last_used_at?: string
+          metadata?: Json | null
+          network_id?: number
+          updated_at?: string
+          user_id: string
+          wallet_address: string
+          wallet_type: string
+        }
+        Update: {
+          connected_at?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          is_primary?: boolean
+          last_used_at?: string
+          metadata?: Json | null
+          network_id?: number
+          updated_at?: string
+          user_id?: string
+          wallet_address?: string
+          wallet_type?: string
         }
         Relationships: []
       }
