@@ -25,9 +25,10 @@ export const MobileMenu = ({ isOpen, onClose, onAuthClick }: MobileMenuProps) =>
 
   const navItems = [
     { to: '/tournaments', label: 'Tournaments' },
-    { to: '/rankings', label: 'Rankings' },
     { to: '/leaderboards', label: 'Leaderboards' },
+    { to: '/rankings', label: 'Rankings' },
     { to: '/teams', label: 'Teams' },
+    { to: '/friends', label: 'Community' },
     { to: '/activity', label: 'Activity' },
   ]
 
@@ -50,8 +51,12 @@ export const MobileMenu = ({ isOpen, onClose, onAuthClick }: MobileMenuProps) =>
         <SheetHeader>
           <SheetTitle className="text-white flex items-center justify-between">
             <div className="flex items-center">
-              <Trophy className="h-5 w-5 mr-2 text-blue-400" />
-              Domin8 P2E
+              <img 
+                src="/lovable-uploads/be31ac20-7045-4c65-bf6f-1dda987cd378.png" 
+                alt="Domin8 Logo" 
+                className="h-6 w-auto mr-2"
+              />
+              Domin8
             </div>
             <span className="text-xs text-gray-400">Swipe right to close</span>
           </SheetTitle>
@@ -129,7 +134,7 @@ export const MobileMenu = ({ isOpen, onClose, onAuthClick }: MobileMenuProps) =>
             ) : (
               <Button
                 onClick={onAuthClick}
-                className="w-full bg-blue-600 hover:bg-blue-700"
+                className="w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-black font-semibold"
               >
                 Sign In / Register
               </Button>

@@ -11,11 +11,11 @@ export const CTASection = () => {
             Ready to Dominate?
           </h2>
           <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
-            Join thousands of African gamers competing for glory, prizes, and recognition in the AER system.
+            Join thousands of African gamers competing for glory, prizes, and recognition in the Domin8 ecosystem.
           </p>
           <Button 
             size="lg" 
-            className="bg-gradient-to-r from-blue-600 to-teal-600 hover:from-blue-700 hover:to-teal-700 text-lg px-8 py-4"
+            className="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-black font-semibold text-lg px-8 py-4"
             onClick={() => window.location.href = '/tournaments'}
           >
             Start Your Journey

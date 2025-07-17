@@ -37,62 +37,72 @@ export const Navigation = () => {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
-            <Trophy className="h-8 w-8 text-blue-500" />
-            <span className="text-xl font-bold text-white">Gamed</span>
+            <img 
+              src="/lovable-uploads/be31ac20-7045-4c65-bf6f-1dda987cd378.png" 
+              alt="Domin8 Logo" 
+              className="h-10 w-auto"
+            />
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden lg:flex items-center space-x-6">
             <Link 
               to="/tournaments" 
-              className="text-gray-300 hover:text-blue-400 transition-colors flex items-center space-x-1"
+              className="text-gray-300 hover:text-yellow-400 transition-colors flex items-center space-x-1"
             >
               <Trophy className="h-4 w-4" />
               <span>Tournaments</span>
             </Link>
             <Link 
+              to="/leaderboards" 
+              className="text-gray-300 hover:text-yellow-400 transition-colors flex items-center space-x-1"
+            >
+              <BarChart3 className="h-4 w-4" />
+              <span>Leaderboards</span>
+            </Link>
+            <Link 
               to="/rankings" 
-              className="text-gray-300 hover:text-blue-400 transition-colors flex items-center space-x-1"
+              className="text-gray-300 hover:text-yellow-400 transition-colors flex items-center space-x-1"
             >
               <BarChart3 className="h-4 w-4" />
               <span>Rankings</span>
             </Link>
             <Link 
               to="/teams" 
-              className="text-gray-300 hover:text-blue-400 transition-colors flex items-center space-x-1"
+              className="text-gray-300 hover:text-yellow-400 transition-colors flex items-center space-x-1"
             >
               <Users className="h-4 w-4" />
               <span>Teams</span>
+            </Link>
+            <Link 
+              to="/friends" 
+              className="text-gray-300 hover:text-yellow-400 transition-colors flex items-center space-x-1"
+            >
+              <UserPlus className="h-4 w-4" />
+              <span>Community</span>
             </Link>
             {user && (
               <>
                 <Link 
                   to="/wallet" 
-                  className="text-gray-300 hover:text-blue-400 transition-colors flex items-center space-x-1"
+                  className="text-gray-300 hover:text-yellow-400 transition-colors flex items-center space-x-1"
                 >
                   <Wallet className="h-4 w-4" />
                   <span>Wallet</span>
                 </Link>
                 <Link 
                   to="/activity" 
-                  className="text-gray-300 hover:text-blue-400 transition-colors flex items-center space-x-1"
+                  className="text-gray-300 hover:text-yellow-400 transition-colors flex items-center space-x-1"
                 >
                   <Activity className="h-4 w-4" />
                   <span>Activity</span>
-                </Link>
-                <Link 
-                  to="/friends" 
-                  className="text-gray-300 hover:text-blue-400 transition-colors flex items-center space-x-1"
-                >
-                  <UserPlus className="h-4 w-4" />
-                  <span>Friends</span>
                 </Link>
               </>
             )}
             {isAdmin && (
               <Link 
                 to="/admin" 
-                className="text-gray-300 hover:text-blue-400 transition-colors flex items-center space-x-1"
+                className="text-gray-300 hover:text-yellow-400 transition-colors flex items-center space-x-1"
               >
                 <Shield className="h-4 w-4" />
                 <span>Admin</span>
@@ -101,7 +111,7 @@ export const Navigation = () => {
           </div>
 
           {/* Right side actions */}
-          <div className="hidden md:flex items-center space-x-4">
+          <div className="hidden lg:flex items-center space-x-4">
             {user ? (
               <>
                 <NotificationBell />
@@ -110,7 +120,7 @@ export const Navigation = () => {
               </>
             ) : (
               <Link to="/auth">
-                <Button variant="outline" className="border-blue-600 text-blue-400 hover:bg-blue-600/10">
+                <Button variant="outline" className="border-yellow-600 text-yellow-400 hover:bg-yellow-600/10">
                   <User className="h-4 w-4 mr-2" />
                   Sign In
                 </Button>
@@ -119,7 +129,7 @@ export const Navigation = () => {
           </div>
 
           {/* Mobile menu button */}
-          <div className="md:hidden">
+          <div className="lg:hidden">
             <Button
               variant="ghost"
               size="sm"
