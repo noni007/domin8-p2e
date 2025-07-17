@@ -1,4 +1,3 @@
-
 import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
@@ -69,7 +68,7 @@ export const MobileMenu = ({ isOpen, onClose, onAuthClick }: MobileMenuProps) =>
               key={item.to}
               to={item.to}
               onClick={handleLinkClick}
-              className="text-gray-300 hover:text-white transition-colors py-2"
+              className="text-gray-300 hover:text-blue-400 transition-colors py-2"
             >
               {item.label}
             </Link>
@@ -80,7 +79,7 @@ export const MobileMenu = ({ isOpen, onClose, onAuthClick }: MobileMenuProps) =>
               <Link
                 to="/wallet"
                 onClick={handleLinkClick}
-                className="text-gray-300 hover:text-white transition-colors py-2 flex items-center"
+                className="text-gray-300 hover:text-blue-400 transition-colors py-2 flex items-center"
               >
                 <Wallet className="h-4 w-4 mr-2" />
                 Wallet
@@ -89,7 +88,7 @@ export const MobileMenu = ({ isOpen, onClose, onAuthClick }: MobileMenuProps) =>
               <Link
                 to="/profile"
                 onClick={handleLinkClick}
-                className="text-gray-300 hover:text-white transition-colors py-2 flex items-center"
+                className="text-gray-300 hover:text-blue-400 transition-colors py-2 flex items-center"
               >
                 <User className="h-4 w-4 mr-2" />
                 Profile
@@ -98,7 +97,7 @@ export const MobileMenu = ({ isOpen, onClose, onAuthClick }: MobileMenuProps) =>
               <Link
                 to="/friends"
                 onClick={handleLinkClick}
-                className="text-gray-300 hover:text-white transition-colors py-2"
+                className="text-gray-300 hover:text-blue-400 transition-colors py-2"
               >
                 Friends
               </Link>
@@ -109,7 +108,7 @@ export const MobileMenu = ({ isOpen, onClose, onAuthClick }: MobileMenuProps) =>
             <Link
               to="/admin"
               onClick={handleLinkClick}
-              className="text-yellow-400 hover:text-yellow-300 transition-colors py-2 flex items-center"
+              className="text-blue-400 hover:text-blue-300 transition-colors py-2 flex items-center"
             >
               <Shield className="h-4 w-4 mr-2" />
               Admin Panel
@@ -134,7 +133,7 @@ export const MobileMenu = ({ isOpen, onClose, onAuthClick }: MobileMenuProps) =>
             ) : (
               <Button
                 onClick={onAuthClick}
-                className="w-full bg-lime-500 hover:bg-lime-600 text-black font-bold"
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold"
               >
                 Sign In / Register
               </Button>

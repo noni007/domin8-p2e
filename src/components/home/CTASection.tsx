@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Calendar } from "lucide-react";
 
@@ -15,7 +14,7 @@ export const CTASection = () => {
           </p>
           <Button 
             size="lg" 
-            className="bg-lime-500 hover:bg-lime-600 text-black font-bold text-lg px-8 py-4"
+            className="bg-blue-600 hover:bg-blue-700 text-white font-bold text-lg px-8 py-4"
             onClick={() => window.location.href = '/tournaments'}
           >
             Start Your Journey
