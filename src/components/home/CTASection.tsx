@@ -14,7 +14,7 @@ export const CTASection = () => {
           </p>
           <Button 
             size="lg" 
-            className="bg-blue-600 hover:bg-blue-700 text-white font-bold text-lg px-8 py-4"
+            className="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-black font-bold text-lg px-8 py-4"
             onClick={() => window.location.href = '/tournaments'}
           >
             Start Your Journey

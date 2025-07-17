@@ -23,7 +23,7 @@ export const HeroSection = () => {
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-4 max-w-md sm:max-w-none mx-auto">
             <Button 
               size="lg" 
-              className="bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm sm:text-base lg:text-lg px-6 sm:px-8 py-3 sm:py-4 touch-manipulation w-full sm:w-auto"
+              className="bg-gradient-to-r from-blue-600 to-teal-600 hover:from-blue-700 hover:to-teal-700 text-white font-bold text-sm sm:text-base lg:text-lg px-6 sm:px-8 py-3 sm:py-4 touch-manipulation w-full sm:w-auto"
               onClick={() => window.location.href = '/tournaments'}
             >
               Join Tournament
@@ -31,8 +31,7 @@ export const HeroSection = () => {
             </Button>
             <Button 
               size="lg" 
-              variant="outline" 
-              className="border-blue-400 text-blue-400 hover:bg-blue-400 hover:text-white text-sm sm:text-base lg:text-lg px-6 sm:px-8 py-3 sm:py-4 touch-manipulation w-full sm:w-auto"
+              className="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-black font-bold text-sm sm:text-base lg:text-lg px-6 sm:px-8 py-3 sm:py-4 touch-manipulation w-full sm:w-auto"
               onClick={() => window.location.href = '/leaderboards'}
             >
               View Leaderboards
