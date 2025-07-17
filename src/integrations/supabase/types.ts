@@ -1554,6 +1554,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      check_admin_role: {
+        Args: { user_id_param: string; required_role?: string }
+        Returns: boolean
+      }
       check_user_achievements: {
         Args: { user_id_param: string }
         Returns: undefined
