@@ -62,13 +62,22 @@ export const Navigation = () => {
               )}
               
               {isAdmin && (
-                <Link
-                  to="/admin"
-                  className="text-yellow-400 hover:text-yellow-300 transition-colors flex items-center"
-                >
-                  <Shield className="h-4 w-4 mr-1" />
-                  Admin
-                </Link>
+                <>
+                  <Link
+                    to="/admin"
+                    className="text-yellow-400 hover:text-yellow-300 transition-colors flex items-center"
+                  >
+                    <Shield className="h-4 w-4 mr-1" />
+                    Admin
+                  </Link>
+                  <Link
+                    to="/web3-admin"
+                    className="text-cyan-400 hover:text-cyan-300 transition-colors flex items-center"
+                  >
+                    <Wallet className="h-4 w-4 mr-1" />
+                    Web3 Admin
+                  </Link>
+                </>
               )}
             </div>
 
