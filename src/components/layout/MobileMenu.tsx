@@ -134,7 +134,7 @@ export const MobileMenu = ({ isOpen, onClose, onAuthClick }: MobileMenuProps) =>
             ) : (
               <Button
                 onClick={onAuthClick}
-                className="w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-black font-semibold"
+                className="w-full bg-lime-500 hover:bg-lime-600 text-black font-bold"
               >
                 Sign In / Register
               </Button>

@@ -48,35 +48,35 @@ export const Navigation = () => {
           <div className="hidden lg:flex items-center space-x-6">
             <Link 
               to="/tournaments" 
-              className="text-gray-300 hover:text-yellow-400 transition-colors flex items-center space-x-1"
+              className="text-gray-300 hover:text-lime-400 transition-colors flex items-center space-x-1"
             >
               <Trophy className="h-4 w-4" />
               <span>Tournaments</span>
             </Link>
             <Link 
               to="/leaderboards" 
-              className="text-gray-300 hover:text-yellow-400 transition-colors flex items-center space-x-1"
+              className="text-gray-300 hover:text-lime-400 transition-colors flex items-center space-x-1"
             >
               <BarChart3 className="h-4 w-4" />
               <span>Leaderboards</span>
             </Link>
             <Link 
               to="/rankings" 
-              className="text-gray-300 hover:text-yellow-400 transition-colors flex items-center space-x-1"
+              className="text-gray-300 hover:text-lime-400 transition-colors flex items-center space-x-1"
             >
               <BarChart3 className="h-4 w-4" />
               <span>Rankings</span>
             </Link>
             <Link 
               to="/teams" 
-              className="text-gray-300 hover:text-yellow-400 transition-colors flex items-center space-x-1"
+              className="text-gray-300 hover:text-lime-400 transition-colors flex items-center space-x-1"
             >
               <Users className="h-4 w-4" />
               <span>Teams</span>
             </Link>
             <Link 
               to="/friends" 
-              className="text-gray-300 hover:text-yellow-400 transition-colors flex items-center space-x-1"
+              className="text-gray-300 hover:text-lime-400 transition-colors flex items-center space-x-1"
             >
               <UserPlus className="h-4 w-4" />
               <span>Community</span>
@@ -85,14 +85,14 @@ export const Navigation = () => {
               <>
                 <Link 
                   to="/wallet" 
-                  className="text-gray-300 hover:text-yellow-400 transition-colors flex items-center space-x-1"
+                  className="text-gray-300 hover:text-lime-400 transition-colors flex items-center space-x-1"
                 >
                   <Wallet className="h-4 w-4" />
                   <span>Wallet</span>
                 </Link>
                 <Link 
                   to="/activity" 
-                  className="text-gray-300 hover:text-yellow-400 transition-colors flex items-center space-x-1"
+                  className="text-gray-300 hover:text-lime-400 transition-colors flex items-center space-x-1"
                 >
                   <Activity className="h-4 w-4" />
                   <span>Activity</span>
@@ -102,7 +102,7 @@ export const Navigation = () => {
             {isAdmin && (
               <Link 
                 to="/admin" 
-                className="text-gray-300 hover:text-yellow-400 transition-colors flex items-center space-x-1"
+                className="text-gray-300 hover:text-lime-400 transition-colors flex items-center space-x-1"
               >
                 <Shield className="h-4 w-4" />
                 <span>Admin</span>
@@ -120,7 +120,7 @@ export const Navigation = () => {
               </>
             ) : (
               <Link to="/auth">
-                <Button variant="outline" className="border-yellow-600 text-yellow-400 hover:bg-yellow-600/10">
+                <Button variant="outline" className="border-lime-500 text-lime-400 hover:bg-lime-500 hover:text-black">
                   <User className="h-4 w-4 mr-2" />
                   Sign In
                 </Button>
