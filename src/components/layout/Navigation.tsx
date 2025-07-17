@@ -1,139 +1,140 @@
 
-import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { Button } from '@/components/ui/button'
-import { useAuth } from '@/hooks/useAuth'
-import { useAdmin } from '@/hooks/useAdmin'
-import { AuthModal } from '@/components/auth/AuthModal'
-import { UserMenu } from './UserMenu'
-import { MobileMenu } from './MobileMenu'
-import { Menu, Shield, Wallet } from 'lucide-react'
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { 
+  Trophy, 
+  Users, 
+  Wallet, 
+  BarChart3, 
+  User, 
+  Activity,
+  UserPlus,
+  Menu,
+  X,
+  Shield
+} from "lucide-react";
+import { UserMenu } from "./UserMenu";
+import { MobileMenu } from "./MobileMenu";
+import { NotificationBell } from "@/components/notifications/NotificationBell";
+import { WalletConnectButton } from "@/components/web3/WalletConnectButton";
+import { useAuth } from "@/hooks/useAuth";
+import { useAdmin } from "@/hooks/useAdmin";
+import { useFeatureFlags } from "@/hooks/useFeatureFlags";
 
 export const Navigation = () => {
-  const { user } = useAuth()
-  const { isAdmin } = useAdmin()
-  const [showAuthModal, setShowAuthModal] = useState(false)
-  const [showMobileMenu, setShowMobileMenu] = useState(false)
-  const navigate = useNavigate()
-
-  const navItems = [
-    { to: '/tournaments', label: 'Tournaments' },
-    { to: '/rankings', label: 'Rankings' },
-    { to: '/leaderboards', label: 'Leaderboards' },
-    { to: '/teams', label: 'Teams' },
-    { to: '/activity', label: 'Activity' },
-    { to: '/match-spectating', label: 'Match Spectating' },
-  ]
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { user } = useAuth();
+  const { isAdmin } = useAdmin();
+  const { isFeatureEnabled } = useFeatureFlags();
+  
+  const isWeb3Enabled = isFeatureEnabled('feature_web3_wallets');
 
   return (
-    <>
-      <nav className="bg-black/20 backdrop-blur-sm border-b border-blue-800/30 sticky top-0 z-50">
-        <div className="container mx-auto px-3 sm:px-4">
-          <div className="flex items-center justify-between h-14 sm:h-16">
-            {/* Logo */}
-            <Link to="/" className="flex items-center touch-manipulation">
-              <img 
-                src="/lovable-uploads/be31ac20-7045-4c65-bf6f-1dda987cd378.png" 
-                alt="Domin8 Logo" 
-                className="h-8 sm:h-10 w-auto"
-              />
+    <nav className="bg-black/90 backdrop-blur-md border-b border-blue-800/30 sticky top-0 z-50">
+      <div className="container mx-auto px-4">
+        <div className="flex items-center justify-between h-16">
+          {/* Logo */}
+          <Link to="/" className="flex items-center space-x-2">
+            <Trophy className="h-8 w-8 text-blue-500" />
+            <span className="text-xl font-bold text-white">Gamed</span>
+          </Link>
+
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center space-x-8">
+            <Link 
+              to="/tournaments" 
+              className="text-gray-300 hover:text-blue-400 transition-colors flex items-center space-x-1"
+            >
+              <Trophy className="h-4 w-4" />
+              <span>Tournaments</span>
             </Link>
-
-            {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center space-x-8">
-              {navItems.map((item) => (
-                <Link
-                  key={item.to}
-                  to={item.to}
-                  className="text-gray-300 hover:text-white transition-colors"
+            <Link 
+              to="/rankings" 
+              className="text-gray-300 hover:text-blue-400 transition-colors flex items-center space-x-1"
+            >
+              <BarChart3 className="h-4 w-4" />
+              <span>Rankings</span>
+            </Link>
+            <Link 
+              to="/teams" 
+              className="text-gray-300 hover:text-blue-400 transition-colors flex items-center space-x-1"
+            >
+              <Users className="h-4 w-4" />
+              <span>Teams</span>
+            </Link>
+            {user && (
+              <>
+                <Link 
+                  to="/wallet" 
+                  className="text-gray-300 hover:text-blue-400 transition-colors flex items-center space-x-1"
                 >
-                  {item.label}
+                  <Wallet className="h-4 w-4" />
+                  <span>Wallet</span>
                 </Link>
-              ))}
-              
-              {user && (
-                <Link
-                  to="/wallet"
-                  className="text-gray-300 hover:text-white transition-colors flex items-center"
+                <Link 
+                  to="/activity" 
+                  className="text-gray-300 hover:text-blue-400 transition-colors flex items-center space-x-1"
                 >
-                  <Wallet className="h-4 w-4 mr-1" />
-                  Wallet
+                  <Activity className="h-4 w-4" />
+                  <span>Activity</span>
                 </Link>
-              )}
-              
-              {isAdmin && (
-                <>
-                  <Link
-                    to="/admin"
-                    className="text-yellow-400 hover:text-yellow-300 transition-colors flex items-center"
-                  >
-                    <Shield className="h-4 w-4 mr-1" />
-                    Admin
-                  </Link>
-                  <Link
-                    to="/web3-admin"
-                    className="text-cyan-400 hover:text-cyan-300 transition-colors flex items-center"
-                  >
-                    <Wallet className="h-4 w-4 mr-1" />
-                    Web3 Admin
-                  </Link>
-                </>
-              )}
-            </div>
-
-            {/* Auth Section */}
-            <div className="hidden md:flex items-center space-x-4">
-              {user ? (
-                <UserMenu />
-              ) : (
-                <div className="flex space-x-2">
-                  <Button
-                    variant="outline"
-                    onClick={() => setShowAuthModal(true)}
-                    className="border-blue-400 text-blue-400 hover:bg-blue-400 hover:text-black"
-                  >
-                    Sign In
-                  </Button>
-                  <Button
-                    onClick={() => setShowAuthModal(true)}
-                    className="bg-blue-600 hover:bg-blue-700"
-                  >
-                    Get Started
-                  </Button>
-                </div>
-              )}
-            </div>
-
-            {/* Mobile Menu Button */}
-            <div className="md:hidden">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setShowMobileMenu(true)}
-                className="text-white touch-manipulation min-h-[44px] min-w-[44px] p-2"
+                <Link 
+                  to="/friends" 
+                  className="text-gray-300 hover:text-blue-400 transition-colors flex items-center space-x-1"
+                >
+                  <UserPlus className="h-4 w-4" />
+                  <span>Friends</span>
+                </Link>
+              </>
+            )}
+            {isAdmin && (
+              <Link 
+                to="/admin" 
+                className="text-gray-300 hover:text-blue-400 transition-colors flex items-center space-x-1"
               >
-                <Menu className="h-6 w-6" />
-              </Button>
-            </div>
+                <Shield className="h-4 w-4" />
+                <span>Admin</span>
+              </Link>
+            )}
+          </div>
+
+          {/* Right side actions */}
+          <div className="hidden md:flex items-center space-x-4">
+            {user ? (
+              <>
+                <NotificationBell />
+                {isWeb3Enabled && <WalletConnectButton />}
+                <UserMenu />
+              </>
+            ) : (
+              <Link to="/auth">
+                <Button variant="outline" className="border-blue-600 text-blue-400 hover:bg-blue-600/10">
+                  <User className="h-4 w-4 mr-2" />
+                  Sign In
+                </Button>
+              </Link>
+            )}
+          </div>
+
+          {/* Mobile menu button */}
+          <div className="md:hidden">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="text-gray-300"
+            >
+              {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            </Button>
           </div>
         </div>
-      </nav>
 
-      {/* Mobile Menu */}
-      <MobileMenu
-        isOpen={showMobileMenu}
-        onClose={() => setShowMobileMenu(false)}
-        onAuthClick={() => {
-          setShowMobileMenu(false)
-          setShowAuthModal(true)
-        }}
-      />
-
-      {/* Auth Modal */}
-      <AuthModal
-        isOpen={showAuthModal}
-        onClose={() => setShowAuthModal(false)}
-      />
-    </>
-  )
-}
+        {/* Mobile menu */}
+        {isMobileMenuOpen && (
+          <MobileMenu onClose={() => setIsMobileMenuOpen(false)} />
+        )}
+      </div>
+    </nav>
+  );
+};

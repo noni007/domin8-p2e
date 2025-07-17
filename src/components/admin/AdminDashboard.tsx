@@ -14,7 +14,8 @@ import {
   AlertTriangle,
   TrendingUp,
   ToggleLeft,
-  BarChart
+  BarChart,
+  Wallet
 } from "lucide-react";
 import { useAdmin } from "@/hooks/useAdmin";
 import { AdminUserManagement } from "./AdminUserManagement";
@@ -24,17 +25,22 @@ import { AdminPlatformConfig } from "./AdminPlatformConfig";
 import { AdminAuditLog } from "./AdminAuditLog";
 import { AdminFeatureToggles } from "./AdminFeatureToggles";
 import { AdminOnboardingAnalytics } from "./AdminOnboardingAnalytics";
+import { AdminWeb3Config } from "./AdminWeb3Config";
 import { supabase } from "@/integrations/supabase/client";
 import { PrizeDistributionPanel } from "./PrizeDistributionPanel";
+import { useFeatureFlags } from "@/hooks/useFeatureFlags";
 
 export const AdminDashboard = () => {
   const { isAdmin, adminRole, loading } = useAdmin();
+  const { isFeatureEnabled } = useFeatureFlags();
   const [stats, setStats] = useState({
     totalUsers: 0,
     activeTournaments: 0,
     totalRevenue: 0,
     pendingTransactions: 0
   });
+
+  const isWeb3Enabled = isFeatureEnabled('feature_web3_wallets');
 
   useEffect(() => {
     if (isAdmin) {
@@ -98,7 +104,7 @@ export const AdminDashboard = () => {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-white">Admin Dashboard</h1>
-          <div className="flex items-center mt-2">
+          <div className="flex items-center mt-2 gap-2">
             <Badge className={`${
               adminRole === 'super_admin' ? 'bg-red-600' :
               adminRole === 'admin' ? 'bg-blue-600' : 'bg-green-600'
@@ -106,6 +112,12 @@ export const AdminDashboard = () => {
               <Shield className="h-3 w-3 mr-1" />
               {adminRole?.replace('_', ' ').toUpperCase()}
             </Badge>
+            {isWeb3Enabled && (
+              <Badge variant="outline" className="border-blue-500 text-blue-400">
+                <Wallet className="h-3 w-3 mr-1" />
+                Web3 Enabled
+              </Badge>
+            )}
           </div>
         </div>
         <Button onClick={fetchDashboardStats} variant="outline">
@@ -167,7 +179,7 @@ export const AdminDashboard = () => {
           
           {/* Admin Tabs */}
           <Tabs defaultValue="analytics" className="space-y-6">
-            <TabsList className="bg-black/40 border-blue-800/30">
+            <TabsList className="bg-black/40 border-blue-800/30 flex-wrap h-auto">
               <TabsTrigger value="analytics" className="data-[state=active]:bg-blue-600">
                 <BarChart className="h-4 w-4 mr-2" />
                 Analytics
@@ -176,6 +188,12 @@ export const AdminDashboard = () => {
                 <ToggleLeft className="h-4 w-4 mr-2" />
                 Features
               </TabsTrigger>
+              {isWeb3Enabled && (
+                <TabsTrigger value="web3" className="data-[state=active]:bg-blue-600">
+                  <Wallet className="h-4 w-4 mr-2" />
+                  Web3
+                </TabsTrigger>
+              )}
               <TabsTrigger value="users" className="data-[state=active]:bg-blue-600">
                 <Users className="h-4 w-4 mr-2" />
                 Users
@@ -205,6 +223,12 @@ export const AdminDashboard = () => {
             <TabsContent value="features">
               <AdminFeatureToggles />
             </TabsContent>
+
+            {isWeb3Enabled && (
+              <TabsContent value="web3">
+                <AdminWeb3Config />
+              </TabsContent>
+            )}
 
             <TabsContent value="users">
               <AdminUserManagement />
