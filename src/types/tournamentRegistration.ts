@@ -2,6 +2,8 @@
 export interface RegistrationResult {
   success: boolean;
   message: string;
+  requiresExternalAction?: boolean;
+  transactionHash?: string;
 }
 
 export interface TournamentRegistrationParams {

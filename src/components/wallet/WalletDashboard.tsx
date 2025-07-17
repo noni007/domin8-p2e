@@ -8,12 +8,20 @@ import { PaymentVerification } from "./PaymentVerification";
 import { WalletOverviewCards } from "./dashboard/WalletOverviewCards";
 import { WalletActions } from "./dashboard/WalletActions";
 import { RecentTransactions } from "./dashboard/RecentTransactions";
+import { EnhancedWalletConnectButton } from "@/components/web3/EnhancedWalletConnectButton";
+import { CryptoTransactionHistory } from "@/components/web3/CryptoTransactionHistory";
+import { useFeatureFlags } from "@/hooks/useFeatureFlags";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export const WalletDashboard = () => {
   const { wallet, transactions, loading, formatAmount } = useWallet();
+  const { isFeatureEnabled } = useFeatureFlags();
   const [showDeposit, setShowDeposit] = useState(false);
   const [showWithdrawal, setShowWithdrawal] = useState(false);
   const [verifyingPayment, setVerifyingPayment] = useState<string | null>(null);
+  
+  const isWeb3Enabled = isFeatureEnabled('feature_web3_wallets');
+  const isCryptoEnabled = isFeatureEnabled('feature_crypto_payments');
 
   // Check for payment success/cancellation from URL params
   useEffect(() => {
@@ -90,12 +98,41 @@ export const WalletDashboard = () => {
         onWithdraw={() => setShowWithdrawal(true)}
       />
 
-      <RecentTransactions 
-        transactions={transactions} 
-        formatAmount={formatAmount} 
-      />
+      {/* Web3 Wallet Section */}
+      {isWeb3Enabled && (
+        <div className="space-y-4">
+          <h3 className="text-lg font-semibold">Web3 Integration</h3>
+          <EnhancedWalletConnectButton showDetails={true} />
+        </div>
+      )}
 
-      <WalletTransactionHistory transactions={transactions} />
+      {/* Transaction History Tabs */}
+      <Tabs defaultValue="platform" className="space-y-4">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="platform">Platform Transactions</TabsTrigger>
+          <TabsTrigger value="crypto" disabled={!isCryptoEnabled}>
+            Crypto Transactions
+          </TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="platform" className="space-y-4">
+          <RecentTransactions 
+            transactions={transactions} 
+            formatAmount={formatAmount} 
+          />
+          <WalletTransactionHistory transactions={transactions} />
+        </TabsContent>
+        
+        <TabsContent value="crypto">
+          {isCryptoEnabled ? (
+            <CryptoTransactionHistory />
+          ) : (
+            <div className="text-center py-8 text-muted-foreground">
+              Crypto transactions are not enabled
+            </div>
+          )}
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };

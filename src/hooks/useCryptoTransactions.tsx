@@ -225,12 +225,34 @@ export const useCryptoTransactions = () => {
     }
   }, [publicClient, address])
 
+  // Add compatibility methods for the new components
+  const sendPayment = useCallback(async (params: any): Promise<any> => {
+    const result = await sendNativeToken({
+      to: address || '0x0000000000000000000000000000000000000000',
+      amount: params.amount,
+      tournamentId: params.tournamentId,
+      matchId: params.matchId
+    });
+    return { 
+      success: result.success, 
+      transactionHash: result.hash,
+      error: result.error 
+    };
+  }, [sendNativeToken, address]);
+
+  const getUserTransactions = useCallback(async () => {
+    return getTransactionHistory();
+  }, [getTransactionHistory]);
+
   return {
     sendNativeToken,
+    sendPayment,
     getTransactionHistory,
+    getUserTransactions,
     getTransactionByHash,
     estimateGas,
     isLoading: isLoading || isPending,
+    isProcessing: isLoading || isPending,
     isCryptoPaymentsEnabled,
     isPolygonEnabled,
   }
