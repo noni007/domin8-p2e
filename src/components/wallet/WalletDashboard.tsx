@@ -10,6 +10,7 @@ import { WalletActions } from "./dashboard/WalletActions";
 import { RecentTransactions } from "./dashboard/RecentTransactions";
 import { EnhancedWalletConnectButton } from "@/components/web3/EnhancedWalletConnectButton";
 import { CryptoTransactionHistory } from "@/components/web3/CryptoTransactionHistory";
+import { Web3StakingPanel } from "@/components/web3/Web3StakingPanel";
 import { useFeatureFlags } from "@/hooks/useFeatureFlags";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -108,10 +109,13 @@ export const WalletDashboard = () => {
 
       {/* Transaction History Tabs */}
       <Tabs defaultValue="platform" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-2">
+        <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="platform">Platform Transactions</TabsTrigger>
           <TabsTrigger value="crypto" disabled={!isCryptoEnabled}>
             Crypto Transactions
+          </TabsTrigger>
+          <TabsTrigger value="staking" disabled={!isFeatureEnabled('feature_smart_contracts')}>
+            Staking
           </TabsTrigger>
         </TabsList>
         
@@ -129,6 +133,16 @@ export const WalletDashboard = () => {
           ) : (
             <div className="text-center py-8 text-muted-foreground">
               Crypto transactions are not enabled
+            </div>
+          )}
+        </TabsContent>
+        
+        <TabsContent value="staking">
+          {isFeatureEnabled('feature_smart_contracts') ? (
+            <Web3StakingPanel />
+          ) : (
+            <div className="text-center py-8 text-muted-foreground">
+              Smart contracts are not enabled
             </div>
           )}
         </TabsContent>

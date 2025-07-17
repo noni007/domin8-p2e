@@ -18,6 +18,9 @@ import { Wallet, AlertTriangle, Check, Settings } from 'lucide-react'
 import { useFeatureFlags } from '@/hooks/useFeatureFlags'
 import { supabase } from '@/integrations/supabase/client'
 import { toast } from 'sonner'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { SmartContractDeployment } from './SmartContractDeployment'
+import { SmartContractManager } from './SmartContractManager'
 
 export const AdminWeb3Config: React.FC = () => {
   const { flags, toggleFeature, refreshFlags } = useFeatureFlags()
@@ -277,6 +280,19 @@ export const AdminWeb3Config: React.FC = () => {
           </Button>
         </CardContent>
       </Card>
+
+      <Tabs defaultValue="contracts" className="w-full">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="contracts">Smart Contracts</TabsTrigger>
+          <TabsTrigger value="deploy">Deploy Contract</TabsTrigger>
+        </TabsList>
+        <TabsContent value="contracts">
+          <SmartContractManager />
+        </TabsContent>
+        <TabsContent value="deploy">
+          <SmartContractDeployment />
+        </TabsContent>
+      </Tabs>
     </div>
   )
 }
