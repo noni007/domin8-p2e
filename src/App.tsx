@@ -23,6 +23,7 @@ import Friends from '@/pages/Friends'
 import Leaderboards from '@/pages/Leaderboards'
 import Admin from '@/pages/Admin'
 import Wallet from '@/pages/Wallet'
+import Web3Admin from '@/pages/Web3Admin'
 import NotFound from '@/pages/NotFound'
 import ResetPassword from '@/pages/ResetPassword'
 import MobileDevelopmentGuide from '@/pages/MobileDevelopmentGuide'
@@ -60,7 +61,8 @@ function App() {
                       <Route path="/reset-password" element={<ResetPassword />} />
                       <Route path="/friends" element={<Friends />} />
                       <Route path="/leaderboards" element={<Leaderboards />} />
-                      <Route path="/admin" element={<Admin />} />
+            <Route path="/admin" element={<Admin />} />
+            <Route path="/web3-admin" element={<Web3Admin />} />
                       <Route path="/wallet" element={<Wallet />} />
                       <Route path="/mobile-guide" element={<MobileDevelopmentGuide />} />
                       <Route path="/match-spectating" element={<MatchSpectatingDemo />} />
