@@ -32,7 +32,7 @@ export const Navigation = () => {
   const isWeb3Enabled = isFeatureEnabled('feature_web3_wallets');
 
   return (
-    <nav className="bg-black/90 backdrop-blur-md border-b border-blue-800/30 sticky top-0 z-50">
+    <nav className="bg-transparent backdrop-blur-sm border-b border-white/10 sticky top-0 z-50">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
