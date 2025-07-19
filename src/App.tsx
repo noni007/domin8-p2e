@@ -49,8 +49,8 @@ function App() {
                   <Route path="*" element={<NotFound />} />
                 </Routes>
                 <Footer />
+                <Toaster />
               </div>
-              <Toaster />
             </BrowserRouter>
           </AuthProvider>
         </ThemeProvider>
