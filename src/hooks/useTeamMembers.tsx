@@ -1,9 +1,8 @@
-
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { Tables } from "@/integrations/supabase/types";
 import { useAuth } from "@/hooks/useAuth";
-import { toast } from "@/hooks/use-toast";
+import { useSimpleToast } from "@/hooks/useSimpleToast";
 
 type TeamMember = Tables<'team_members'> & {
   member_profile: Tables<'profiles'>;
@@ -11,6 +10,7 @@ type TeamMember = Tables<'team_members'> & {
 
 export const useTeamMembers = (teamId: string) => {
   const { user } = useAuth();
+  const { toast } = useSimpleToast();
   const [members, setMembers] = useState<TeamMember[]>([]);
   const [loading, setLoading] = useState(true);
   const [userRole, setUserRole] = useState<string | null>(null);
@@ -35,11 +35,7 @@ export const useTeamMembers = (teamId: string) => {
       setMembers(data || []);
     } catch (error) {
       console.error('Error fetching team members:', error);
-      toast({
-        title: "Error",
-        description: "Failed to load team members.",
-        variant: "destructive"
-      });
+      toast({ title: "Error", description: "Failed to load team members.", variant: "destructive" });
     } finally {
       setLoading(false);
     }
@@ -73,17 +69,10 @@ export const useTeamMembers = (teamId: string) => {
       if (error) throw error;
 
       setMembers(prev => prev.filter(member => member.id !== memberId));
-      toast({
-        title: "Success",
-        description: "Member removed from team.",
-      });
+      toast({ title: "Success", description: "Member removed from team." });
     } catch (error) {
       console.error('Error removing member:', error);
-      toast({
-        title: "Error",
-        description: "Failed to remove member.",
-        variant: "destructive"
-      });
+      toast({ title: "Error", description: "Failed to remove member.", variant: "destructive" });
     }
   };
 

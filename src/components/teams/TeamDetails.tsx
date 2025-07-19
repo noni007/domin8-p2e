@@ -198,7 +198,7 @@ export const TeamDetails = ({ teamId, onBack, onTeamUpdate }: TeamDetailsProps) 
               <TeamChat teamId={teamId} />
             </TabsContent>
             <TabsContent value="tournaments">
-              <TeamTournaments teamId={teamId} userRole={userRole} />
+              <TeamTournaments teamId={teamId} canCreateTournaments={userRole === 'owner' || userRole === 'admin'} />
             </TabsContent>
           </>
         )}

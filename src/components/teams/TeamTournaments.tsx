@@ -1,30 +1,45 @@
-
-import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
+import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { TournamentCard } from "@/components/tournaments/TournamentCard";
 import { Trophy, Plus, Calendar, Users } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useSimpleToast } from "@/hooks/useSimpleToast";
 import type { Tables } from "@/integrations/supabase/types";
-import { useAuth } from "@/hooks/useAuth";
-import { toast } from "@/hooks/use-toast";
-import { formatDistanceToNow } from "date-fns";
 
 type Tournament = Tables<'tournaments'>;
 
 interface TeamTournamentsProps {
   teamId: string;
-  userRole: string | null;
+  canCreateTournaments: boolean;
 }
 
-export const TeamTournaments = ({ teamId, userRole }: TeamTournamentsProps) => {
-  const { user } = useAuth();
+export const TeamTournaments = ({ teamId, canCreateTournaments }: TeamTournamentsProps) => {
+  const { toast } = useSimpleToast();
   const [tournaments, setTournaments] = useState<Tournament[]>([]);
   const [loading, setLoading] = useState(true);
+  const [teamInfo, setTeamInfo] = useState<any>(null);
 
   useEffect(() => {
     fetchTeamTournaments();
+    fetchTeamInfo();
   }, [teamId]);
+
+  const fetchTeamInfo = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('teams')
+        .select('name, tag')
+        .eq('id', teamId)
+        .single();
+
+      if (error) throw error;
+      setTeamInfo(data);
+    } catch (error) {
+      console.error('Error fetching team info:', error);
+    }
+  };
 
   const fetchTeamTournaments = async () => {
     try {
@@ -38,49 +53,122 @@ export const TeamTournaments = ({ teamId, userRole }: TeamTournamentsProps) => {
       setTournaments(data || []);
     } catch (error) {
       console.error('Error fetching team tournaments:', error);
-      toast({
-        title: "Error",
-        description: "Failed to load team tournaments.",
-        variant: "destructive"
-      });
+      toast({ title: "Error", description: "Failed to load team tournaments.", variant: "destructive" });
     } finally {
       setLoading(false);
     }
   };
 
-  const canCreateTournaments = userRole && ['owner', 'admin'].includes(userRole);
+  const createTeamTournament = async () => {
+    if (!teamInfo) return;
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'upcoming':
-        return 'bg-blue-600';
-      case 'active':
-        return 'bg-green-600';
-      case 'completed':
-        return 'bg-gray-600';
-      default:
-        return 'bg-gray-600';
+    try {
+      const newTournament = {
+        title: `${teamInfo.name} Team Tournament`,
+        description: `Exclusive tournament for ${teamInfo.name} [${teamInfo.tag}] team members`,
+        game: 'Team Event',
+        tournament_type: 'team',
+        team_id: teamId,
+        max_participants: 16,
+        start_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 1 week from now
+        end_date: new Date(Date.now() + 8 * 24 * 60 * 60 * 1000).toISOString(), // 8 days from now
+        registration_deadline: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString(), // 5 days from now
+        entry_fee: 0,
+        prize_pool: 0,
+        status: 'upcoming',
+        organizer_id: teamId // Using team ID as organizer for team tournaments
+      };
+
+      const { error } = await supabase
+        .from('tournaments')
+        .insert(newTournament);
+
+      if (error) throw error;
+
+      toast({ title: "Success", description: "Team tournament created successfully!" });
+      fetchTeamTournaments();
+    } catch (error) {
+      console.error('Error creating team tournament:', error);
+      toast({ title: "Error", description: "Failed to create team tournament.", variant: "destructive" });
     }
   };
 
   if (loading) {
-    return <div className="text-center text-gray-400">Loading tournaments...</div>;
+    return (
+      <Card className="bg-black/40 border-blue-800/30 backdrop-blur-sm">
+        <CardContent className="p-6">
+          <div className="flex items-center justify-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-400"></div>
+          </div>
+        </CardContent>
+      </Card>
+    );
   }
 
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h3 className="text-xl font-semibold text-white">Team Tournaments</h3>
+        <div className="flex items-center gap-3">
+          <Trophy className="h-6 w-6 text-yellow-400" />
+          <h2 className="text-2xl font-bold text-white">Team Tournaments</h2>
+          <Badge className="bg-blue-600 text-white">
+            {tournaments.length} Tournament{tournaments.length !== 1 ? 's' : ''}
+          </Badge>
+        </div>
+        
         {canCreateTournaments && (
-          <Button
-            onClick={() => window.location.href = '/tournaments'}
-            className="bg-blue-600 hover:bg-blue-700"
+          <Button 
+            onClick={createTeamTournament}
+            className="bg-gradient-to-r from-blue-600 to-teal-600 hover:from-blue-700 hover:to-teal-700"
           >
             <Plus className="h-4 w-4 mr-2" />
-            Create Tournament
+            Create Team Tournament
           </Button>
         )}
+      </div>
+
+      {/* Tournament Statistics */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Card className="bg-black/40 border-blue-800/30 backdrop-blur-sm">
+          <CardContent className="p-4">
+            <div className="flex items-center gap-3">
+              <Trophy className="h-8 w-8 text-yellow-400" />
+              <div>
+                <p className="text-sm text-gray-400">Total Tournaments</p>
+                <p className="text-2xl font-bold text-white">{tournaments.length}</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card className="bg-black/40 border-blue-800/30 backdrop-blur-sm">
+          <CardContent className="p-4">
+            <div className="flex items-center gap-3">
+              <Calendar className="h-8 w-8 text-blue-400" />
+              <div>
+                <p className="text-sm text-gray-400">Active Tournaments</p>
+                <p className="text-2xl font-bold text-white">
+                  {tournaments.filter(t => t.status === 'in_progress' || t.status === 'registration_open').length}
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card className="bg-black/40 border-blue-800/30 backdrop-blur-sm">
+          <CardContent className="p-4">
+            <div className="flex items-center gap-3">
+              <Users className="h-8 w-8 text-green-400" />
+              <div>
+                <p className="text-sm text-gray-400">Completed</p>
+                <p className="text-2xl font-bold text-white">
+                  {tournaments.filter(t => t.status === 'completed').length}
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Tournaments List */}
@@ -88,75 +176,29 @@ export const TeamTournaments = ({ teamId, userRole }: TeamTournamentsProps) => {
         <Card className="bg-black/40 border-blue-800/30 backdrop-blur-sm">
           <CardContent className="p-12 text-center">
             <Trophy className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-white mb-2">No Team Tournaments</h3>
-            <p className="text-gray-400 mb-4">
-              {canCreateTournaments 
-                ? "Create your first team tournament to get started!"
-                : "Your team hasn't organized any tournaments yet."
-              }
-            </p>
+            <h3 className="text-xl font-semibold text-white mb-2">No Team Tournaments Yet</h3>
+            <p className="text-gray-400 mb-4">Create your first team tournament to get started!</p>
             {canCreateTournaments && (
-              <Button
-                onClick={() => window.location.href = '/tournaments'}
-                className="bg-blue-600 hover:bg-blue-700"
+              <Button 
+                onClick={createTeamTournament}
+                className="bg-gradient-to-r from-blue-600 to-teal-600 hover:from-blue-700 hover:to-teal-700"
               >
                 <Plus className="h-4 w-4 mr-2" />
-                Create Tournament
+                Create Team Tournament
               </Button>
             )}
           </CardContent>
         </Card>
       ) : (
-        <div className="grid gap-4">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {tournaments.map((tournament) => (
-            <Card key={tournament.id} className="bg-black/40 border-blue-800/30 backdrop-blur-sm hover:border-blue-600/50 transition-colors">
-              <CardContent className="p-6">
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex-1">
-                    <h4 className="text-lg font-semibold text-white mb-2">{tournament.title}</h4>
-                    <p className="text-gray-300 text-sm mb-3">{tournament.description}</p>
-                    
-                    <div className="flex flex-wrap gap-2 mb-3">
-                      <Badge className={getStatusColor(tournament.status)}>
-                        {tournament.status.charAt(0).toUpperCase() + tournament.status.slice(1)}
-                      </Badge>
-                      <Badge variant="outline">{tournament.game}</Badge>
-                      <Badge variant="outline">{tournament.tournament_type}</Badge>
-                    </div>
-
-                    <div className="flex items-center space-x-4 text-sm text-gray-400">
-                      <div className="flex items-center space-x-1">
-                        <Calendar className="h-4 w-4" />
-                        <span>
-                          {formatDistanceToNow(new Date(tournament.start_date), { addSuffix: true })}
-                        </span>
-                      </div>
-                      <div className="flex items-center space-x-1">
-                        <Users className="h-4 w-4" />
-                        <span>Max {tournament.max_participants} players</span>
-                      </div>
-                      {tournament.prize_pool > 0 && (
-                        <div className="flex items-center space-x-1">
-                          <Trophy className="h-4 w-4" />
-                          <span>${tournament.prize_pool}</span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex space-x-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => window.location.href = '/tournaments'}
-                    className="border-blue-400 text-blue-400 hover:bg-blue-400 hover:text-black"
-                  >
-                    View Details
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+            <TournamentCard
+              key={tournament.id}
+              tournament={tournament}
+              participantCount={0}
+              isRegistered={false}
+              onRegistrationChange={() => fetchTeamTournaments()}
+            />
           ))}
         </div>
       )}

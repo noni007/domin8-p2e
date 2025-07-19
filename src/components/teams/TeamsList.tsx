@@ -7,7 +7,7 @@ import { Users, Crown, Shield, Eye } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import type { Tables } from "@/integrations/supabase/types";
 import { useAuth } from "@/hooks/useAuth";
-import { toast } from "@/hooks/use-toast";
+import { useSimpleToast } from "@/hooks/useSimpleToast";
 import { TeamDetails } from "./TeamDetails";
 
 type Team = Tables<'teams'> & {
@@ -16,8 +16,13 @@ type Team = Tables<'teams'> & {
   user_role?: string;
 };
 
-export const TeamsList = () => {
+interface TeamsListProps {
+  onTeamSelect?: (teamId: string, teamName: string) => void;
+}
+
+export const TeamsList = ({ onTeamSelect }: TeamsListProps) => {
   const { user } = useAuth();
+  const { toast } = useSimpleToast();
   const [teams, setTeams] = useState<Team[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedTeam, setSelectedTeam] = useState<string | null>(null);
@@ -68,11 +73,7 @@ export const TeamsList = () => {
       }
     } catch (error) {
       console.error('Error fetching teams:', error);
-      toast({
-        title: "Error",
-        description: "Failed to load teams.",
-        variant: "destructive"
-      });
+      toast({ title: "Error", description: "Failed to load teams.", variant: "destructive" });
     } finally {
       setLoading(false);
     }
@@ -80,11 +81,7 @@ export const TeamsList = () => {
 
   const handleJoinTeam = async (teamId: string) => {
     if (!user) {
-      toast({
-        title: "Authentication Required",
-        description: "Please log in to join a team.",
-        variant: "destructive"
-      });
+      toast({ title: "Authentication Required", description: "Please log in to join a team.", variant: "destructive" });
       return;
     }
 
@@ -99,19 +96,12 @@ export const TeamsList = () => {
 
       if (error) throw error;
 
-      toast({
-        title: "Success",
-        description: "Successfully joined the team!",
-      });
+      toast({ title: "Success", description: "Successfully joined the team!" });
 
       fetchTeams();
     } catch (error) {
       console.error('Error joining team:', error);
-      toast({
-        title: "Error",
-        description: "Failed to join team.",
-        variant: "destructive"
-      });
+      toast({ title: "Error", description: "Failed to join team.", variant: "destructive" });
     }
   };
 
@@ -206,7 +196,7 @@ export const TeamsList = () => {
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => setSelectedTeam(team.id)}
+                    onClick={() => onTeamSelect ? onTeamSelect(team.id, team.name) : setSelectedTeam(team.id)}
                     className="flex-1"
                   >
                     <Eye className="h-4 w-4 mr-2" />

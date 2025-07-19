@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import { toast } from "@/hooks/use-toast";
+import { useSimpleToast } from "@/hooks/useSimpleToast";
 
 interface TeamFormProps {
   onSuccess: () => void;
@@ -16,6 +16,7 @@ interface TeamFormProps {
 
 export const TeamForm = ({ onSuccess }: TeamFormProps) => {
   const { user } = useAuth();
+  const { toast } = useSimpleToast();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
@@ -44,10 +45,7 @@ export const TeamForm = ({ onSuccess }: TeamFormProps) => {
 
       if (error) throw error;
 
-      toast({
-        title: "Success",
-        description: "Team created successfully!",
-      });
+      toast({ title: "Success", description: "Team created successfully!" });
 
       onSuccess();
       setFormData({
@@ -59,11 +57,7 @@ export const TeamForm = ({ onSuccess }: TeamFormProps) => {
       });
     } catch (error) {
       console.error('Error creating team:', error);
-      toast({
-        title: "Error",
-        description: "Failed to create team.",
-        variant: "destructive"
-      });
+      toast({ title: "Error", description: "Failed to create team.", variant: "destructive" });
     } finally {
       setLoading(false);
     }
