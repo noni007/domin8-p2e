@@ -9,8 +9,12 @@ interface AuthContextType {
   profile: Profile | null
   session: Session | null
   loading: boolean
+  error: string | null
   signOut: () => Promise<void>
   refreshProfile: () => Promise<void>
+  signIn: (email: string, password: string) => Promise<{ error: Error | null }>
+  signUp: (email: string, password: string, username: string, userType: string) => Promise<{ error: Error | null }>
+  resetPassword: (email: string) => Promise<{ error: Error | null }>
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -32,6 +36,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [profile, setProfile] = useState<Profile | null>(null)
   const [session, setSession] = useState<Session | null>(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   const refreshProfile = async () => {
     if (!user) {
@@ -44,27 +49,102 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         .from('profiles')
         .select('*')
         .eq('id', user.id)
-        .single()
+        .maybeSingle()
 
       if (error) {
         console.error('Error fetching profile:', error)
+        setError('Failed to fetch profile')
         return
       }
       
-      setProfile(data as Profile)
+      setProfile(data as Profile | null)
+      setError(null)
     } catch (error) {
       console.error('Error fetching profile:', error)
+      setError('Failed to fetch profile')
     }
   }
 
   const signOut = async () => {
     try {
+      setError(null)
       await supabase.auth.signOut()
       setUser(null)
       setProfile(null)
       setSession(null)
     } catch (error) {
       console.error('Error signing out:', error)
+      setError('Failed to sign out')
+    }
+  }
+
+  const signIn = async (email: string, password: string) => {
+    try {
+      setError(null)
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      })
+
+      if (error) {
+        setError(error.message)
+        return { error }
+      }
+
+      return { error: null }
+    } catch (error: any) {
+      setError(error.message || 'An unexpected error occurred')
+      return { error }
+    }
+  }
+
+  const signUp = async (email: string, password: string, username: string, userType: string) => {
+    try {
+      setError(null)
+      const redirectUrl = `${window.location.origin}/`
+      
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: redirectUrl,
+          data: {
+            username,
+            user_type: userType,
+          },
+        },
+      })
+
+      if (error) {
+        setError(error.message)
+        return { error }
+      }
+
+      return { error: null }
+    } catch (error: any) {
+      setError(error.message || 'An unexpected error occurred')
+      return { error }
+    }
+  }
+
+  const resetPassword = async (email: string) => {
+    try {
+      setError(null)
+      const redirectUrl = `${window.location.origin}/reset-password`
+      
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: redirectUrl,
+      })
+
+      if (error) {
+        setError(error.message)
+        return { error }
+      }
+
+      return { error: null }
+    } catch (error: any) {
+      setError(error.message || 'An unexpected error occurred')
+      return { error }
     }
   }
 
@@ -108,8 +188,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     profile,
     session,
     loading,
+    error,
     signOut,
     refreshProfile,
+    signIn,
+    signUp,
+    resetPassword,
   }
 
   return (

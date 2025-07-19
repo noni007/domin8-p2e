@@ -11,15 +11,38 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/hooks/useAuth";
 import { AuthModal } from "@/components/auth/AuthModal";
+import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { User, Settings, LogOut, Trophy, BarChart3, Users } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 export const UserMenu = () => {
-  const { user, profile, signOut } = useAuth();
+  const { user, profile, signOut, loading, error } = useAuth();
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [signingOut, setSigningOut] = useState(false);
+  const { toast } = useToast();
 
   const handleSignOut = async () => {
-    await signOut();
+    setSigningOut(true);
+    try {
+      await signOut();
+      toast({
+        title: "Signed out successfully",
+        description: "You have been signed out of your account.",
+      });
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Error signing out",
+        description: error.message || "An unexpected error occurred.",
+      });
+    } finally {
+      setSigningOut(false);
+    }
   };
+
+  if (loading) {
+    return <LoadingSpinner />;
+  }
 
   if (!user) {
     return (
@@ -104,9 +127,14 @@ export const UserMenu = () => {
         <DropdownMenuItem 
           className="text-red-400 hover:bg-red-900/50 cursor-pointer"
           onClick={handleSignOut}
+          disabled={signingOut}
         >
-          <LogOut className="mr-2 h-4 w-4" />
-          Sign Out
+          {signingOut ? (
+            <LoadingSpinner className="mr-2 h-4 w-4" />
+          ) : (
+            <LogOut className="mr-2 h-4 w-4" />
+          )}
+          {signingOut ? "Signing out..." : "Sign Out"}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

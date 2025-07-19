@@ -17,7 +17,10 @@ export const SocialLoginButtons = ({ onSuccess, mode = 'login' }: SocialLoginBut
     setLoading(provider);
     
     try {
-      const redirectUrl = `${window.location.origin}/`;
+      // Get current location for redirect after auth
+      const currentPath = window.location.pathname;
+      const intendedPath = currentPath === '/auth' ? '/' : currentPath;
+      const redirectUrl = `${window.location.origin}${intendedPath}`;
       
       const { error } = await supabase.auth.signInWithOAuth({
         provider,
@@ -42,13 +45,13 @@ export const SocialLoginButtons = ({ onSuccess, mode = 'login' }: SocialLoginBut
           title: `${provider === 'discord' ? 'Discord' : 'Google'} Login`,
           description: "Redirecting to authentication...",
         });
-        onSuccess?.();
+        // Don't call onSuccess here as the redirect will handle it
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error(`${provider} auth error:`, error);
       toast({
         title: "Authentication Error",
-        description: "Something went wrong. Please try again.",
+        description: error?.message || "Something went wrong. Please try again.",
         variant: "destructive",
       });
     } finally {

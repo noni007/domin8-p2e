@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 import { Loader2, Mail, Lock, User, Trophy, ArrowLeft } from "lucide-react";
 import { SocialLoginButtons } from "@/components/social/SocialLoginButtons";
 
@@ -30,6 +30,18 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [resetEmail, setResetEmail] = useState("");
   const { toast } = useToast();
+  const { signIn, signUp, resetPassword, error: authError } = useAuth();
+
+  // Show auth errors as toasts
+  useEffect(() => {
+    if (authError) {
+      toast({
+        variant: "destructive",
+        title: "Authentication Error",
+        description: authError,
+      });
+    }
+  }, [authError, toast]);
 
   const resetForm = () => {
     setEmail("");
@@ -55,31 +67,10 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
     setLoading(true);
 
     try {
-      // First try Supabase's built-in reset
-      const redirectUrl = `${window.location.origin}/reset-password`;
-      
-      const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
-        redirectTo: redirectUrl,
-      });
+      const { error } = await resetPassword(resetEmail);
 
       if (error) {
-        // If Supabase email fails, send custom email via Resend
-        console.log('Supabase email failed, trying custom email service:', error);
-        
-        const emailResponse = await supabase.functions.invoke('send-notification-email', {
-          body: {
-            to: resetEmail,
-            type: 'password_reset',
-            data: {
-              reset_url: `${window.location.origin}/reset-password?email=${encodeURIComponent(resetEmail)}`,
-              user_email: resetEmail
-            }
-          }
-        });
-
-        if (emailResponse.error) {
-          throw new Error('Failed to send password reset email. Please contact support.');
-        }
+        throw error;
       }
 
       toast({
@@ -125,19 +116,7 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
     setLoading(true);
 
     try {
-      const redirectUrl = `${window.location.origin}/`;
-      
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          emailRedirectTo: redirectUrl,
-          data: {
-            username,
-            user_type: userType,
-          },
-        },
-      });
+      const { error } = await signUp(email, password, username, userType);
 
       if (error) {
         if (error.message.includes("already registered")) {
@@ -152,14 +131,12 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
         return;
       }
 
-      if (data.user) {
-        toast({
-          title: "Account created successfully!",
-          description: "Please check your email to verify your account.",
-        });
-        resetForm();
-        onClose();
-      }
+      toast({
+        title: "Account created successfully!",
+        description: "Please check your email to verify your account.",
+      });
+      resetForm();
+      onClose();
     } catch (error: any) {
       console.error('Signup error:', error);
       toast({
@@ -187,10 +164,7 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
     setLoading(true);
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
+      const { error } = await signIn(email, password);
 
       if (error) {
         if (error.message.includes("Invalid login credentials")) {

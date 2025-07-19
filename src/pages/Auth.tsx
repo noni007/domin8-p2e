@@ -2,17 +2,20 @@
 import { useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { AuthModal } from "@/components/auth/AuthModal";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 export default function Auth() {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     if (!loading && user) {
-      navigate('/');
+      // Redirect to the intended page or home
+      const from = location.state?.from?.pathname || '/';
+      navigate(from, { replace: true });
     }
-  }, [user, loading, navigate]);
+  }, [user, loading, navigate, location]);
 
   if (loading) {
     return (
@@ -40,7 +43,10 @@ export default function Auth() {
             </p>
           </div>
           
-          <AuthModal isOpen={true} onClose={() => navigate('/')} />
+          <AuthModal isOpen={true} onClose={() => {
+            const from = location.state?.from?.pathname || '/';
+            navigate(from);
+          }} />
         </div>
       </div>
     </div>

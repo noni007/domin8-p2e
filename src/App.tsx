@@ -9,6 +9,7 @@ import { Footer } from "./components/layout/Footer";
 import { ThemeProvider } from "@/contexts/ThemeProvider";
 import { Web3Provider } from "@/contexts/Web3Provider";
 import { AuthProvider } from "@/hooks/useAuth";
+import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import ResetPassword from "./pages/ResetPassword";
@@ -45,19 +46,51 @@ function App() {
                   <main className="flex-1">
                     <Routes>
                       <Route path="/" element={<Index />} />
-                      <Route path="/auth" element={<Auth />} />
-                      <Route path="/reset-password" element={<ResetPassword />} />
+                      <Route path="/auth" element={
+                        <ProtectedRoute requireAuth={false}>
+                          <Auth />
+                        </ProtectedRoute>
+                      } />
+                      <Route path="/reset-password" element={
+                        <ProtectedRoute requireAuth={false}>
+                          <ResetPassword />
+                        </ProtectedRoute>
+                      } />
                       <Route path="/tournaments" element={<Tournaments />} />
-                      <Route path="/profile" element={<Profile />} />
+                      <Route path="/profile" element={
+                        <ProtectedRoute>
+                          <Profile />
+                        </ProtectedRoute>
+                      } />
                       <Route path="/profile/:userId" element={<UserProfile />} />
                       <Route path="/leaderboards" element={<Leaderboards />} />
                       <Route path="/rankings" element={<Rankings />} />
                       <Route path="/teams" element={<Teams />} />
-                      <Route path="/wallet" element={<Wallet />} />
-                      <Route path="/activity" element={<Activity />} />
-                      <Route path="/friends" element={<Friends />} />
-                      <Route path="/admin" element={<Admin />} />
-                      <Route path="/admin/web3" element={<Web3Admin />} />
+                      <Route path="/wallet" element={
+                        <ProtectedRoute>
+                          <Wallet />
+                        </ProtectedRoute>
+                      } />
+                      <Route path="/activity" element={
+                        <ProtectedRoute>
+                          <Activity />
+                        </ProtectedRoute>
+                      } />
+                      <Route path="/friends" element={
+                        <ProtectedRoute>
+                          <Friends />
+                        </ProtectedRoute>
+                      } />
+                      <Route path="/admin" element={
+                        <ProtectedRoute>
+                          <Admin />
+                        </ProtectedRoute>
+                      } />
+                      <Route path="/admin/web3" element={
+                        <ProtectedRoute>
+                          <Web3Admin />
+                        </ProtectedRoute>
+                      } />
                       <Route path="/mobile-dev" element={<MobileDevelopmentGuide />} />
                       <Route path="/match-spectating" element={<MatchSpectatingDemo />} />
                       <Route path="*" element={<NotFound />} />
