@@ -38,7 +38,7 @@ function App() {
       <QueryClientProvider client={queryClient}>
         <ThemeProvider>
           <AuthProvider>
-            <Web3Provider>
+            <div>
               <div>
                 <BrowserRouter>
                   <div className="min-h-screen flex flex-col bg-background">
@@ -100,7 +100,7 @@ function App() {
                   </div>
                 </BrowserRouter>
               </div>
-            </Web3Provider>
+            </div>
           </AuthProvider>
         </ThemeProvider>
       </QueryClientProvider>
