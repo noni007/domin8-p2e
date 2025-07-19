@@ -45,10 +45,6 @@ const Index = () => {
   // Show enhanced landing page for non-authenticated users
   return (
     <>
-      {/* Temporary toast test - remove after verification */}
-      <div className="fixed top-4 right-4 z-50">
-        <ToastTest />
-      </div>
       <HeroSection />
       <StatisticsSection />
       <FeaturesSection />

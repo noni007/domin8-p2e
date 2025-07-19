@@ -6,7 +6,7 @@ import { AuthProvider } from "@/hooks/useAuth";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 import { Navigation } from "@/components/layout/Navigation";
 import { Footer } from "@/components/layout/Footer";
-import { Toaster } from "@/components/ui/toaster";
+import { SimpleToaster } from "@/components/ui/simple-toaster";
 
 // Import pages
 import Index from "@/pages/Index";
@@ -50,7 +50,7 @@ function App() {
                   <Route path="*" element={<NotFound />} />
                 </Routes>
                 <Footer />
-                <Toaster />
+                <SimpleToaster />
               </div>
             </BrowserRouter>
           </AuthProvider>
