@@ -49,7 +49,7 @@ function App() {
                   <Route path="*" element={<NotFound />} />
                 </Routes>
                 <Footer />
-                <Toaster />
+                {/* <Toaster /> - Temporarily disabled to debug */}
               </div>
             </BrowserRouter>
           </AuthProvider>
