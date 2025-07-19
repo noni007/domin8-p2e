@@ -34,8 +34,8 @@ const queryClient = new QueryClient();
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <ThemeProvider>
+      <ThemeProvider>
+        <AuthProvider>
           <Web3Provider>
             <TooltipProvider>
               <Toaster />
@@ -101,8 +101,8 @@ function App() {
               </BrowserRouter>
             </TooltipProvider>
           </Web3Provider>
-        </ThemeProvider>
-      </AuthProvider>
+        </AuthProvider>
+      </ThemeProvider>
     </QueryClientProvider>
   );
 }
