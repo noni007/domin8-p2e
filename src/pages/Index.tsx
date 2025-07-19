@@ -13,6 +13,8 @@ import { ComingSoonSection } from "@/components/home/ComingSoonSection";
 import { CommunitySection } from "@/components/home/CommunitySection";
 import { CTASection } from "@/components/home/CTASection";
 import { ComplianceSection } from "@/components/home/ComplianceSection";
+import { ToastTest } from "@/components/common/ToastTest";
+
 const Index = () => {
   const { user, loading } = useAuth();
   const { shouldShowOnboarding, markOnboardingComplete, isLoading: onboardingLoading } = useOnboarding();
@@ -43,6 +45,10 @@ const Index = () => {
   // Show enhanced landing page for non-authenticated users
   return (
     <>
+      {/* Temporary toast test - remove after verification */}
+      <div className="fixed top-4 right-4 z-50">
+        <ToastTest />
+      </div>
       <HeroSection />
       <StatisticsSection />
       <FeaturesSection />

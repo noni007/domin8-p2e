@@ -1,3 +1,4 @@
+
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "@/contexts/ThemeProvider";
@@ -49,7 +50,7 @@ function App() {
                   <Route path="*" element={<NotFound />} />
                 </Routes>
                 <Footer />
-                {/* <Toaster /> - Temporarily disabled to debug */}
+                <Toaster />
               </div>
             </BrowserRouter>
           </AuthProvider>
