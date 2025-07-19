@@ -149,8 +149,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   }
 
   useEffect(() => {
+    let mounted = true;
+
     // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (!mounted) return;
+      
       setSession(session)
       setUser(session?.user ?? null)
       setLoading(false)
@@ -158,27 +162,44 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       // Defer profile fetching to avoid recursion
       if (session?.user) {
         setTimeout(() => {
-          refreshProfile()
-        }, 0)
+          if (mounted) {
+            refreshProfile()
+          }
+        }, 100)
       } else {
         setProfile(null)
       }
     })
 
     // THEN check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session)
-      setUser(session?.user ?? null)
-      setLoading(false)
-      
-      if (session?.user) {
-        setTimeout(() => {
-          refreshProfile()
-        }, 0)
+    const getInitialSession = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession()
+        if (!mounted) return;
+        
+        setSession(session)
+        setUser(session?.user ?? null)
+        setLoading(false)
+        
+        if (session?.user) {
+          setTimeout(() => {
+            if (mounted) {
+              refreshProfile()
+            }
+          }, 100)
+        }
+      } catch (error) {
+        console.error('Error getting session:', error)
+        if (mounted) {
+          setLoading(false)
+        }
       }
-    })
+    }
+
+    getInitialSession()
 
     return () => {
+      mounted = false
       subscription.unsubscribe()
     }
   }, [])
