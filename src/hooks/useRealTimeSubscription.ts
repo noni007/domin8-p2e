@@ -21,7 +21,6 @@ export const useRealTimeSubscription = ({
 
   const cleanup = useCallback(() => {
     if (channelRef.current) {
-      console.log('Cleaning up real-time subscription:', channelName);
       try {
         supabase.removeChannel(channelRef.current);
       } catch (error) {
@@ -46,16 +45,12 @@ export const useRealTimeSubscription = ({
     const timestamp = Date.now();
     const uniqueChannelName = `${channelName}-${timestamp}`;
     
-    console.log('Creating real-time subscription:', uniqueChannelName);
-    
     const channel = supabase.channel(uniqueChannelName);
     channelRef.current = channel;
 
     // Set up subscription with status handler
     channel.subscribe((status, error) => {
       if (!mountedRef.current) return;
-      
-      console.log(`Channel ${uniqueChannelName} status:`, status);
       
       if (status === 'SUBSCRIBED') {
         setIsSubscribed(true);
