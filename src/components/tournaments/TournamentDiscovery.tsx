@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { TournamentList } from "./TournamentList";
-import { TournamentSearch } from "./TournamentSearch";
+import { TournamentSearch, SearchFilters } from "./TournamentSearch";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Trophy, Users, Calendar, DollarSign } from "lucide-react";
@@ -10,6 +10,13 @@ export const TournamentDiscovery = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedGame, setSelectedGame] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("");
+
+  const gameOptions = ['FIFA 24', 'Call of Duty', 'Fortnite', 'Valorant', 'League of Legends', 'Apex Legends'];
+
+  const handleSearch = (filters: SearchFilters) => {
+    // TODO: Implement search functionality
+    console.log('Search filters:', filters);
+  };
 
   return (
     <div className="space-y-8">
@@ -71,12 +78,8 @@ export const TournamentDiscovery = () => {
         </CardHeader>
         <CardContent>
           <TournamentSearch
-            searchQuery={searchQuery}
-            onSearchChange={setSearchQuery}
-            selectedGame={selectedGame}
-            onGameChange={setSelectedGame}
-            selectedStatus={selectedStatus}
-            onStatusChange={setSelectedStatus}
+            onSearch={handleSearch}
+            gameOptions={gameOptions}
           />
         </CardContent>
       </Card>

@@ -172,10 +172,9 @@ export const UserDashboard = () => {
                   <TournamentCard 
                     key={tournament.id} 
                     tournament={tournament}
-                    participants={tournamentParticipants[tournament.id] || []}
+                    participantCount={tournamentParticipants[tournament.id]?.length || 0}
                     isRegistered={userRegistrations.includes(tournament.id)}
                     onRegistrationChange={handleRegistrationChange}
-                    onViewDetails={handleViewTournamentDetails}
                   />
                 ))}
               </CardContent>
@@ -199,10 +198,10 @@ export const UserDashboard = () => {
                   <TournamentCard 
                     key={tournament.id} 
                     tournament={tournament}
-                    participants={tournamentParticipants[tournament.id] || []}
+                    participantCount={tournamentParticipants[tournament.id]?.length || 0}
                     isRegistered={userRegistrations.includes(tournament.id)}
                     onRegistrationChange={handleRegistrationChange}
-                    onViewDetails={handleViewTournamentDetails}
+                    
                   />
                 ))
               ) : (

@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { AuthProvider } from "@/contexts/AuthProvider";
+import { AuthProvider } from "@/hooks/useAuth";
 import { Web3Provider } from "@/contexts/Web3Provider";
 import { ThemeProvider } from "@/contexts/ThemeProvider";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
@@ -18,7 +18,7 @@ import Teams from "@/pages/Teams";
 import Rankings from "@/pages/Rankings";
 import Activity from "@/pages/Activity";
 import Admin from "@/pages/Admin";
-import Testing from "@/pages/Testing";
+// import Testing from "@/pages/Testing";
 import NotFound from "@/pages/NotFound";
 
 function App() {
@@ -40,7 +40,7 @@ function App() {
                   <Route path="/rankings" element={<Rankings />} />
                   <Route path="/activity" element={<Activity />} />
                   <Route path="/admin" element={<Admin />} />
-                  <Route path="/testing" element={<Testing />} />
+                  {/* <Route path="/testing" element={<Testing />} /> */}
                   <Route path="*" element={<NotFound />} />
                 </Routes>
                 <Footer />
