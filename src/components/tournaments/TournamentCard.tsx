@@ -1,215 +1,173 @@
 
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { 
-  Calendar, 
-  Users, 
-  Trophy, 
-  MapPin, 
-  Clock,
-  DollarSign,
-  Star
-} from "lucide-react";
-import { SocialShareButton } from "@/components/social/SocialShareButton";
+import { Calendar, Users, Trophy, DollarSign, Clock } from "lucide-react";
 import { TournamentRegistrationButton } from "./TournamentRegistrationButton";
+import { useAuth } from "@/hooks/useAuth";
+import { AuthModal } from "@/components/auth/AuthModal";
 import type { Tables } from "@/integrations/supabase/types";
 
-type Tournament = Tables<'tournaments'> & {
-  entry_fee?: number;
-};
-type TournamentParticipant = Tables<'tournament_participants'>;
+type Tournament = Tables<'tournaments'>;
 
 interface TournamentCardProps {
   tournament: Tournament;
-  participants: TournamentParticipant[];
-  isRegistered: boolean;
-  onRegistrationChange: () => void;
-  onViewDetails: (tournament: Tournament) => void;
+  participantCount?: number;
+  isRegistered?: boolean;
+  onRegistrationChange?: () => void;
 }
 
-export const TournamentCard = ({
-  tournament,
-  participants,
-  isRegistered,
-  onRegistrationChange,
-  onViewDetails
+export const TournamentCard = ({ 
+  tournament, 
+  participantCount = 0, 
+  isRegistered = false,
+  onRegistrationChange 
 }: TournamentCardProps) => {
-  const spotsRemaining = tournament.max_participants - participants.length;
-  const isFull = spotsRemaining <= 0;
-  const isUpcoming = tournament.status === 'upcoming' || tournament.status === 'registration_open';
-  const entryFee = tournament.entry_fee || 0;
-  
-  const formatMoney = (cents: number) => {
-    return (cents / 100).toFixed(2);
+  const { user } = useAuth();
+  const [showAuthModal, setShowAuthModal] = useState(false);
+
+  const formatDate = (date: string) => {
+    return new Date(date).toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
+  const formatPrize = (amount: number) => {
+    return `₦${(amount / 100).toFixed(2)}`;
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'registration_open':
-        return 'bg-green-600';
       case 'upcoming':
-        return 'bg-blue-600';
+      case 'registration_open':
+        return 'bg-green-500';
       case 'in_progress':
-        return 'bg-yellow-600';
+        return 'bg-blue-500';
       case 'completed':
-        return 'bg-gray-600';
+        return 'bg-gray-500';
       default:
-        return 'bg-gray-600';
+        return 'bg-gray-500';
     }
   };
 
-  const getStatusText = (status: string) => {
-    switch (status) {
-      case 'registration_open':
-        return 'Registration Open';
-      case 'upcoming':
-        return 'Upcoming';
-      case 'in_progress':
-        return 'In Progress';
-      case 'completed':
-        return 'Completed';
-      default:
-        return status;
+  const canRegister = () => {
+    const now = new Date();
+    const deadline = new Date(tournament.registration_deadline);
+    const isFull = participantCount >= tournament.max_participants;
+    const deadlinePassed = now > deadline;
+    const registrationOpen = tournament.status === 'registration_open' || tournament.status === 'upcoming';
+    
+    return registrationOpen && !isFull && !deadlinePassed && !isRegistered;
+  };
+
+  const handleRegistrationClick = () => {
+    if (!user) {
+      setShowAuthModal(true);
     }
   };
+
+  const spotsRemaining = tournament.max_participants - participantCount;
 
   return (
-    <Card className="bg-black/40 border-blue-800/30 backdrop-blur-sm hover:border-blue-600/50 transition-all duration-300 h-full">
-      <CardHeader className="pb-3 sm:pb-4">
-        <div className="flex justify-between items-start mb-2">
-          <div className="flex items-center space-x-2">
-            <Avatar className="h-6 w-6 sm:h-8 sm:w-8">
-              <AvatarFallback className="bg-blue-600 text-white text-xs">
-                {tournament.game?.charAt(0).toUpperCase()}
-              </AvatarFallback>
-            </Avatar>
-            <div>
-              <Badge className={`${getStatusColor(tournament.status)} text-white text-xs`}>
-                {getStatusText(tournament.status)}
-              </Badge>
+    <>
+      <Card className="bg-black/40 border-blue-800/30 backdrop-blur-sm hover:border-blue-600/50 transition-all duration-300">
+        <CardHeader>
+          <div className="flex justify-between items-start">
+            <div className="space-y-2">
+              <CardTitle className="text-white text-lg">{tournament.title}</CardTitle>
+              <div className="flex items-center gap-2">
+                <Badge className={`${getStatusColor(tournament.status)} text-white`}>
+                  {tournament.status.replace('_', ' ').toUpperCase()}
+                </Badge>
+                <Badge variant="outline" className="border-yellow-400 text-yellow-400">
+                  {tournament.game}
+                </Badge>
+              </div>
             </div>
+            {tournament.prize_pool > 0 && (
+              <div className="text-right">
+                <div className="text-yellow-400 font-bold text-lg">
+                  {formatPrize(tournament.prize_pool)}
+                </div>
+                <div className="text-gray-400 text-xs">Prize Pool</div>
+              </div>
+            )}
           </div>
-          {entryFee > 0 && (
-            <div className="flex items-center gap-1 bg-green-900/30 px-2 py-1 rounded border border-green-700/50">
-              <DollarSign className="h-3 w-3 text-green-400" />
-              <span className="text-green-400 text-xs font-semibold">
-                ${formatMoney(entryFee)}
-              </span>
+        </CardHeader>
+        
+        <CardContent className="space-y-4">
+          <p className="text-gray-300 text-sm line-clamp-2">
+            {tournament.description}
+          </p>
+          
+          <div className="grid grid-cols-2 gap-4 text-sm">
+            <div className="flex items-center gap-2 text-gray-300">
+              <Calendar className="h-4 w-4" />
+              <span>{formatDate(tournament.start_date)}</span>
+            </div>
+            <div className="flex items-center gap-2 text-gray-300">
+              <Users className="h-4 w-4" />
+              <span>{participantCount}/{tournament.max_participants}</span>
+            </div>
+            <div className="flex items-center gap-2 text-gray-300">
+              <Clock className="h-4 w-4" />
+              <span>Reg. Deadline: {formatDate(tournament.registration_deadline)}</span>
+            </div>
+            {tournament.entry_fee > 0 && (
+              <div className="flex items-center gap-2 text-gray-300">
+                <DollarSign className="h-4 w-4" />
+                <span>Entry: {formatPrize(tournament.entry_fee)}</span>
+              </div>
+            )}
+          </div>
+
+          {spotsRemaining > 0 && spotsRemaining <= 5 && canRegister() && (
+            <div className="bg-orange-600/20 border border-orange-400/30 rounded-lg p-2">
+              <p className="text-orange-400 text-sm text-center">
+                Only {spotsRemaining} spots remaining!
+              </p>
             </div>
           )}
-        </div>
-        
-        <CardTitle className="text-white text-base sm:text-lg line-clamp-2 leading-tight">
-          {tournament.title}
-        </CardTitle>
-        
-        <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4 space-y-1 sm:space-y-0 text-xs sm:text-sm text-gray-300">
-          <div className="flex items-center space-x-1">
-            <MapPin className="h-3 w-3 sm:h-4 sm:w-4" />
-            <span className="capitalize">{tournament.game?.replace('-', ' ')}</span>
-          </div>
-          <div className="flex items-center space-x-1">
-            <Users className="h-3 w-3 sm:h-4 sm:w-4" />
-            <span>{participants.length}/{tournament.max_participants}</span>
-          </div>
-        </div>
-      </CardHeader>
 
-      <CardContent className="space-y-3 sm:space-y-4 pt-0">
-        {/* Prize Pool Section */}
-        <div className="flex items-center justify-between p-2 sm:p-3 bg-gradient-to-r from-yellow-900/20 to-orange-900/20 rounded-lg border border-yellow-700/30">
-          <div className="flex items-center space-x-2">
-            <Trophy className="h-4 w-4 sm:h-5 sm:w-5 text-yellow-400" />
-            <span className="text-yellow-400 font-semibold text-sm sm:text-base">Prize Pool</span>
-          </div>
-          <span className="text-white font-bold text-base sm:text-lg">
-            ${formatMoney(tournament.prize_pool)}
-          </span>
-        </div>
-
-        {/* Entry Fee Info */}
-        {entryFee > 0 ? (
-          <div className="flex items-center justify-between p-2 sm:p-3 bg-blue-900/20 rounded-lg border border-blue-700/30">
-            <span className="text-blue-400 font-medium text-sm sm:text-base">Entry Fee</span>
-            <span className="text-white font-semibold text-sm sm:text-base">
-              ${formatMoney(entryFee)}
-            </span>
-          </div>
-        ) : (
-          <div className="flex items-center justify-center p-2 sm:p-3 bg-green-900/20 rounded-lg border border-green-700/30">
-            <Star className="h-3 w-3 sm:h-4 sm:w-4 text-green-400 mr-2" />
-            <span className="text-green-400 font-medium text-sm sm:text-base">Free to Join</span>
-          </div>
-        )}
-
-        {/* Tournament Details */}
-        <div className="space-y-2 text-xs sm:text-sm">
-          <div className="flex items-center space-x-2 text-gray-300">
-            <Calendar className="h-3 w-3 sm:h-4 sm:w-4" />
-            <span>
-              Starts: {new Date(tournament.start_date).toLocaleDateString()}
-            </span>
-          </div>
-          <div className="flex items-center space-x-2 text-gray-300">
-            <Clock className="h-3 w-3 sm:h-4 sm:w-4" />
-            <span>
-              Registration closes: {new Date(tournament.registration_deadline).toLocaleDateString()}
-            </span>
-          </div>
-        </div>
-
-        {/* Registration Status */}
-        {spotsRemaining > 0 && spotsRemaining <= 5 && isUpcoming && (
-          <div className="p-2 bg-orange-900/20 rounded border border-orange-700/30">
-            <p className="text-orange-400 text-xs sm:text-sm text-center">
-              Only {spotsRemaining} spots remaining!
-            </p>
-          </div>
-        )}
-
-        {isFull && isUpcoming && (
-          <div className="p-2 bg-red-900/20 rounded border border-red-700/30">
-            <p className="text-red-400 text-xs sm:text-sm text-center">Tournament is full</p>
-          </div>
-        )}
-
-        {/* Action Buttons */}
-        <div className="space-y-2">
-          <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
-            <Button
-              variant="outline"
-              onClick={() => onViewDetails(tournament)}
-              className="flex-1 border-blue-400 text-blue-400 hover:bg-blue-400 hover:text-black text-sm touch-manipulation h-10"
+          <div className="flex gap-2">
+            <Button 
+              variant="outline" 
+              className="flex-1 border-blue-400 text-blue-400 hover:bg-blue-400 hover:text-black"
+              onClick={() => window.open(`/tournaments/${tournament.id}`, '_self')}
             >
               View Details
             </Button>
             
-            {isUpcoming && (
-              <div className="flex-1">
-                <TournamentRegistrationButton
-                  tournamentId={tournament.id}
-                  tournamentTitle={tournament.title}
-                  entryFee={entryFee}
-                  isRegistered={isRegistered}
-                  onRegistrationChange={onRegistrationChange}
-                />
-              </div>
+            {user ? (
+              <TournamentRegistrationButton
+                tournamentId={tournament.id}
+                tournamentTitle={tournament.title}
+                entryFee={tournament.entry_fee || 0}
+                isRegistered={isRegistered}
+                onRegistrationChange={onRegistrationChange || (() => {})}
+              />
+            ) : (
+              <Button 
+                onClick={handleRegistrationClick}
+                className="bg-gradient-to-r from-blue-600 to-teal-600 hover:from-blue-700 hover:to-teal-700"
+              >
+                <Trophy className="h-4 w-4 mr-2" />
+                Register
+              </Button>
             )}
           </div>
-          
-          {/* Social Share Button */}
-          <div className="flex justify-center">
-            <SocialShareButton
-              title={tournament.title}
-              description={`${tournament.game} tournament with $${formatMoney(tournament.prize_pool)} prize pool! ${participants.length}/${tournament.max_participants} participants.`}
-              type="tournament"
-              url={`${window.location.origin}/tournaments?id=${tournament.id}`}
-            />
-          </div>
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+
+      <AuthModal 
+        isOpen={showAuthModal} 
+        onClose={() => setShowAuthModal(false)} 
+      />
+    </>
   );
 };

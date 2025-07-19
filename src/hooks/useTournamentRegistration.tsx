@@ -3,11 +3,11 @@ import { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { logTournamentJoin } from '@/utils/activityHelpers';
-import { useToast } from '@/hooks/use-toast';
+import { useSimpleToast } from '@/hooks/useSimpleToast';
 
 export const useTournamentRegistration = () => {
   const { user } = useAuth();
-  const { toast } = useToast();
+  const { toast } = useSimpleToast();
   const [loading, setLoading] = useState(false);
 
   const registerForTournament = async (tournamentId: string, tournamentTitle: string, prizePool?: number) => {
@@ -53,8 +53,13 @@ export const useTournamentRegistration = () => {
 
       if (registrationError) throw registrationError;
 
-      // Log activity
-      await logTournamentJoin(user.id, tournamentTitle, tournamentId, prizePool);
+      // Log activity if the helper function exists
+      try {
+        await logTournamentJoin(user.id, tournamentTitle, tournamentId, prizePool);
+      } catch (activityError) {
+        console.warn('Failed to log activity:', activityError);
+        // Don't fail registration if activity logging fails
+      }
 
       toast({
         title: "Registration Successful",
