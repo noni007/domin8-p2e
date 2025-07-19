@@ -40,8 +40,6 @@ function App() {
           <AuthProvider>
             <Web3Provider>
               <div>
-                <Toaster />
-                <Sonner />
                 <BrowserRouter>
                   <div className="min-h-screen flex flex-col bg-background">
                     <Navigation />
