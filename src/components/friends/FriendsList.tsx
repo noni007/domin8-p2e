@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Users, Search, UserPlus, MessageCircle } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
+import { useSimpleToast } from "@/hooks/useSimpleToast";
 
 interface UserProfile {
   id: string;
@@ -31,7 +31,7 @@ interface Friendship {
 
 export const FriendsList = () => {
   const { user } = useAuth();
-  const { toast } = useToast();
+  const { toast } = useSimpleToast();
   const [friends, setFriends] = useState<Friendship[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<UserProfile[]>([]);
@@ -78,11 +78,7 @@ export const FriendsList = () => {
       }
     } catch (error) {
       console.error('Error fetching friends:', error);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Failed to load friends list.",
-      });
+      toast({ title: "Error", description: "Failed to load friends list.", variant: "destructive" });
     } finally {
       setLoading(false);
     }
@@ -108,11 +104,7 @@ export const FriendsList = () => {
       setSearchResults(data || []);
     } catch (error) {
       console.error('Error searching users:', error);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Failed to search users.",
-      });
+      toast({ title: "Error", description: "Failed to search users.", variant: "destructive" });
     } finally {
       setSearching(false);
     }
@@ -130,21 +122,14 @@ export const FriendsList = () => {
 
       if (error) throw error;
 
-      toast({
-        title: "Success",
-        description: "Friend added successfully!",
-      });
+      toast({ title: "Success", description: "Friend added successfully!" });
 
       fetchFriends();
       setSearchResults([]);
       setSearchQuery("");
     } catch (error) {
       console.error('Error adding friend:', error);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Failed to add friend.",
-      });
+      toast({ title: "Error", description: "Failed to add friend.", variant: "destructive" });
     }
   };
 

@@ -1,8 +1,7 @@
-
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
-import { toast } from '@/hooks/use-toast';
+import { useSimpleToast } from '@/hooks/useSimpleToast';
 import { logFriendAdded } from '@/utils/activityHelpers';
 import type { Tables } from '@/integrations/supabase/types';
 
@@ -21,6 +20,7 @@ interface FriendRequestWithProfile extends FriendRequest {
 
 export const useFriends = () => {
   const { user } = useAuth();
+  const { toast } = useSimpleToast();
   const [friends, setFriends] = useState<FriendWithProfile[]>([]);
   const [sentRequests, setSentRequests] = useState<FriendRequestWithProfile[]>([]);
   const [receivedRequests, setReceivedRequests] = useState<FriendRequestWithProfile[]>([]);
@@ -146,20 +146,13 @@ export const useFriends = () => {
 
       if (error) throw error;
 
-      toast({
-        title: "Friend Request Sent",
-        description: "Your friend request has been sent successfully.",
-      });
+      toast({ title: "Friend Request Sent", description: "Your friend request has been sent successfully." });
 
       await fetchFriendRequests();
       return true;
     } catch (error) {
       console.error('Error sending friend request:', error);
-      toast({
-        title: "Error",
-        description: "Failed to send friend request. Please try again.",
-        variant: "destructive"
-      });
+      toast({ title: "Error", description: "Failed to send friend request. Please try again.", variant: "destructive" });
       return false;
     }
   };
@@ -201,20 +194,13 @@ export const useFriends = () => {
         ]);
       }
 
-      toast({
-        title: "Friend Request Accepted",
-        description: "You are now friends!",
-      });
+      toast({ title: "Friend Request Accepted", description: "You are now friends!" });
 
       await Promise.all([fetchFriends(), fetchFriendRequests()]);
       return true;
     } catch (error) {
       console.error('Error accepting friend request:', error);
-      toast({
-        title: "Error",
-        description: "Failed to accept friend request. Please try again.",
-        variant: "destructive"
-      });
+      toast({ title: "Error", description: "Failed to accept friend request. Please try again.", variant: "destructive" });
       return false;
     }
   };
@@ -228,20 +214,13 @@ export const useFriends = () => {
 
       if (error) throw error;
 
-      toast({
-        title: "Friend Request Declined",
-        description: "The friend request has been declined.",
-      });
+      toast({ title: "Friend Request Declined", description: "The friend request has been declined." });
 
       await fetchFriendRequests();
       return true;
     } catch (error) {
       console.error('Error declining friend request:', error);
-      toast({
-        title: "Error",
-        description: "Failed to decline friend request. Please try again.",
-        variant: "destructive"
-      });
+      toast({ title: "Error", description: "Failed to decline friend request. Please try again.", variant: "destructive" });
       return false;
     }
   };
@@ -257,20 +236,13 @@ export const useFriends = () => {
 
       if (error) throw error;
 
-      toast({
-        title: "Friend Removed",
-        description: "You are no longer friends.",
-      });
+      toast({ title: "Friend Removed", description: "You are no longer friends." });
 
       await fetchFriends();
       return true;
     } catch (error) {
       console.error('Error removing friend:', error);
-      toast({
-        title: "Error",
-        description: "Failed to remove friend. Please try again.",
-        variant: "destructive"
-      });
+      toast({ title: "Error", description: "Failed to remove friend. Please try again.", variant: "destructive" });
       return false;
     }
   };
