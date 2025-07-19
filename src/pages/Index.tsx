@@ -43,14 +43,13 @@ const Index = () => {
   // Show enhanced landing page for non-authenticated users
   return (
     <>
-
       <HeroSection />
       <StatisticsSection />
       <FeaturesSection />
       <HowItWorksSection />
       <GamesSupportedSection />
       <TournamentShowcaseSection />
-      <ComingSoonSection />
+      {/* <ComingSoonSection /> */}
       <CommunitySection />
       <CTASection />
       <ComplianceSection />
