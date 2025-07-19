@@ -39,7 +39,7 @@ function App() {
         <ThemeProvider>
           <AuthProvider>
             <Web3Provider>
-              <TooltipProvider>
+              <div>
                 <Toaster />
                 <Sonner />
                 <BrowserRouter>
@@ -101,7 +101,7 @@ function App() {
                     <Footer />
                   </div>
                 </BrowserRouter>
-              </TooltipProvider>
+              </div>
             </Web3Provider>
           </AuthProvider>
         </ThemeProvider>
