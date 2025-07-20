@@ -18,7 +18,8 @@ import {
   Wallet
 } from "lucide-react";
 import { useAdmin } from "@/hooks/useAdmin";
-import { AdminUserManagement } from "./AdminUserManagement";
+import { EnhancedUserManagement } from "./EnhancedUserManagement";
+import { AdminAnalyticsDashboard } from "./AdminAnalyticsDashboard";
 import { AdminTournamentManagement } from "./AdminTournamentManagement";
 import { AdminWalletManagement } from "./AdminWalletManagement";
 import { AdminPlatformConfig } from "./AdminPlatformConfig";
@@ -182,6 +183,10 @@ export const AdminDashboard = () => {
             <TabsList className="bg-black/40 border-blue-800/30 flex-wrap h-auto">
               <TabsTrigger value="analytics" className="data-[state=active]:bg-blue-600">
                 <BarChart className="h-4 w-4 mr-2" />
+                Overview
+              </TabsTrigger>
+              <TabsTrigger value="detailed-analytics" className="data-[state=active]:bg-blue-600">
+                <TrendingUp className="h-4 w-4 mr-2" />
                 Analytics
               </TabsTrigger>
               <TabsTrigger value="features" className="data-[state=active]:bg-blue-600">
@@ -220,6 +225,10 @@ export const AdminDashboard = () => {
               <AdminOnboardingAnalytics />
             </TabsContent>
 
+            <TabsContent value="detailed-analytics">
+              <AdminAnalyticsDashboard />
+            </TabsContent>
+
             <TabsContent value="features">
               <AdminFeatureToggles />
             </TabsContent>
@@ -231,7 +240,7 @@ export const AdminDashboard = () => {
             )}
 
             <TabsContent value="users">
-              <AdminUserManagement />
+              <EnhancedUserManagement />
             </TabsContent>
 
             <TabsContent value="tournaments">
