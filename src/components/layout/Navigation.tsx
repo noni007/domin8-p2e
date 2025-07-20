@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import { UserMenu } from "./UserMenu";
 import { MobileMenu } from "./MobileMenu";
-import { NotificationBell } from "@/components/notifications/NotificationBell";
+import { LiveNotificationFeed } from "@/components/notifications/LiveNotificationFeed";
 import { WalletConnectButton } from "@/components/web3/WalletConnectButton";
 import { useAuth } from "@/hooks/useAuth";
 import { useAdmin } from "@/hooks/useAdmin";
@@ -113,7 +113,7 @@ export const Navigation = () => {
           <div className="hidden lg:flex items-center space-x-4">
             {user ? (
               <>
-                <NotificationBell />
+                <LiveNotificationFeed />
                 {isWeb3Enabled && <WalletConnectButton />}
                 <UserMenu />
               </>
