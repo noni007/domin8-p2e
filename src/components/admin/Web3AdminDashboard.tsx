@@ -16,6 +16,9 @@ import { AdminWeb3Config } from './AdminWeb3Config';
 import { Web3TournamentDashboard } from './Web3TournamentDashboard';
 import { RealtimeWeb3Monitor } from './RealtimeWeb3Monitor';
 import { Web3AnalyticsDashboard } from './Web3AnalyticsDashboard';
+import { Web3StakingPanel } from '../web3/Web3StakingPanel';
+import { Web3NFTRewards } from '../web3/Web3NFTRewards';
+import { Web3GovernancePanel } from '../web3/Web3GovernancePanel';
 
 export const Web3AdminDashboard = () => {
   const { isAdmin, adminRole, loading } = useAdmin();
@@ -54,23 +57,14 @@ export const Web3AdminDashboard = () => {
 
       {/* Web3 Admin Tabs */}
       <Tabs defaultValue="config" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="config">
-            <Settings className="h-4 w-4 mr-2" />
-            Configuration
-          </TabsTrigger>
-          <TabsTrigger value="tournaments">
-            <Zap className="h-4 w-4 mr-2" />
-            Tournaments
-          </TabsTrigger>
-          <TabsTrigger value="monitor">
-            <Activity className="h-4 w-4 mr-2" />
-            Monitor
-          </TabsTrigger>
-          <TabsTrigger value="analytics">
-            <BarChart3 className="h-4 w-4 mr-2" />
-            Analytics
-          </TabsTrigger>
+        <TabsList className="grid w-full grid-cols-7">
+          <TabsTrigger value="config">Config</TabsTrigger>
+          <TabsTrigger value="tournaments">Tournaments</TabsTrigger>
+          <TabsTrigger value="monitor">Monitor</TabsTrigger>
+          <TabsTrigger value="analytics">Analytics</TabsTrigger>
+          <TabsTrigger value="staking">Staking</TabsTrigger>
+          <TabsTrigger value="nfts">NFTs</TabsTrigger>
+          <TabsTrigger value="governance">Governance</TabsTrigger>
         </TabsList>
 
         <TabsContent value="config">
@@ -85,10 +79,22 @@ export const Web3AdminDashboard = () => {
           <RealtimeWeb3Monitor />
         </TabsContent>
 
-        <TabsContent value="analytics">
-          <Web3AnalyticsDashboard />
-        </TabsContent>
-      </Tabs>
+          <TabsContent value="analytics">
+            <Web3AnalyticsDashboard />
+          </TabsContent>
+
+          <TabsContent value="staking">
+            <Web3StakingPanel />
+          </TabsContent>
+
+          <TabsContent value="nfts">
+            <Web3NFTRewards />
+          </TabsContent>
+
+          <TabsContent value="governance">
+            <Web3GovernancePanel />
+          </TabsContent>
+        </Tabs>
     </div>
   );
 };
