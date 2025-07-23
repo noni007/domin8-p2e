@@ -107,6 +107,12 @@ export const Navigation = () => {
                 <span>Admin</span>
               </Link>
             )}
+            <Link 
+              to="/mobile-guide" 
+              className="text-gray-300 hover:text-blue-400 transition-colors flex items-center space-x-1"
+            >
+              <span>📱 Mobile Guide</span>
+            </Link>
           </div>
 
           {/* Right side actions */}
