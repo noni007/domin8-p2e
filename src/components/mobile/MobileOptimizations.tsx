@@ -44,22 +44,62 @@ export const MobileOptimizations = ({ children }: MobileOptimizationsProps) => {
       }
       
       .touch-device button,
-      .touch-device [role="button"] {
-        min-height: 44px;
-        min-width: 44px;
+      .touch-device [role="button"],
+      .touch-device a[role="button"] {
+        min-height: 48px;
+        min-width: 48px;
         touch-action: manipulation;
+        user-select: none;
       }
       
       .mobile-device input,
       .mobile-device textarea,
       .mobile-device select {
         font-size: 16px; /* Prevents zoom on iOS */
+        -webkit-appearance: none;
+        border-radius: 0;
+      }
+      
+      .mobile-device input:focus,
+      .mobile-device textarea:focus,
+      .mobile-device select:focus {
+        outline: none;
+        box-shadow: 0 0 0 2px hsl(var(--ring));
       }
       
       @media (max-width: 768px) {
         .mobile-scroll {
           -webkit-overflow-scrolling: touch;
           overflow-scrolling: touch;
+        }
+        
+        /* Safe area support */
+        .safe-area-inset-bottom {
+          padding-bottom: env(safe-area-inset-bottom);
+        }
+        
+        .safe-area-inset-top {
+          padding-top: env(safe-area-inset-top);
+        }
+        
+        /* Better touch targets */
+        .touch-target {
+          min-height: 48px;
+          min-width: 48px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        
+        /* Improved scrolling */
+        .mobile-scroll-container {
+          scroll-behavior: smooth;
+          scrollbar-width: none;
+          -ms-overflow-style: none;
+        }
+        
+        .mobile-scroll-container::-webkit-scrollbar {
+          display: none;
         }
       }
     `;

@@ -54,34 +54,35 @@ export const MobileNavigation = () => {
   };
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-background border-t border-border z-40 pb-safe">
-      <div className="flex items-center justify-around px-2 py-1">
+    <nav className="fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur-sm border-t border-border z-50 safe-area-inset-bottom">
+      <div className="flex items-center justify-around px-1 py-2">
         {navigationItems.map(({ to, icon: Icon, label, exactMatch }) => (
           <NavLink
             key={to}
             to={to}
             className={({ isActive: routerIsActive }) =>
               cn(
-                "flex flex-col items-center gap-1 p-2 rounded-lg transition-colors relative",
-                "min-w-0 flex-1 text-center",
+                "flex flex-col items-center gap-1 p-3 rounded-xl transition-all duration-200 relative",
+                "min-w-[60px] min-h-[60px] flex-1 text-center touch-manipulation",
+                "active:scale-95 active:bg-muted/50",
                 (routerIsActive || isActive(to, exactMatch))
-                  ? "text-primary bg-primary/10"
-                  : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                  ? "text-primary bg-primary/10 shadow-sm" 
+                  : "text-muted-foreground hover:text-foreground hover:bg-muted/70"
               )
             }
           >
             <div className="relative">
-              <Icon className="h-5 w-5" />
+              <Icon className="h-6 w-6" />
               {to === '/activity' && unreadCount > 0 && (
                 <Badge 
                   variant="destructive" 
-                  className="absolute -top-2 -right-2 h-4 w-4 p-0 flex items-center justify-center text-xs"
+                  className="absolute -top-1 -right-1 h-5 w-5 p-0 flex items-center justify-center text-xs font-semibold animate-pulse"
                 >
                   {unreadCount > 9 ? '9+' : unreadCount}
                 </Badge>
               )}
             </div>
-            <span className="text-xs font-medium truncate max-w-full">
+            <span className="text-[10px] font-medium truncate max-w-full leading-none">
               {label}
             </span>
           </NavLink>

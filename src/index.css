@@ -94,10 +94,24 @@
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 
-  /* Mobile bottom navigation spacing */
+  /* Mobile optimizations */
   @media (max-width: 768px) {
     body {
-      padding-bottom: 80px;
+      padding-bottom: max(80px, env(safe-area-inset-bottom, 0px));
+      -webkit-text-size-adjust: 100%;
+      -ms-text-size-adjust: 100%;
+    }
+    
+    /* Prevent pull-to-refresh on mobile browsers */
+    body {
+      overscroll-behavior-y: contain;
+    }
+  }
+  
+  /* iOS specific optimizations */
+  @supports (-webkit-touch-callout: none) {
+    body {
+      -webkit-touch-callout: none;
     }
   }
 }

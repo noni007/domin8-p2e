@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { CrossDeviceTester } from './CrossDeviceTester';
 import { MobilePerformanceAuditor } from './MobilePerformanceAuditor';
 import { MobileAccessibilityTester } from './MobileAccessibilityTester';
+import { MobilePerformanceOptimizer } from '../mobile/MobilePerformanceOptimizer';
 import { TestTube, Smartphone, Zap, Users, CheckCircle2 } from 'lucide-react';
 
 export const MobileTestingSuite = () => {
@@ -20,10 +21,10 @@ export const MobileTestingSuite = () => {
     },
     {
       id: 'performance',
-      title: 'Performance Audit',
-      description: 'Analyze loading times and optimization opportunities',
+      title: 'Performance Optimizer',
+      description: 'Optimize mobile performance and user experience',
       icon: Zap,
-      component: MobilePerformanceAuditor
+      component: MobilePerformanceOptimizer
     },
     {
       id: 'accessibility',
