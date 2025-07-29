@@ -2,7 +2,7 @@
 // This file is deprecated - now using the integrated Supabase client
 // All imports should use: import { supabase } from "@/integrations/supabase/client"
 
-export * from "@/integrations/supabase/client";
+export { supabase } from "@/integrations/supabase/client";
 
 // Re-export types using Supabase's generated types
 import type { Tables } from "@/integrations/supabase/types";
