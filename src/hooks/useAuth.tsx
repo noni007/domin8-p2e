@@ -2,7 +2,9 @@
 import { useState, useEffect, createContext, useContext, ReactNode } from 'react'
 import { User, Session } from '@supabase/supabase-js'
 import { supabase } from '@/integrations/supabase/client'
-import type { Profile } from '@/lib/supabase'
+import type { Tables } from '@/integrations/supabase/types'
+
+type Profile = Tables<'profiles'>
 
 interface AuthContextType {
   user: User | null
