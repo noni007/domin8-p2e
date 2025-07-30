@@ -31,9 +31,44 @@ import MobileDevelopmentGuide from "@/pages/MobileDevelopmentGuide";
 import Testing from "@/pages/Testing";
 import NotFound from "@/pages/NotFound";
 
-function App() {
+function AppContent() {
   const isMobile = useIsMobile();
 
+  return (
+    <BrowserRouter>
+      <EnhancedMobileLayout>
+        <div className="min-h-screen flex flex-col">
+          <OfflineIndicator />
+          {!isMobile && <Navigation />}
+          <main className="flex-1 mobile-scroll-container">
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/tournaments" element={<Tournaments />} />
+              <Route path="/tournaments/:id" element={<TournamentDetails />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/wallet" element={<Wallet />} />
+              <Route path="/teams" element={<Teams />} />
+              <Route path="/rankings" element={<Rankings />} />
+              <Route path="/activity" element={<Activity />} />
+              <Route path="/friends" element={<Friends />} />
+              <Route path="/user/:id" element={<UserProfile />} />
+              <Route path="/admin" element={<Admin />} />
+              <Route path="/web3-admin" element={<Web3Admin />} />
+              <Route path="/mobile-guide" element={<MobileDevelopmentGuide />} />
+              <Route path="/testing" element={<Testing />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </main>
+          {!isMobile && <Footer />}
+          {isMobile && <MobileNavigation />}
+          <SimpleToaster />
+        </div>
+      </EnhancedMobileLayout>
+    </BrowserRouter>
+  );
+}
+
+function App() {
   return (
     <ErrorBoundary>
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
@@ -41,36 +76,7 @@ function App() {
           <AuthProvider>
             <MobileOptimizations>
               <MobileAppShell>
-                <BrowserRouter>
-                  <EnhancedMobileLayout>
-                    <div className="min-h-screen flex flex-col">
-                      <OfflineIndicator />
-                      {!isMobile && <Navigation />}
-                      <main className="flex-1 mobile-scroll-container">
-                        <Routes>
-                          <Route path="/" element={<Index />} />
-                          <Route path="/tournaments" element={<Tournaments />} />
-                          <Route path="/tournaments/:id" element={<TournamentDetails />} />
-                          <Route path="/profile" element={<Profile />} />
-                          <Route path="/wallet" element={<Wallet />} />
-                          <Route path="/teams" element={<Teams />} />
-                          <Route path="/rankings" element={<Rankings />} />
-                          <Route path="/activity" element={<Activity />} />
-                          <Route path="/friends" element={<Friends />} />
-                          <Route path="/user/:id" element={<UserProfile />} />
-                          <Route path="/admin" element={<Admin />} />
-                          <Route path="/web3-admin" element={<Web3Admin />} />
-                          <Route path="/mobile-guide" element={<MobileDevelopmentGuide />} />
-                          <Route path="/testing" element={<Testing />} />
-                          <Route path="*" element={<NotFound />} />
-                        </Routes>
-                      </main>
-                      {!isMobile && <Footer />}
-                      {isMobile && <MobileNavigation />}
-                      <SimpleToaster />
-                    </div>
-                  </EnhancedMobileLayout>
-                </BrowserRouter>
+                <AppContent />
               </MobileAppShell>
             </MobileOptimizations>
           </AuthProvider>
