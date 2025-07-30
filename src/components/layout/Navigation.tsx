@@ -47,71 +47,63 @@ export const Navigation = () => {
           <div className="hidden lg:flex items-center space-x-6">
             <Link 
               to="/tournaments" 
-              className="text-gray-300 hover:text-blue-400 transition-colors flex items-center space-x-1"
+              className="text-gray-300 hover:text-blue-400 transition-colors"
             >
-              <Trophy className="h-4 w-4" />
-              <span>Tournaments</span>
+              Tournaments
             </Link>
             <Link 
               to="/leaderboards" 
-              className="text-gray-300 hover:text-blue-400 transition-colors flex items-center space-x-1"
+              className="text-gray-300 hover:text-blue-400 transition-colors"
             >
-              <BarChart3 className="h-4 w-4" />
-              <span>Leaderboards</span>
+              Leaderboards
             </Link>
             <Link 
               to="/rankings" 
-              className="text-gray-300 hover:text-blue-400 transition-colors flex items-center space-x-1"
+              className="text-gray-300 hover:text-blue-400 transition-colors"
             >
-              <BarChart3 className="h-4 w-4" />
-              <span>Rankings</span>
+              Rankings
             </Link>
             <Link 
               to="/teams" 
-              className="text-gray-300 hover:text-blue-400 transition-colors flex items-center space-x-1"
+              className="text-gray-300 hover:text-blue-400 transition-colors"
             >
-              <Users className="h-4 w-4" />
-              <span>Teams</span>
+              Teams
             </Link>
             <Link 
               to="/friends" 
-              className="text-gray-300 hover:text-blue-400 transition-colors flex items-center space-x-1"
+              className="text-gray-300 hover:text-blue-400 transition-colors"
             >
-              <UserPlus className="h-4 w-4" />
-              <span>Community</span>
+              Community
             </Link>
             {user && (
               <>
                 <Link 
                   to="/wallet" 
-                  className="text-gray-300 hover:text-blue-400 transition-colors flex items-center space-x-1"
+                  className="text-gray-300 hover:text-blue-400 transition-colors"
                 >
-                  <Wallet className="h-4 w-4" />
-                  <span>Wallet</span>
+                  Wallet
                 </Link>
                 <Link 
                   to="/activity" 
-                  className="text-gray-300 hover:text-blue-400 transition-colors flex items-center space-x-1"
+                  className="text-gray-300 hover:text-blue-400 transition-colors"
                 >
-                  <Activity className="h-4 w-4" />
-                  <span>Activity</span>
+                  Activity
                 </Link>
               </>
             )}
             {isAdmin && (
               <Link 
                 to="/admin" 
-                className="text-gray-300 hover:text-blue-400 transition-colors flex items-center space-x-1"
+                className="text-gray-300 hover:text-blue-400 transition-colors"
               >
-                <Shield className="h-4 w-4" />
-                <span>Admin</span>
+                Admin
               </Link>
             )}
             <Link 
               to="/mobile-guide" 
-              className="text-gray-300 hover:text-blue-400 transition-colors flex items-center space-x-1"
+              className="text-gray-300 hover:text-blue-400 transition-colors"
             >
-              <span>📱 Mobile Guide</span>
+              📱 Mobile Guide
             </Link>
           </div>
 

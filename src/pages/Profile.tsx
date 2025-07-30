@@ -44,8 +44,6 @@ const Profile = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
-      <ProfileNavigation />
-
       <main className="max-w-4xl mx-auto px-3 sm:px-4 lg:px-8 py-4 sm:py-8">
         <div className="grid gap-4 sm:gap-6 lg:gap-8 lg:grid-cols-3">
           <div className="lg:col-span-1">
