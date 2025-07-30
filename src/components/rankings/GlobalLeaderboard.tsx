@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import * as React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -25,12 +25,12 @@ interface PlayerRanking {
 }
 
 export const GlobalLeaderboard = () => {
-  const [rankings, setRankings] = useState<PlayerRanking[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [selectedCategory, setSelectedCategory] = useState<'overall' | 'tournaments' | 'winrate'>('overall');
-  const [categoryLoading, setCategoryLoading] = useState(false);
+  const [rankings, setRankings] = React.useState<PlayerRanking[]>([]);
+  const [loading, setLoading] = React.useState(true);
+  const [selectedCategory, setSelectedCategory] = React.useState<'overall' | 'tournaments' | 'winrate'>('overall');
+  const [categoryLoading, setCategoryLoading] = React.useState(false);
 
-  useEffect(() => {
+  React.useEffect(() => {
     fetchRankings();
   }, [selectedCategory]);
 

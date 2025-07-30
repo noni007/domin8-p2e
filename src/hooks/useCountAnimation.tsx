@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import * as React from 'react';
 
 interface UseCountAnimationProps {
   end: number;
@@ -13,9 +13,9 @@ export const useCountAnimation = ({
   delay = 0,
   isVisible = true 
 }: UseCountAnimationProps) => {
-  const [count, setCount] = useState(0);
+  const [count, setCount] = React.useState(0);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (!isVisible) return;
 
     const timer = setTimeout(() => {

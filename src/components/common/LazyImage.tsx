@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useRef } from 'react';
+import * as React from 'react';
 import { cn } from '@/lib/utils';
 
 interface LazyImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
@@ -20,12 +20,12 @@ export const LazyImage = ({
   onError,
   ...props 
 }: LazyImageProps) => {
-  const [imageSrc, setImageSrc] = useState(placeholder);
-  const [isLoading, setIsLoading] = useState(true);
-  const [hasError, setHasError] = useState(false);
-  const imgRef = useRef<HTMLImageElement>(null);
+  const [imageSrc, setImageSrc] = React.useState(placeholder);
+  const [isLoading, setIsLoading] = React.useState(true);
+  const [hasError, setHasError] = React.useState(false);
+  const imgRef = React.useRef<HTMLImageElement>(null);
 
-  useEffect(() => {
+  React.useEffect(() => {
     let observer: IntersectionObserver;
     
     if (imgRef.current) {

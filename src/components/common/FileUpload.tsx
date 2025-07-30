@@ -1,5 +1,5 @@
 
-import { useState, useRef } from 'react';
+import * as React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Upload, X, FileImage } from 'lucide-react';
@@ -22,9 +22,9 @@ export const FileUpload = ({
   disabled = false 
 }: FileUploadProps) => {
   const { isFeatureEnabled } = useFeatureFlags();
-  const [dragActive, setDragActive] = useState(false);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const [dragActive, setDragActive] = React.useState(false);
+  const [selectedFile, setSelectedFile] = React.useState<File | null>(null);
+  const inputRef = React.useRef<HTMLInputElement>(null);
 
   const isEnabled = isFeatureEnabled('feature_file_uploads') && !disabled;
 

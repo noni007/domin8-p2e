@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import * as React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -12,9 +12,9 @@ type Notification = Tables<'notifications'>;
 
 export const LiveNotificationFeed = () => {
   const { user } = useAuth();
-  const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [unreadCount, setUnreadCount] = useState(0);
-  const [isVisible, setIsVisible] = useState(false);
+  const [notifications, setNotifications] = React.useState<Notification[]>([]);
+  const [unreadCount, setUnreadCount] = React.useState(0);
+  const [isVisible, setIsVisible] = React.useState(false);
 
   // Real-time subscription for notifications
   const { isSubscribed } = useRealTimeSubscription({
@@ -74,7 +74,7 @@ export const LiveNotificationFeed = () => {
   });
 
   // Fetch initial notifications
-  useEffect(() => {
+  React.useEffect(() => {
     if (!user) return;
 
     const fetchNotifications = async () => {
@@ -99,7 +99,7 @@ export const LiveNotificationFeed = () => {
   }, [user]);
 
   // Request notification permission
-  useEffect(() => {
+  React.useEffect(() => {
     if ('Notification' in window && Notification.permission === 'default') {
       Notification.requestPermission();
     }

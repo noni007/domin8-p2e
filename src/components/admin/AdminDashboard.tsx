@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import * as React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
@@ -34,7 +34,7 @@ import { useFeatureFlags } from "@/hooks/useFeatureFlags";
 export const AdminDashboard = () => {
   const { isAdmin, adminRole, loading } = useAdmin();
   const { isFeatureEnabled } = useFeatureFlags();
-  const [stats, setStats] = useState({
+  const [stats, setStats] = React.useState({
     totalUsers: 0,
     activeTournaments: 0,
     totalRevenue: 0,
@@ -43,7 +43,7 @@ export const AdminDashboard = () => {
 
   const isWeb3Enabled = isFeatureEnabled('feature_web3_wallets');
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (isAdmin) {
       fetchDashboardStats();
     }

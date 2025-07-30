@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import * as React from 'react';
 
 interface SwipeGestureOptions {
   onSwipeLeft?: () => void;
@@ -24,9 +24,9 @@ export const useSwipeGestures = (options: SwipeGestureOptions) => {
     preventScroll = false
   } = options;
 
-  const elementRef = useRef<HTMLElement>(null);
-  const [touchStart, setTouchStart] = useState<TouchPosition | null>(null);
-  const [touchEnd, setTouchEnd] = useState<TouchPosition | null>(null);
+  const elementRef = React.useRef<HTMLElement>(null);
+  const [touchStart, setTouchStart] = React.useState<TouchPosition | null>(null);
+  const [touchEnd, setTouchEnd] = React.useState<TouchPosition | null>(null);
 
   const minSwipeDistance = threshold;
 
@@ -76,7 +76,7 @@ export const useSwipeGestures = (options: SwipeGestureOptions) => {
     }
   };
 
-  useEffect(() => {
+  React.useEffect(() => {
     const element = elementRef.current;
     if (!element) return;
 

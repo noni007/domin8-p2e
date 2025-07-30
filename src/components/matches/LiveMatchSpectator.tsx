@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import * as React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -18,10 +18,10 @@ interface LiveMatchSpectatorProps {
 
 export const LiveMatchSpectator = ({ match, participants }: LiveMatchSpectatorProps) => {
   const { user } = useAuth();
-  const [isSpectating, setIsSpectating] = useState(false);
-  const [spectatorCount, setSpectatorCount] = useState(0);
-  const [matchEvents, setMatchEvents] = useState<any[]>([]);
-  const [liveSession, setLiveSession] = useState<any>(null);
+  const [isSpectating, setIsSpectating] = React.useState(false);
+  const [spectatorCount, setSpectatorCount] = React.useState(0);
+  const [matchEvents, setMatchEvents] = React.useState<any[]>([]);
+  const [liveSession, setLiveSession] = React.useState<any>(null);
 
   // Get player names
   const player1 = participants.find(p => p.user_id === match.player1_id);
@@ -97,7 +97,7 @@ export const LiveMatchSpectator = ({ match, participants }: LiveMatchSpectatorPr
   });
 
   // Fetch initial data
-  useEffect(() => {
+  React.useEffect(() => {
     fetchInitialData();
     fetchSpectatorCount();
   }, [match.id]);

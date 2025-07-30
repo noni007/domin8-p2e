@@ -1,5 +1,5 @@
 
-import { useState, useCallback } from 'react';
+import * as React from 'react';
 import { toast } from '@/hooks/use-toast';
 
 interface UseErrorHandlerReturn {
@@ -11,9 +11,9 @@ interface UseErrorHandlerReturn {
 }
 
 export const useErrorHandler = (): UseErrorHandlerReturn => {
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = React.useState<string | null>(null);
 
-  const handleError = useCallback((error: unknown, customMessage?: string) => {
+  const handleError = React.useCallback((error: unknown, customMessage?: string) => {
     console.error('Error occurred:', error);
     
     let errorMessage = customMessage || "An unexpected error occurred";
@@ -35,11 +35,11 @@ export const useErrorHandler = (): UseErrorHandlerReturn => {
     });
   }, []);
 
-  const clearError = useCallback(() => {
+  const clearError = React.useCallback(() => {
     setError(null);
   }, []);
 
-  const retryWithErrorHandling = useCallback(async (fn: () => Promise<void>) => {
+  const retryWithErrorHandling = React.useCallback(async (fn: () => Promise<void>) => {
     try {
       clearError();
       await fn();

@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import * as React from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -25,9 +25,9 @@ export const AdvancedSearch = ({
   placeholder = "Search...", 
   filters = [] 
 }: AdvancedSearchProps) => {
-  const [query, setQuery] = useState("");
-  const [showFilters, setShowFilters] = useState(false);
-  const [activeFilters, setActiveFilters] = useState<Record<string, any>>({});
+  const [query, setQuery] = React.useState("");
+  const [showFilters, setShowFilters] = React.useState(false);
+  const [activeFilters, setActiveFilters] = React.useState<Record<string, any>>({});
 
   const handleSearch = () => {
     onSearch(query, activeFilters);
@@ -102,7 +102,7 @@ export const AdvancedSearch = ({
                 variant="secondary"
                 className="bg-blue-800/20 text-blue-400 hover:bg-blue-800/30"
               >
-                {filter?.label}: {Array.isArray(value) ? value.join(', ') : value}
+                {filter?.label}: {Array.isArray(value) ? value.join(', ') : String(value)}
                 <X 
                   className="h-3 w-3 ml-1 cursor-pointer hover:text-red-400" 
                   onClick={() => removeFilter(filterId)}

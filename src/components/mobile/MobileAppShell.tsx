@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import * as React from 'react';
 import { Capacitor } from '@capacitor/core';
 import { StatusBar } from '@capacitor/status-bar';
 import { SplashScreen } from '@capacitor/splash-screen';
@@ -30,12 +30,12 @@ interface DeviceInfo {
 
 export const MobileAppShell = ({ children }: { children: React.ReactNode }) => {
   const { toast } = useToast();
-  const [appInfo, setAppInfo] = useState<AppInfo | null>(null);
-  const [networkStatus, setNetworkStatus] = useState<NetworkStatus>({ connected: true, connectionType: 'unknown' });
-  const [deviceInfo, setDeviceInfo] = useState<DeviceInfo>({ platform: 'web', isNative: false });
-  const [isAppReady, setIsAppReady] = useState(false);
+  const [appInfo, setAppInfo] = React.useState<AppInfo | null>(null);
+  const [networkStatus, setNetworkStatus] = React.useState<NetworkStatus>({ connected: true, connectionType: 'unknown' });
+  const [deviceInfo, setDeviceInfo] = React.useState<DeviceInfo>({ platform: 'web', isNative: false });
+  const [isAppReady, setIsAppReady] = React.useState(false);
 
-  useEffect(() => {
+  React.useEffect(() => {
     initializeApp();
     setupEventListeners();
     

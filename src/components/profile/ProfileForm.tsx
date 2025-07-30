@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -19,8 +19,8 @@ interface ProfileFormProps {
 }
 
 export const ProfileForm = ({ profile, user, editing, onProfileUpdated }: ProfileFormProps) => {
-  const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState({
+  const [loading, setLoading] = React.useState(false);
+  const [formData, setFormData] = React.useState({
     username: profile?.username || "",
     bio: profile?.bio || "",
     user_type: profile?.user_type || "player"

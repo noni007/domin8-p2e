@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import * as React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -15,9 +15,9 @@ type Profile = Tables<'profiles'>;
 export const UserDiscovery = () => {
   const { user } = useAuth();
   const { friends, sentRequests, sendFriendRequest } = useFriends();
-  const [searchTerm, setSearchTerm] = useState("");
-  const [searchResults, setSearchResults] = useState<Profile[]>([]);
-  const [searching, setSearching] = useState(false);
+  const [searchTerm, setSearchTerm] = React.useState("");
+  const [searchResults, setSearchResults] = React.useState<Profile[]>([]);
+  const [searching, setSearching] = React.useState(false);
 
   const searchUsers = async () => {
     if (!searchTerm.trim() || !user) return;

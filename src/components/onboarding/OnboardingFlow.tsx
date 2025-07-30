@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -27,11 +27,11 @@ interface OnboardingStep {
 
 export const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
   const { user, refreshProfile } = useAuth();
-  const [currentStep, setCurrentStep] = useState(0);
-  const [completedSteps, setCompletedSteps] = useState<string[]>([]);
-  const [startTime] = useState(new Date());
-  const [stepStartTime, setStepStartTime] = useState(new Date());
-  const [profileData, setProfileData] = useState({
+  const [currentStep, setCurrentStep] = React.useState(0);
+  const [completedSteps, setCompletedSteps] = React.useState<string[]>([]);
+  const [startTime] = React.useState(new Date());
+  const [stepStartTime, setStepStartTime] = React.useState(new Date());
+  const [profileData, setProfileData] = React.useState({
     username: '',
     favoriteGames: [] as string[],
     experienceLevel: '',
@@ -116,7 +116,7 @@ export const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
   ];
 
   // Track step start when step changes
-  useEffect(() => {
+  React.useEffect(() => {
     if (steps[currentStep]) {
       trackStepStart(steps[currentStep].id);
       setStepStartTime(new Date());
