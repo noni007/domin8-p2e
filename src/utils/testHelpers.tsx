@@ -53,7 +53,7 @@ const customRender = (
   options?: Omit<RenderOptions, 'wrapper'>
 ) => render(ui, { wrapper: AllTheProviders, ...options });
 
-export * from '@testing-library/react';
+// Re-export specific testing utilities instead of star export to avoid module resolution issues
 export { customRender as render };
 
 // Performance testing utilities
