@@ -1,6 +1,10 @@
 import { Gamepad2 } from "lucide-react";
+import { useScrollAnimation } from "@/hooks/useScrollAnimation";
+import { useMobileInteractions } from "@/hooks/useMobileInteractions";
 
 export const GamesSupportedSection = () => {
+  const { ref, isVisible } = useScrollAnimation();
+  const { createTouchHandler } = useMobileInteractions();
   const games = [
     {
       name: "FC24",
@@ -54,9 +58,11 @@ export const GamesSupportedSection = () => {
   ];
 
   return (
-    <div className="bg-gradient-to-r from-slate-900/50 to-blue-900/50 backdrop-blur-sm">
+    <div ref={ref} className="bg-gradient-to-r from-slate-900/50 to-blue-900/50 backdrop-blur-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
-        <div className="text-center mb-16">
+        <div className={`text-center mb-16 transition-all duration-1000 ${
+          isVisible ? 'opacity-100 animate-fadeInUp' : 'opacity-0 translate-y-10'
+        }`}>
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
             Supported Games
           </h2>
@@ -67,7 +73,14 @@ export const GamesSupportedSection = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {games.map((game, index) => (
-            <div key={index} className="group relative overflow-hidden rounded-xl bg-black/40 border border-blue-800/30 backdrop-blur-sm transition-all duration-300 hover:border-blue-600/50 hover:bg-black/60 hover-lift">
+            <div 
+              key={index} 
+              className={`group relative overflow-hidden rounded-xl bg-black/40 border border-blue-800/30 backdrop-blur-sm transition-all duration-300 hover:border-blue-600/50 hover:bg-black/60 hover-scale cursor-pointer ${
+                isVisible ? 'opacity-100 animate-fadeInUp' : 'opacity-0 translate-y-10'
+              }`}
+              style={{ animationDelay: `${index * 150}ms` }}
+              {...createTouchHandler(() => {}, 'light')}
+            >
               <div className="aspect-video overflow-hidden">
                 <img 
                   src={game.image} 
@@ -94,13 +107,19 @@ export const GamesSupportedSection = () => {
           ))}
         </div>
 
-        <div className="text-center mt-16">
-          <h3 className="text-2xl font-bold text-white mb-8 animate-fade-in-up">More games coming soon...</h3>
+        <div className={`text-center mt-16 transition-all duration-1000 delay-500 ${
+          isVisible ? 'opacity-100 animate-fadeInUp' : 'opacity-0 translate-y-10'
+        }`}>
+          <h3 className="text-2xl font-bold text-white mb-8">More games coming soon...</h3>
           <div className="flex justify-center flex-wrap gap-8">
             {upcomingGames.map((game, index) => (
               <div 
                 key={index} 
-                className="group flex flex-col items-center p-8 bg-gradient-to-br from-gray-800/50 to-gray-900/50 text-gray-300 rounded-xl border border-gray-700/50 backdrop-blur-sm hover:border-blue-500/50 hover:bg-gradient-to-br hover:from-blue-900/30 hover:to-gray-900/50 transition-all duration-300 hover-lift min-w-[180px]"
+                className={`group flex flex-col items-center p-8 bg-gradient-to-br from-gray-800/50 to-gray-900/50 text-gray-300 rounded-xl border border-gray-700/50 backdrop-blur-sm hover:border-blue-500/50 hover:bg-gradient-to-br hover:from-blue-900/30 hover:to-gray-900/50 transition-all duration-300 hover-scale min-w-[180px] cursor-pointer ${
+                  isVisible ? 'opacity-100 animate-fadeInUp' : 'opacity-0 translate-y-10'
+                }`}
+                style={{ animationDelay: `${(index + 6) * 150}ms` }}
+                {...createTouchHandler(() => {}, 'light')}
               >
                 <div className="mb-4 group-hover:scale-110 transition-transform duration-300 w-24 h-24 flex items-center justify-center">
                   <img 

@@ -1,8 +1,18 @@
 
 import { Button } from "@/components/ui/button";
 import { Users, MessageCircle, Flag, Heart } from "lucide-react";
+import { useScrollAnimation } from "@/hooks/useScrollAnimation";
+import { useMobileInteractions } from "@/hooks/useMobileInteractions";
+import { useCountAnimation } from "@/hooks/useCountAnimation";
 
 export const CommunitySection = () => {
+  const { ref, isVisible } = useScrollAnimation();
+  const { createTouchHandler } = useMobileInteractions();
+  
+  const activePlayersCount = useCountAnimation({ end: 12847, duration: 2000, isVisible });
+  const teamsCount = useCountAnimation({ end: 1243, duration: 2000, delay: 200, isVisible });
+  const friendshipsCount = useCountAnimation({ end: 50000, duration: 2000, delay: 400, isVisible });
+  const countriesCount = useCountAnimation({ end: 30, duration: 2000, delay: 600, isVisible });
   const communityFeatures = [
     {
       icon: Users,
@@ -27,9 +37,11 @@ export const CommunitySection = () => {
   ];
 
   return (
-    <div className="py-16 sm:py-24 bg-black/20 backdrop-blur-sm">
+    <div ref={ref} className="py-16 sm:py-24 bg-black/20 backdrop-blur-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12 sm:mb-16">
+        <div className={`text-center mb-12 sm:mb-16 transition-all duration-1000 ${
+          isVisible ? 'opacity-100 animate-fadeInUp' : 'opacity-0 translate-y-10'
+        }`}>
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-4 sm:mb-6">
             More Than Just Competition
           </h2>
@@ -40,7 +52,14 @@ export const CommunitySection = () => {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 mb-8 sm:mb-12">
           {communityFeatures.map((feature, index) => (
-            <div key={index} className="text-center px-4">
+            <div 
+              key={index} 
+              className={`text-center px-4 transition-all duration-1000 hover-scale cursor-pointer ${
+                isVisible ? 'opacity-100 animate-fadeInUp' : 'opacity-0 translate-y-10'
+              }`}
+              style={{ animationDelay: `${index * 150}ms` }}
+              {...createTouchHandler(() => {}, 'light')}
+            >
               <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-teal-600 rounded-full flex items-center justify-center mx-auto mb-4">
                 <feature.icon className="h-8 w-8 text-white" />
               </div>
@@ -54,29 +73,40 @@ export const CommunitySection = () => {
           <h3 className="text-xl sm:text-2xl font-semibold text-white mb-6 sm:mb-8 text-center">Community Highlights</h3>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             <div className="text-center">
-              <div className="text-2xl sm:text-3xl font-bold text-green-400 mb-2">12,847</div>
+              <div className="text-2xl sm:text-3xl font-bold text-green-400 mb-2">
+                {activePlayersCount.toLocaleString()}
+              </div>
               <div className="text-gray-300 text-xs sm:text-sm">Active Players Online</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl sm:text-3xl font-bold text-blue-400 mb-2">1,243</div>
+              <div className="text-2xl sm:text-3xl font-bold text-blue-400 mb-2">
+                {teamsCount.toLocaleString()}
+              </div>
               <div className="text-gray-300 text-xs sm:text-sm">Teams Formed This Month</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl sm:text-3xl font-bold text-purple-400 mb-2">50K+</div>
+              <div className="text-2xl sm:text-3xl font-bold text-purple-400 mb-2">
+                {friendshipsCount >= 50000 ? '50K+' : `${Math.floor(friendshipsCount / 1000)}K+`}
+              </div>
               <div className="text-gray-300 text-xs sm:text-sm">Friendships Made</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl sm:text-3xl font-bold text-yellow-400 mb-2">30+</div>
+              <div className="text-2xl sm:text-3xl font-bold text-yellow-400 mb-2">
+                {countriesCount}+
+              </div>
               <div className="text-gray-300 text-xs sm:text-sm">Countries Represented</div>
             </div>
           </div>
         </div>
 
-        <div className="text-center px-4">
+        <div className={`text-center px-4 transition-all duration-1000 delay-800 ${
+          isVisible ? 'opacity-100 animate-fadeInUp' : 'opacity-0 translate-y-10'
+        }`}>
           <Button 
             size="lg"
-            className="bg-gradient-to-r from-blue-600 to-teal-600 hover:from-blue-700 hover:to-teal-700 px-6 sm:px-8 py-3 text-base sm:text-lg w-full sm:w-auto"
+            className="bg-gradient-to-r from-blue-600 to-teal-600 hover:from-blue-700 hover:to-teal-700 px-6 sm:px-8 py-3 text-base sm:text-lg w-full sm:w-auto hover-scale"
             onClick={() => window.location.href = '/friends'}
+            {...createTouchHandler(() => window.location.href = '/friends', 'medium')}
           >
             Join the Community
           </Button>

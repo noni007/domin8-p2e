@@ -1,8 +1,12 @@
 
 import { Button } from "@/components/ui/button";
 import { Calendar, Users, DollarSign, Clock } from "lucide-react";
+import { useScrollAnimation } from "@/hooks/useScrollAnimation";
+import { useMobileInteractions } from "@/hooks/useMobileInteractions";
 
 export const TournamentShowcaseSection = () => {
+  const { ref, isVisible } = useScrollAnimation();
+  const { createTouchHandler } = useMobileInteractions();
   const featuredTournaments = [
     {
       title: "African FIFA Championship",
@@ -34,8 +38,10 @@ export const TournamentShowcaseSection = () => {
   ];
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
-      <div className="text-center mb-16">
+    <div ref={ref} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+      <div className={`text-center mb-16 transition-all duration-1000 ${
+        isVisible ? 'opacity-100 animate-fadeInUp' : 'opacity-0 translate-y-10'
+      }`}>
         <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
           Featured Tournaments
         </h2>
@@ -46,7 +52,14 @@ export const TournamentShowcaseSection = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {featuredTournaments.map((tournament, index) => (
-          <div key={index} className="group relative overflow-hidden rounded-xl bg-black/40 border border-blue-800/30 backdrop-blur-sm transition-all duration-300 hover:border-blue-600/50 hover:bg-black/60">
+          <div 
+            key={index} 
+            className={`group relative overflow-hidden rounded-xl bg-black/40 border border-blue-800/30 backdrop-blur-sm transition-all duration-300 hover:border-blue-600/50 hover:bg-black/60 hover-scale cursor-pointer ${
+              isVisible ? 'opacity-100 animate-fadeInUp' : 'opacity-0 translate-y-10'
+            }`}
+            style={{ animationDelay: `${index * 200}ms` }}
+            {...createTouchHandler(() => window.location.href = '/tournaments', 'medium')}
+          >
             <div className="aspect-video overflow-hidden">
               <img 
                 src={tournament.image} 
@@ -94,12 +107,15 @@ export const TournamentShowcaseSection = () => {
         ))}
       </div>
 
-      <div className="text-center mt-12">
+      <div className={`text-center mt-12 transition-all duration-1000 delay-600 ${
+        isVisible ? 'opacity-100 animate-fadeInUp' : 'opacity-0 translate-y-10'
+      }`}>
         <Button 
           size="lg" 
           variant="outline"
-          className="border-blue-400 text-blue-400 hover:bg-blue-400 hover:text-black"
+          className="border-blue-400 text-blue-400 hover:bg-blue-400 hover:text-black hover-scale"
           onClick={() => window.location.href = '/tournaments'}
+          {...createTouchHandler(() => window.location.href = '/tournaments', 'medium')}
         >
           <Clock className="mr-2 h-5 w-5" />
           View All Tournaments
