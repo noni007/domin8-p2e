@@ -1,5 +1,5 @@
 
-import { useState, useEffect, createContext, useContext, ReactNode } from 'react'
+import * as React from 'react'
 import { User, Session } from '@supabase/supabase-js'
 import { supabase } from '@/integrations/supabase/client'
 import type { Tables } from '@/integrations/supabase/types'
@@ -19,10 +19,10 @@ interface AuthContextType {
   resetPassword: (email: string) => Promise<{ error: Error | null }>
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined)
+const AuthContext = React.createContext<AuthContextType | undefined>(undefined)
 
 export const useAuth = () => {
-  const context = useContext(AuthContext)
+  const context = React.useContext(AuthContext)
   if (context === undefined) {
     throw new Error('useAuth must be used within an AuthProvider')
   }
@@ -30,15 +30,15 @@ export const useAuth = () => {
 }
 
 interface AuthProviderProps {
-  children: ReactNode
+  children: React.ReactNode
 }
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
-  const [user, setUser] = useState<User | null>(null)
-  const [profile, setProfile] = useState<Profile | null>(null)
-  const [session, setSession] = useState<Session | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [user, setUser] = React.useState<User | null>(null)
+  const [profile, setProfile] = React.useState<Profile | null>(null)
+  const [session, setSession] = React.useState<Session | null>(null)
+  const [loading, setLoading] = React.useState(true)
+  const [error, setError] = React.useState<string | null>(null)
 
   const refreshProfile = async () => {
     if (!user) {
@@ -150,7 +150,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   }
 
-  useEffect(() => {
+  React.useEffect(() => {
     let mounted = true;
 
     // Set up auth state listener FIRST

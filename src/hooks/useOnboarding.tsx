@@ -1,12 +1,12 @@
 
-import { useState, useEffect } from 'react';
+import * as React from 'react';
 import { useAuth } from './useAuth';
 
 export const useOnboarding = () => {
   const { user, profile, loading } = useAuth();
-  const [shouldShowOnboarding, setShouldShowOnboarding] = useState(false);
+  const [shouldShowOnboarding, setShouldShowOnboarding] = React.useState(false);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (loading || !user) {
       setShouldShowOnboarding(false);
       return;
