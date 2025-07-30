@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import * as React from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useAdmin } from '@/hooks/useAdmin';
@@ -26,7 +26,7 @@ interface FeatureFlags {
 export const useFeatureFlags = () => {
   const { user } = useAuth();
   const { isAdmin } = useAdmin();
-  const [flags, setFlags] = useState<FeatureFlags>({
+  const [flags, setFlags] = React.useState<FeatureFlags>({
     feature_tournament_registration: true,
     feature_wallet_payments: true,
     feature_team_creation: true,
@@ -44,9 +44,9 @@ export const useFeatureFlags = () => {
     feature_nft_achievements: false,
     feature_token_staking: false,
   });
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = React.useState(true);
 
-  useEffect(() => {
+  React.useEffect(() => {
     fetchFeatureFlags();
   }, []);
 

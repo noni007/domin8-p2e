@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import * as React from 'react';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { Capacitor } from '@capacitor/core';
 
@@ -16,8 +16,8 @@ interface UseCameraReturn {
 }
 
 export const useCamera = (): UseCameraReturn => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [error, setError] = React.useState<string | null>(null);
   const isNativeCamera = Capacitor.isNativePlatform();
 
   const takePhoto = async (): Promise<CameraResult | null> => {

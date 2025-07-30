@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import * as React from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { logFriendAdded } from '@/utils/activityHelpers';
@@ -8,7 +8,7 @@ import { useToast } from '@/hooks/use-toast';
 export const useFriendSystem = () => {
   const { user, profile } = useAuth();
   const { toast } = useToast();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = React.useState(false);
 
   const sendFriendRequest = async (receiverId: string) => {
     if (!user) return false;

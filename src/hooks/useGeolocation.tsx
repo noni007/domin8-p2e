@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import * as React from 'react';
 import { Geolocation, Position } from '@capacitor/geolocation';
 import { Capacitor } from '@capacitor/core';
 
@@ -24,11 +24,11 @@ interface UseGeolocationReturn {
 }
 
 export const useGeolocation = (): UseGeolocationReturn => {
-  const [location, setLocation] = useState<LocationCoords | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [watchId, setWatchId] = useState<string | number | null>(null);
-  const [isWatching, setIsWatching] = useState(false);
+  const [location, setLocation] = React.useState<LocationCoords | null>(null);
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [error, setError] = React.useState<string | null>(null);
+  const [watchId, setWatchId] = React.useState<string | number | null>(null);
+  const [isWatching, setIsWatching] = React.useState(false);
   const isNativeGeolocation = Capacitor.isNativePlatform();
 
   const getCurrentLocation = async (): Promise<LocationCoords | null> => {
@@ -162,7 +162,7 @@ export const useGeolocation = (): UseGeolocationReturn => {
     }
   };
 
-  useEffect(() => {
+  React.useEffect(() => {
     return () => {
       clearWatch();
     };

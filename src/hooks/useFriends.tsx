@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import * as React from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { useSimpleToast } from '@/hooks/useSimpleToast';
@@ -21,10 +21,10 @@ interface FriendRequestWithProfile extends FriendRequest {
 export const useFriends = () => {
   const { user } = useAuth();
   const { toast } = useSimpleToast();
-  const [friends, setFriends] = useState<FriendWithProfile[]>([]);
-  const [sentRequests, setSentRequests] = useState<FriendRequestWithProfile[]>([]);
-  const [receivedRequests, setReceivedRequests] = useState<FriendRequestWithProfile[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [friends, setFriends] = React.useState<FriendWithProfile[]>([]);
+  const [sentRequests, setSentRequests] = React.useState<FriendRequestWithProfile[]>([]);
+  const [receivedRequests, setReceivedRequests] = React.useState<FriendRequestWithProfile[]>([]);
+  const [loading, setLoading] = React.useState(true);
 
   const fetchFriends = async () => {
     if (!user) return;
@@ -247,7 +247,7 @@ export const useFriends = () => {
     }
   };
 
-  useEffect(() => {
+  React.useEffect(() => {
     const loadData = async () => {
       if (user) {
         setLoading(true);

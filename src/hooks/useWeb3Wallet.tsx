@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import * as React from 'react'
 import { useAccount, useConnect, useDisconnect, useBalance, useChainId } from 'wagmi'
 import { useWeb3Modal } from '@web3modal/wagmi/react'
 import { supabase } from '@/integrations/supabase/client'
@@ -28,7 +28,7 @@ export const useWeb3Wallet = () => {
   const chainId = useChainId()
   const { data: balance } = useBalance({ address })
 
-  const [walletState, setWalletState] = useState<Web3WalletState>({
+  const [walletState, setWalletState] = React.useState<Web3WalletState>({
     address: null,
     isConnected: false,
     isLoading: false,
@@ -38,7 +38,7 @@ export const useWeb3Wallet = () => {
   })
 
   // Update wallet state when Web3 data changes
-  useEffect(() => {
+  React.useEffect(() => {
     if (!isWeb3Enabled) {
       setWalletState({
         address: null,
@@ -153,7 +153,7 @@ export const useWeb3Wallet = () => {
   }
 
   // Handle successful connection
-  useEffect(() => {
+  React.useEffect(() => {
     if (wagmiConnected && address && user && isWeb3Enabled) {
       // Determine wallet type based on connector
       const walletType = 'unknown' // TODO: Determine from connector

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import * as React from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useWallet } from '@/hooks/useWallet';
 import { useWeb3Wallet } from '@/hooks/useWeb3Wallet';
@@ -30,8 +30,8 @@ export const useEnhancedTournamentRegistration = () => {
   const { checkForNewAchievements } = useAchievements();
   const { isFeatureEnabled } = useFeatureFlags();
   
-  const [isRegistering, setIsRegistering] = useState(false);
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<PaymentMethod>('wallet');
+  const [isRegistering, setIsRegistering] = React.useState(false);
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = React.useState<PaymentMethod>('wallet');
 
   const getPaymentOptions = (entryFee: number): PaymentOption[] => {
     const options: PaymentOption[] = [

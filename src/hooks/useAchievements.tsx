@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import * as React from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -13,11 +13,11 @@ type UserAchievement = Tables<'user_achievements'> & {
 export const useAchievements = () => {
   const { user } = useAuth();
   const { toast } = useToast();
-  const [achievements, setAchievements] = useState<Achievement[]>([]);
-  const [userAchievements, setUserAchievements] = useState<UserAchievement[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [achievements, setAchievements] = React.useState<Achievement[]>([]);
+  const [userAchievements, setUserAchievements] = React.useState<UserAchievement[]>([]);
+  const [loading, setLoading] = React.useState(true);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (user) {
       fetchAchievements();
       fetchUserAchievements();

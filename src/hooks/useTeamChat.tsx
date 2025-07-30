@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import * as React from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { Tables } from "@/integrations/supabase/types";
 import { useAuth } from "@/hooks/useAuth";
@@ -11,11 +11,11 @@ type TeamMessage = Tables<'team_messages'> & {
 
 export const useTeamChat = (teamId: string) => {
   const { user } = useAuth();
-  const [messages, setMessages] = useState<TeamMessage[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [sending, setSending] = useState(false);
+  const [messages, setMessages] = React.useState<TeamMessage[]>([]);
+  const [loading, setLoading] = React.useState(true);
+  const [sending, setSending] = React.useState(false);
 
-  useEffect(() => {
+  React.useEffect(() => {
     fetchMessages();
     const unsubscribe = subscribeToMessages();
     return unsubscribe;

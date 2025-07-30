@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import * as React from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import type { Tables } from '@/integrations/supabase/types';
@@ -23,10 +23,10 @@ export const useFriendsActivities = ({
   userId
 }: UseFriendsActivitiesProps = {}) => {
   const { user } = useAuth();
-  const [activities, setActivities] = useState<ActivityWithProfile[]>([]);
-  const [page, setPage] = useState(1);
-  const [total, setTotal] = useState(0);
-  const [loading, setLoading] = useState(true);
+  const [activities, setActivities] = React.useState<ActivityWithProfile[]>([]);
+  const [page, setPage] = React.useState(1);
+  const [total, setTotal] = React.useState(0);
+  const [loading, setLoading] = React.useState(true);
 
   const fetchActivities = async (pageNumber: number = 1) => {
     if (!user || userId) return; // Don't fetch friends activities when viewing specific user
@@ -110,7 +110,7 @@ export const useFriendsActivities = ({
     fetchActivities(1).finally(() => setLoading(false));
   };
 
-  useEffect(() => {
+  React.useEffect(() => {
     const loadActivities = async () => {
       if (user) {
         setLoading(true);

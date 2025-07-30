@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import * as React from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -25,13 +25,13 @@ interface MatchSpectatingData {
 export const useMatchSpectating = (matchId: string) => {
   const { user } = useAuth();
   const { toast } = useToast();
-  const [spectatingData, setSpectatingData] = useState<MatchSpectatingData>({
+  const [spectatingData, setSpectatingData] = React.useState<MatchSpectatingData>({
     spectators: [],
     spectatorCount: 0,
     isSpectating: false,
     matchStatus: 'scheduled'
   });
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = React.useState(true);
 
   // Fetch current spectators
   const fetchSpectators = async () => {
@@ -169,7 +169,7 @@ export const useMatchSpectating = (matchId: string) => {
   };
 
   // Set up real-time subscriptions
-  useEffect(() => {
+  React.useEffect(() => {
     fetchSpectators();
 
     // Subscribe to spectator changes

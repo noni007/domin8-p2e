@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import * as React from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import type { Tables } from '@/integrations/supabase/types';
@@ -13,9 +13,9 @@ interface ActivityWithProfile extends UserActivity {
 
 export const useActivityFeed = () => {
   const { user } = useAuth();
-  const [personalActivities, setPersonalActivities] = useState<ActivityWithProfile[]>([]);
-  const [friendsActivities, setFriendsActivities] = useState<ActivityWithProfile[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [personalActivities, setPersonalActivities] = React.useState<ActivityWithProfile[]>([]);
+  const [friendsActivities, setFriendsActivities] = React.useState<ActivityWithProfile[]>([]);
+  const [loading, setLoading] = React.useState(true);
 
   const fetchPersonalActivities = async () => {
     if (!user) return;
@@ -134,7 +134,7 @@ export const useActivityFeed = () => {
     };
   };
 
-  useEffect(() => {
+  React.useEffect(() => {
     const loadActivities = async () => {
       if (user) {
         setLoading(true);

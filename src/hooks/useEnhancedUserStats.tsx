@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import * as React from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import type { Tables } from '@/integrations/supabase/types';
 
@@ -29,11 +29,11 @@ interface EnhancedUserStats extends Profile {
 }
 
 export const useEnhancedUserStats = (userId?: string) => {
-  const [stats, setStats] = useState<EnhancedUserStats | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [tournaments, setTournaments] = useState<Tournament[]>([]);
+  const [stats, setStats] = React.useState<EnhancedUserStats | null>(null);
+  const [loading, setLoading] = React.useState(true);
+  const [tournaments, setTournaments] = React.useState<Tournament[]>([]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (!userId) return;
 
     const fetchEnhancedStats = async () => {

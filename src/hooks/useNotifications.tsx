@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import * as React from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { useRealTimeSubscription } from '@/hooks/useRealTimeSubscription';
@@ -10,10 +10,10 @@ type NotificationPreferences = Tables<'notification_preferences'>;
 
 export const useNotifications = () => {
   const { user } = useAuth();
-  const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [preferences, setPreferences] = useState<NotificationPreferences | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [unreadCount, setUnreadCount] = useState(0);
+  const [notifications, setNotifications] = React.useState<Notification[]>([]);
+  const [preferences, setPreferences] = React.useState<NotificationPreferences | null>(null);
+  const [loading, setLoading] = React.useState(true);
+  const [unreadCount, setUnreadCount] = React.useState(0);
 
   // Fetch notifications
   const fetchNotifications = async () => {
@@ -87,7 +87,7 @@ export const useNotifications = () => {
   });
 
   // Initial data fetch
-  useEffect(() => {
+  React.useEffect(() => {
     if (!user) {
       setLoading(false);
       return;

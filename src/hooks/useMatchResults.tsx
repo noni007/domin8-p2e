@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import * as React from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { logMatchWin, logTournamentWin } from '@/utils/activityHelpers';
@@ -11,7 +11,7 @@ type Match = Tables<'matches'>;
 export const useMatchResults = () => {
   const { user } = useAuth();
   const { toast } = useToast();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = React.useState(false);
 
   const submitMatchResult = async (
     matchId: string,

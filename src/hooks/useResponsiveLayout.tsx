@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import * as React from 'react';
 
 interface BreakpointConfig {
   sm: number;
@@ -16,14 +16,14 @@ const defaultBreakpoints: BreakpointConfig = {
 };
 
 export const useResponsiveLayout = (breakpoints: BreakpointConfig = defaultBreakpoints) => {
-  const [screenSize, setScreenSize] = useState({
+  const [screenSize, setScreenSize] = React.useState({
     width: typeof window !== 'undefined' ? window.innerWidth : 1024,
     height: typeof window !== 'undefined' ? window.innerHeight : 768,
   });
 
-  const [orientation, setOrientation] = useState<'portrait' | 'landscape'>('landscape');
+  const [orientation, setOrientation] = React.useState<'portrait' | 'landscape'>('landscape');
 
-  useEffect(() => {
+  React.useEffect(() => {
     const handleResize = () => {
       const width = window.innerWidth;
       const height = window.innerHeight;

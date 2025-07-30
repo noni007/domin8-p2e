@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import * as React from 'react';
 import { PushNotifications } from '@capacitor/push-notifications';
 import { Capacitor } from '@capacitor/core';
 
@@ -22,10 +22,10 @@ interface UsePushNotificationsReturn {
 }
 
 export const usePushNotifications = (): UsePushNotificationsReturn => {
-  const [isRegistered, setIsRegistered] = useState(false);
-  const [token, setToken] = useState<string | null>(null);
-  const [notifications, setNotifications] = useState<PushNotification[]>([]);
-  const [error, setError] = useState<string | null>(null);
+  const [isRegistered, setIsRegistered] = React.useState(false);
+  const [token, setToken] = React.useState<string | null>(null);
+  const [notifications, setNotifications] = React.useState<PushNotification[]>([]);
+  const [error, setError] = React.useState<string | null>(null);
   
   const isSupported = Capacitor.isNativePlatform();
 
@@ -79,7 +79,7 @@ export const usePushNotifications = (): UsePushNotificationsReturn => {
     setNotifications([]);
   };
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (!isSupported) return;
 
     // Add listeners for push notification events

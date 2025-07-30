@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import * as React from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
@@ -20,10 +20,10 @@ interface Milestone {
 }
 
 export const useFeatureWaitlist = (feature: string = 'historical_stats_upload') => {
-  const [stats, setStats] = useState<WaitlistStats | null>(null);
-  const [milestones, setMilestones] = useState<Milestone[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [joining, setJoining] = useState(false);
+  const [stats, setStats] = React.useState<WaitlistStats | null>(null);
+  const [milestones, setMilestones] = React.useState<Milestone[]>([]);
+  const [loading, setLoading] = React.useState(true);
+  const [joining, setJoining] = React.useState(false);
   const { toast } = useToast();
 
   const fetchStats = async () => {
@@ -107,7 +107,7 @@ export const useFeatureWaitlist = (feature: string = 'historical_stats_upload') 
     }
   };
 
-  useEffect(() => {
+  React.useEffect(() => {
     const loadData = async () => {
       setLoading(true);
       await Promise.all([fetchStats(), fetchMilestones()]);

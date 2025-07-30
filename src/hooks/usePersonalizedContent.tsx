@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import * as React from 'react';
 import { useAuth } from './useAuth';
 
 interface PersonalizedContent {
@@ -20,10 +20,10 @@ interface Recommendation {
 
 export const usePersonalizedContent = () => {
   const { user, profile } = useAuth();
-  const [content, setContent] = useState<PersonalizedContent | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [content, setContent] = React.useState<PersonalizedContent | null>(null);
+  const [loading, setLoading] = React.useState(true);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (user && profile) {
       generatePersonalizedContent();
     }

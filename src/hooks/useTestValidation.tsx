@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import * as React from 'react';
 
 interface ValidationRule {
   id: string;
@@ -16,8 +16,8 @@ interface ValidationResult {
 }
 
 export const useTestValidation = () => {
-  const [results, setResults] = useState<ValidationResult[]>([]);
-  const [isRunning, setIsRunning] = useState(false);
+  const [results, setResults] = React.useState<ValidationResult[]>([]);
+  const [isRunning, setIsRunning] = React.useState(false);
 
   // Default validation rules
   const defaultRules: ValidationRule[] = [
@@ -78,7 +78,7 @@ export const useTestValidation = () => {
     }
   ];
 
-  const runValidation = useCallback(async (rules: ValidationRule[] = defaultRules) => {
+  const runValidation = React.useCallback(async (rules: ValidationRule[] = defaultRules) => {
     setIsRunning(true);
     setResults([]);
 
@@ -113,7 +113,7 @@ export const useTestValidation = () => {
     setIsRunning(false);
   }, []);
 
-  const getValidationSummary = useCallback(() => {
+  const getValidationSummary = React.useCallback(() => {
     const total = results.length;
     const passed = results.filter(r => r.passed).length;
     const failed = total - passed;
@@ -122,7 +122,7 @@ export const useTestValidation = () => {
     return { total, passed, failed, score };
   }, [results]);
 
-  const getResultsByCategory = useCallback(() => {
+  const getResultsByCategory = React.useCallback(() => {
     return results.reduce((acc, result) => {
       const category = result.rule.category;
       if (!acc[category]) {
@@ -134,7 +134,7 @@ export const useTestValidation = () => {
   }, [results]);
 
   // Auto-run validation on component mount in development
-  useEffect(() => {
+  React.useEffect(() => {
     if (process.env.NODE_ENV === 'development') {
       // Delay initial validation to allow components to render
       const timer = setTimeout(() => {

@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import * as React from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { Tables } from "@/integrations/supabase/types";
 
@@ -19,10 +19,10 @@ interface UserStats {
 }
 
 export const useUserStats = (userId: string | undefined) => {
-  const [stats, setStats] = useState<UserStats | null>(null);
-  const [tournaments, setTournaments] = useState<Tournament[]>([]);
+  const [stats, setStats] = React.useState<UserStats | null>(null);
+  const [tournaments, setTournaments] = React.useState<Tournament[]>([]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (userId) {
       fetchUserStats();
     }

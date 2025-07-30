@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import * as React from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { SocialIntegrationService } from '@/services/socialIntegrationService';
 import { useToast } from '@/hooks/use-toast';
@@ -14,10 +14,10 @@ interface SocialIntegrationHook {
 export const useSocialIntegration = (): SocialIntegrationHook => {
   const { user } = useAuth();
   const { toast } = useToast();
-  const [isSharing, setIsSharing] = useState(false);
-  const [connectedPlatforms, setConnectedPlatforms] = useState<string[]>([]);
+  const [isSharing, setIsSharing] = React.useState(false);
+  const [connectedPlatforms, setConnectedPlatforms] = React.useState<string[]>([]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     // Check for connected social platforms
     const checkConnectedPlatforms = () => {
       const platforms = [];

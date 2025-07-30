@@ -1,5 +1,5 @@
 
-import { useState } from 'react'
+import * as React from 'react'
 import { useAccount, useWriteContract, useEstimateGas } from 'wagmi'
 import { parseEther, formatEther } from 'viem'
 import { supabase } from '@/integrations/supabase/client'
@@ -25,7 +25,7 @@ export const useCryptoTransactions = () => {
   const { user } = useAuth()
   const { address, chainId } = useAccount()
   const { writeContractAsync } = useWriteContract()
-  const [isProcessing, setIsProcessing] = useState(false)
+  const [isProcessing, setIsProcessing] = React.useState(false)
 
   const estimateGas = async (params: { to: string; amount: string }) => {
     try {

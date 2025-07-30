@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import * as React from 'react';
 
 interface Toast {
   id: string;
@@ -10,9 +10,9 @@ interface Toast {
 let toastId = 0;
 
 export const useSimpleToast = () => {
-  const [toasts, setToasts] = useState<Toast[]>([]);
+  const [toasts, setToasts] = React.useState<Toast[]>([]);
 
-  const toast = useCallback(({ title, description, variant = 'default' }: Omit<Toast, 'id'>) => {
+  const toast = React.useCallback(({ title, description, variant = 'default' }: Omit<Toast, 'id'>) => {
     const id = `toast-${++toastId}`;
     const newToast: Toast = { id, title, description, variant };
     
@@ -26,7 +26,7 @@ export const useSimpleToast = () => {
     return { id };
   }, []);
 
-  const dismiss = useCallback((id: string) => {
+  const dismiss = React.useCallback((id: string) => {
     setToasts(prev => prev.filter(t => t.id !== id));
   }, []);
 
