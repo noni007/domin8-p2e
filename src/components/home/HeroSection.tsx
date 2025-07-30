@@ -1,7 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { ChevronRight, TrendingUp } from "lucide-react";
+import { useMobileInteractions } from "@/hooks/useMobileInteractions";
 
 export const HeroSection = () => {
+  const { createTouchHandler } = useMobileInteractions();
   return (
     <div className="relative overflow-hidden">
       {/* Background Grid */}
@@ -23,19 +25,21 @@ export const HeroSection = () => {
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-4 max-w-md sm:max-w-none mx-auto">
             <Button 
               size="lg" 
-              className="bg-gradient-to-r from-blue-600 to-teal-600 hover:from-blue-700 hover:to-teal-700 text-white font-bold text-sm sm:text-base lg:text-lg px-6 sm:px-8 py-3 sm:py-4 touch-manipulation w-full sm:w-auto"
+              className="bg-gradient-to-r from-blue-600 to-teal-600 hover:from-blue-700 hover:to-teal-700 text-white font-bold text-sm sm:text-base lg:text-lg px-6 sm:px-8 py-3 sm:py-4 touch-manipulation w-full sm:w-auto hover-lift animate-glow transition-all duration-300"
               onClick={() => window.location.href = '/tournaments'}
+              {...createTouchHandler(() => window.location.href = '/tournaments', 'medium')}
             >
               Join Tournament
-              <ChevronRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
+              <ChevronRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5 group-hover:translate-x-1 transition-transform" />
             </Button>
             <Button 
               size="lg" 
-              className="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-black font-bold text-sm sm:text-base lg:text-lg px-6 sm:px-8 py-3 sm:py-4 touch-manipulation w-full sm:w-auto"
+              className="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-black font-bold text-sm sm:text-base lg:text-lg px-6 sm:px-8 py-3 sm:py-4 touch-manipulation w-full sm:w-auto hover-lift animate-glow transition-all duration-300"
               onClick={() => window.location.href = '/leaderboards'}
+              {...createTouchHandler(() => window.location.href = '/leaderboards', 'medium')}
             >
               View Leaderboards
-              <TrendingUp className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
+              <TrendingUp className="ml-2 h-4 w-4 sm:h-5 sm:w-5 group-hover:translate-x-1 transition-transform" />
             </Button>
           </div>
         </div>
