@@ -1,33 +1,36 @@
 import { useCallback } from 'react';
-import { useHaptics } from './useHaptics';
-import { useMobileFeatures } from './useMobileFeatures';
-import { ImpactStyle } from '@capacitor/haptics';
+
+declare global {
+  interface Window {
+    Capacitor?: any;
+  }
+}
 
 export const useMobileInteractions = () => {
-  const { haptics, isNativePlatform } = useMobileFeatures();
-
   const triggerHapticFeedback = useCallback((type: 'light' | 'medium' | 'heavy' = 'light') => {
-    if (isNativePlatform && haptics.isSupported) {
-      switch (type) {
-        case 'light':
-          haptics.impact(ImpactStyle.Light);
-          break;
-        case 'medium':
-          haptics.impact(ImpactStyle.Medium);
-          break;
-        case 'heavy':
-          haptics.impact(ImpactStyle.Heavy);
-          break;
-      }
+    // Check if we're in a native environment (Capacitor)
+    if (window.Capacitor) {
+      import('@capacitor/haptics').then(({ Haptics, ImpactStyle }) => {
+        const hapticType = type === 'light' ? ImpactStyle.Light : 
+                          type === 'medium' ? ImpactStyle.Medium : 
+                          ImpactStyle.Heavy;
+        Haptics.impact({ style: hapticType });
+      }).catch(() => {
+        // Fallback if haptics import fails
+        if ('vibrate' in navigator) {
+          const duration = type === 'light' ? 10 : type === 'medium' ? 20 : 30;
+          navigator.vibrate(duration);
+        }
+      });
     } else if ('vibrate' in navigator) {
-      // Fallback for web
-      const duration = type === 'light' ? 10 : type === 'medium' ? 20 : 50;
+      // Fallback for web browsers
+      const duration = type === 'light' ? 10 : type === 'medium' ? 20 : 30;
       navigator.vibrate(duration);
     }
-  }, [haptics, isNativePlatform]);
+  }, []);
 
   const createTouchHandler = useCallback((
-    onClick: () => void,
+    onClick: () => void, 
     hapticType: 'light' | 'medium' | 'heavy' = 'light'
   ) => {
     return {
@@ -35,17 +38,17 @@ export const useMobileInteractions = () => {
         triggerHapticFeedback(hapticType);
         onClick();
       },
-      onTouchStart: () => {
+      onTouchStart: (event: React.TouchEvent) => {
         // Add visual feedback for touch start
-        const target = event?.currentTarget as HTMLElement;
+        const target = event.currentTarget as HTMLElement;
         if (target) {
           target.style.transform = 'scale(0.98)';
           target.style.transition = 'transform 0.1s ease';
         }
       },
-      onTouchEnd: () => {
+      onTouchEnd: (event: React.TouchEvent) => {
         // Remove visual feedback on touch end
-        const target = event?.currentTarget as HTMLElement;
+        const target = event.currentTarget as HTMLElement;
         if (target) {
           target.style.transform = '';
         }
@@ -55,19 +58,18 @@ export const useMobileInteractions = () => {
 
   const optimizeForTouch = useCallback((element: HTMLElement) => {
     // Ensure minimum touch target size
+    const minSize = 44; // iOS/Android recommendation
     const rect = element.getBoundingClientRect();
-    if (rect.width < 48 || rect.height < 48) {
-      element.style.minWidth = '48px';
-      element.style.minHeight = '48px';
-      element.style.display = 'flex';
-      element.style.alignItems = 'center';
-      element.style.justifyContent = 'center';
+    
+    if (rect.width < minSize || rect.height < minSize) {
+      element.style.minWidth = `${minSize}px`;
+      element.style.minHeight = `${minSize}px`;
     }
-
-    // Add touch-friendly classes
-    element.classList.add('touch-target');
+    
+    // Add touch-friendly properties
     element.style.touchAction = 'manipulation';
     element.style.userSelect = 'none';
+    (element.style as any).webkitTapHighlightColor = 'transparent';
     
     return element;
   }, []);
@@ -75,7 +77,6 @@ export const useMobileInteractions = () => {
   return {
     triggerHapticFeedback,
     createTouchHandler,
-    optimizeForTouch,
-    isNativePlatform
+    optimizeForTouch
   };
 };
