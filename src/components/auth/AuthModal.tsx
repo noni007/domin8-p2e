@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import * as React from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -22,18 +22,18 @@ interface AuthModalProps {
 }
 
 export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
-  const [loading, setLoading] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [username, setUsername] = useState("");
-  const [userType, setUserType] = useState<"player" | "creator" | "organizer">("player");
-  const [showForgotPassword, setShowForgotPassword] = useState(false);
-  const [resetEmail, setResetEmail] = useState("");
+  const [loading, setLoading] = React.useState(false);
+  const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
+  const [username, setUsername] = React.useState("");
+  const [userType, setUserType] = React.useState<"player" | "creator" | "organizer">("player");
+  const [showForgotPassword, setShowForgotPassword] = React.useState(false);
+  const [resetEmail, setResetEmail] = React.useState("");
   const { toast } = useToast();
   const { signIn, signUp, resetPassword, error: authError } = useAuth();
 
   // Show auth errors as toasts
-  useEffect(() => {
+  React.useEffect(() => {
     if (authError) {
       toast({
         variant: "destructive",

@@ -11,7 +11,7 @@ import { RealTimeUpdates } from "@/components/notifications/RealTimeUpdates";
 import { PersonalizedWelcome } from "./PersonalizedWelcome";
 import { Trophy, Users, Calendar, TrendingUp } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { useState, useEffect } from "react";
+import * as React from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { Tables } from "@/integrations/supabase/types";
 
@@ -24,10 +24,10 @@ export const UserDashboard = () => {
   const { stats } = useEnhancedUserStats(user?.id);
   const { tournaments } = useTournaments();
   const { toast } = useToast();
-  const [userRegistrations, setUserRegistrations] = useState<string[]>([]);
-  const [tournamentParticipants, setTournamentParticipants] = useState<Record<string, any[]>>({});
+  const [userRegistrations, setUserRegistrations] = React.useState<string[]>([]);
+  const [tournamentParticipants, setTournamentParticipants] = React.useState<Record<string, any[]>>({});
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (user) {
       fetchUserRegistrations();
       fetchTournamentParticipants();

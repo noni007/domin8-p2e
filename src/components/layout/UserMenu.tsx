@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import * as React from "react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -17,8 +17,8 @@ import { useToast } from "@/hooks/use-toast";
 
 export const UserMenu = () => {
   const { user, profile, signOut, loading, error } = useAuth();
-  const [showAuthModal, setShowAuthModal] = useState(false);
-  const [signingOut, setSigningOut] = useState(false);
+  const [showAuthModal, setShowAuthModal] = React.useState(false);
+  const [signingOut, setSigningOut] = React.useState(false);
   const { toast } = useToast();
 
   const handleSignOut = async () => {

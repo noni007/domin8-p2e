@@ -4,6 +4,7 @@ import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 import { SimpleThemeProvider } from "@/contexts/SimpleThemeProvider";
 import { AuthProvider } from "@/hooks/useAuth";
 import { Navigation } from "@/components/layout/Navigation";
+import { SimpleToaster } from "@/components/ui/simple-toaster";
 
 // Import pages
 import Index from "@/pages/Index";
@@ -24,6 +25,7 @@ function App() {
                   </div>
                 } />
               </Routes>
+              <SimpleToaster />
             </div>
           </BrowserRouter>
         </AuthProvider>

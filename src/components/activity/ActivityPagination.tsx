@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import * as React from 'react';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
@@ -19,9 +19,9 @@ export const ActivityPagination = ({
   loading = false
 }: ActivityPaginationProps) => {
   const totalPages = Math.ceil(totalItems / itemsPerPage);
-  const [visiblePages, setVisiblePages] = useState<number[]>([]);
+  const [visiblePages, setVisiblePages] = React.useState<number[]>([]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     const generateVisiblePages = () => {
       const pages: number[] = [];
       const maxVisible = 5;

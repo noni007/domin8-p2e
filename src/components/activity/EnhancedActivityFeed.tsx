@@ -1,5 +1,5 @@
 
-import { useState, useMemo } from "react";
+import * as React from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { ActivityItem } from "./ActivityItem";
 import { ActivityFilters } from "./ActivityFilters";
@@ -28,10 +28,10 @@ export const EnhancedActivityFeed = ({
   userId,
   showPagination = true
 }: EnhancedActivityFeedProps) => {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedFilters, setSelectedFilters] = useState<ActivityType[]>([]);
-  const [showFilterPanel, setShowFilterPanel] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = React.useState("");
+  const [selectedFilters, setSelectedFilters] = React.useState<ActivityType[]>([]);
+  const [showFilterPanel, setShowFilterPanel] = React.useState(false);
+  const [currentPage, setCurrentPage] = React.useState(1);
   const pageSize = 10;
 
   const { 
@@ -51,13 +51,13 @@ export const EnhancedActivityFeed = ({
     userId
   });
 
-  const allActivities = useMemo(() => {
+  const allActivities = React.useMemo(() => {
     return [...personalActivities, ...friendsActivities].sort((a, b) => 
       new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
     );
   }, [personalActivities, friendsActivities]);
 
-  const filteredActivities = useMemo(() => {
+  const filteredActivities = React.useMemo(() => {
     let filtered = allActivities;
 
     // Apply search filter
@@ -77,7 +77,7 @@ export const EnhancedActivityFeed = ({
     return filtered;
   }, [allActivities, searchQuery, maxItems]);
 
-  const paginatedActivities = useMemo(() => {
+  const paginatedActivities = React.useMemo(() => {
     if (!showPagination) return filteredActivities;
     
     const startIndex = (currentPage - 1) * pageSize;
@@ -85,7 +85,7 @@ export const EnhancedActivityFeed = ({
     return filteredActivities.slice(startIndex, endIndex);
   }, [filteredActivities, currentPage, pageSize, showPagination]);
 
-  const activityCounts = useMemo(() => {
+  const activityCounts = React.useMemo(() => {
     const counts: Record<ActivityType, number> = {
       tournament_join: 0,
       tournament_win: 0,

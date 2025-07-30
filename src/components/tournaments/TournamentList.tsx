@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import * as React from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { TournamentCard } from "./TournamentCard";
 import { TournamentCardSkeleton } from "./TournamentCardSkeleton";
@@ -18,8 +18,8 @@ interface TournamentWithData extends Tournament {
 export const TournamentList = () => {
   const { user } = useAuth();
   const { toast } = useSimpleToast();
-  const [tournaments, setTournaments] = useState<TournamentWithData[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [tournaments, setTournaments] = React.useState<TournamentWithData[]>([]);
+  const [loading, setLoading] = React.useState(true);
 
   const fetchTournaments = async () => {
     try {
@@ -61,7 +61,7 @@ export const TournamentList = () => {
     }
   };
 
-  useEffect(() => {
+  React.useEffect(() => {
     fetchTournaments();
   }, [user]);
 

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import * as React from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { 
@@ -22,8 +22,8 @@ import { useAdmin } from "@/hooks/useAdmin";
 import { useFeatureFlags } from "@/hooks/useFeatureFlags";
 
 export const Navigation = () => {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = React.useState(false);
   const { user } = useAuth();
   const { isAdmin } = useAdmin();
   const { isFeatureEnabled } = useFeatureFlags();

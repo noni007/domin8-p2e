@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import * as React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -32,13 +32,13 @@ interface Friendship {
 export const FriendsList = () => {
   const { user } = useAuth();
   const { toast } = useSimpleToast();
-  const [friends, setFriends] = useState<Friendship[]>([]);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState<UserProfile[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [searching, setSearching] = useState(false);
+  const [friends, setFriends] = React.useState<Friendship[]>([]);
+  const [searchQuery, setSearchQuery] = React.useState("");
+  const [searchResults, setSearchResults] = React.useState<UserProfile[]>([]);
+  const [loading, setLoading] = React.useState(true);
+  const [searching, setSearching] = React.useState(false);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (user) {
       fetchFriends();
     }
@@ -133,7 +133,7 @@ export const FriendsList = () => {
     }
   };
 
-  useEffect(() => {
+  React.useEffect(() => {
     const timeoutId = setTimeout(() => {
       searchUsers();
     }, 300);
