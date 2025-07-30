@@ -2,11 +2,9 @@
 import { Users, Trophy, Globe, DollarSign } from "lucide-react";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { useCountAnimation } from "@/hooks/useCountAnimation";
-import { useMobileInteractions } from "@/hooks/useMobileInteractions";
 
 export const StatisticsSection = () => {
   const { ref, isVisible } = useScrollAnimation({ threshold: 0.2 });
-  const { createTouchHandler } = useMobileInteractions();
 
   const stats = [
     {
@@ -62,10 +60,6 @@ export const StatisticsSection = () => {
       return `${count}${stat.suffix || ""}`;
     };
 
-    const touchHandlers = createTouchHandler(() => {
-      // Optional: Add haptic feedback on touch
-    }, 'light');
-
     return (
       <div 
         className={`text-center group transition-all duration-500 ${
@@ -74,7 +68,6 @@ export const StatisticsSection = () => {
             : 'opacity-0 translate-y-8'
         }`}
         style={{ transitionDelay: `${index * 100}ms` }}
-        {...touchHandlers}
       >
         <div className="bg-black/40 backdrop-blur-sm border border-blue-800/30 rounded-xl p-6 transition-all duration-300 group-hover:border-blue-600/50 group-hover:bg-black/60 hover-lift hover-glow">
           <stat.icon className="h-10 w-10 text-blue-400 mx-auto mb-4 group-hover:text-teal-400 transition-colors duration-300 animate-float" />
