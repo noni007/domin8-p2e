@@ -96,8 +96,8 @@ self.addEventListener('sync', (event) => {
 self.addEventListener('push', (event) => {
   const options = {
     body: event.data ? event.data.text() : 'New notification from Domin8',
-    icon: '/favicon.ico',
-    badge: '/favicon.ico',
+    icon: '/lovable-uploads/03e7851f-34bb-4ea5-947f-08410efe50ce.png',
+    badge: '/lovable-uploads/03e7851f-34bb-4ea5-947f-08410efe50ce.png',
     vibrate: [100, 50, 100],
     data: {
       dateOfArrival: Date.now(),
@@ -107,12 +107,12 @@ self.addEventListener('push', (event) => {
       {
         action: 'explore',
         title: 'View',
-        icon: '/favicon.ico'
+        icon: '/lovable-uploads/03e7851f-34bb-4ea5-947f-08410efe50ce.png'
       },
       {
         action: 'close',
         title: 'Close',
-        icon: '/favicon.ico'
+        icon: '/lovable-uploads/03e7851f-34bb-4ea5-947f-08410efe50ce.png'
       }
     ]
   };
