@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 import { SimpleThemeProvider } from "@/contexts/SimpleThemeProvider";
 import { AuthProvider } from "@/hooks/useAuth";
@@ -9,10 +10,21 @@ import { SimpleToaster } from "@/components/ui/simple-toaster";
 // Import pages
 import Index from "@/pages/Index";
 
+// Create a client
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 5, // 5 minutes
+      refetchOnWindowFocus: false,
+    },
+  },
+});
+
 function App() {
   return (
     <ErrorBoundary>
-      <SimpleThemeProvider>
+      <QueryClientProvider client={queryClient}>
+        <SimpleThemeProvider>
         <AuthProvider>
           <BrowserRouter>
             <div className="min-h-screen bg-slate-900 text-white">
@@ -30,6 +42,7 @@ function App() {
           </BrowserRouter>
         </AuthProvider>
       </SimpleThemeProvider>
+      </QueryClientProvider>
     </ErrorBoundary>
   );
 }
