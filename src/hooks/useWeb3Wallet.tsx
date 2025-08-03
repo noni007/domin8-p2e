@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React from 'react'
 import { useAccount, useConnect, useDisconnect, useBalance, useChainId } from 'wagmi'
 import { useWeb3Modal } from '@web3modal/wagmi/react'
 import { supabase } from '@/integrations/supabase/client'

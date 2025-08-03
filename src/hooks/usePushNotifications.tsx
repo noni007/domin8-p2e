@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { PushNotifications } from '@capacitor/push-notifications';
 import { Capacitor } from '@capacitor/core';
 

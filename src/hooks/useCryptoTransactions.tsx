@@ -1,5 +1,5 @@
 
-import * as React from 'react'
+import React from 'react'
 import { useAccount, useWriteContract, useEstimateGas } from 'wagmi'
 import { parseEther, formatEther } from 'viem'
 import { supabase } from '@/integrations/supabase/client'

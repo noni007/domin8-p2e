@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { Geolocation, Position } from '@capacitor/geolocation';
 import { Capacitor } from '@capacitor/core';
 

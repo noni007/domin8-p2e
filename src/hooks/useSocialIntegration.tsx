@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { SocialIntegrationService } from '@/services/socialIntegrationService';
 import { useToast } from '@/hooks/use-toast';

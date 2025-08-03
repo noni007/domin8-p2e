@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { Capacitor } from '@capacitor/core';
 import { StatusBar } from '@capacitor/status-bar';
 import { SplashScreen } from '@capacitor/splash-screen';

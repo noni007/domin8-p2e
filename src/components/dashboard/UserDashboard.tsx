@@ -11,7 +11,7 @@ import { RealTimeUpdates } from "@/components/notifications/RealTimeUpdates";
 import { PersonalizedWelcome } from "./PersonalizedWelcome";
 import { Trophy, Users, Calendar, TrendingUp } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import * as React from "react";
+import React from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { Tables } from "@/integrations/supabase/types";
 

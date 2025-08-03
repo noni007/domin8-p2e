@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { Capacitor } from '@capacitor/core';
 
