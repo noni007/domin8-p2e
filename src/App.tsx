@@ -23,7 +23,7 @@ import Web3Admin from "@/pages/Web3Admin";
 import Auth from "@/pages/Auth";
 import Testing from "@/pages/Testing";
 import TournamentDetails from "@/pages/TournamentDetails";
-import { MatchSpectatingDemo } from "@/pages/MatchSpectatingDemo";
+import MatchSpectatingDemo from "@/pages/MatchSpectatingDemo";
 import MobileDevelopmentGuide from "@/pages/MobileDevelopmentGuide";
 import ResetPassword from "@/pages/ResetPassword";
 

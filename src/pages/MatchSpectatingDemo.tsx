@@ -202,3 +202,5 @@ export const MatchSpectatingDemo = () => {
     </div>
   );
 };
+
+export default MatchSpectatingDemo;
