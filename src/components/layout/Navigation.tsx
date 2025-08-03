@@ -99,12 +99,15 @@ export const Navigation = () => {
                 Admin
               </Link>
             )}
-            <Link 
-              to="/mobile-guide" 
-              className="text-gray-300 hover:text-blue-400 transition-colors"
-            >
-              📱 Mobile Guide
-            </Link>
+            {/* Only show Mobile Guide on staging/development, not on production */}
+            {!window.location.hostname.includes('domin8.one') && (
+              <Link 
+                to="/mobile-guide" 
+                className="text-gray-300 hover:text-blue-400 transition-colors"
+              >
+                📱 Mobile Guide
+              </Link>
+            )}
           </div>
 
           {/* Right side actions */}
