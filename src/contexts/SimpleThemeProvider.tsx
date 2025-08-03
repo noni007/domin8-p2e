@@ -1,28 +1,28 @@
-import React from 'react';
+import { createContext, useContext, useState, useCallback, useEffect, useMemo, ReactNode } from 'react';
 
 interface ThemeContextType {
   theme: 'dark' | 'light';
   toggleTheme: () => void;
 }
 
-const ThemeContext = React.createContext<ThemeContextType>({
+const ThemeContext = createContext<ThemeContextType>({
   theme: 'dark',
   toggleTheme: () => {},
 });
 
-export function SimpleThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = React.useState<'dark' | 'light'>('dark');
+export function SimpleThemeProvider({ children }: { children: ReactNode }) {
+  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
 
-  const toggleTheme = React.useCallback(() => {
+  const toggleTheme = useCallback(() => {
     setTheme(prev => prev === 'dark' ? 'light' : 'dark');
   }, []);
 
-  React.useEffect(() => {
+  useEffect(() => {
     document.documentElement.classList.remove('light', 'dark');
     document.documentElement.classList.add(theme);
   }, [theme]);
 
-  const value = React.useMemo(() => ({
+  const value = useMemo(() => ({
     theme,
     toggleTheme,
   }), [theme, toggleTheme]);
@@ -35,6 +35,6 @@ export function SimpleThemeProvider({ children }: { children: React.ReactNode })
 }
 
 export const useSimpleTheme = () => {
-  const context = React.useContext(ThemeContext);
+  const context = useContext(ThemeContext);
   return context;
 };
