@@ -91,15 +91,15 @@ export const Footer = () => {
             <div className="space-y-3">
               <div className="flex items-center space-x-3 text-gray-300">
                 <Mail className="h-4 w-4 text-lime-400" />
-                <span className="text-sm">support@domin8.africa</span>
+                <span className="text-sm">support@domin8.one</span>
               </div>
               <div className="flex items-center space-x-3 text-gray-300">
                 <Phone className="h-4 w-4 text-lime-400" />
-                <span className="text-sm">+27 (0) 11 123 4567</span>
+                <span className="text-sm">+234 (0) 9091 675 3225</span>
               </div>
               <div className="flex items-center space-x-3 text-gray-300">
                 <MapPin className="h-4 w-4 text-lime-400" />
-                <span className="text-sm">Cape Town, South Africa</span>
+                <span className="text-sm">Victoria Island, Nigeria</span>
               </div>
             </div>
             
