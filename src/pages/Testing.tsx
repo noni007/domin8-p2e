@@ -5,7 +5,7 @@ import { PerformanceOptimizer } from '@/components/testing/PerformanceOptimizer'
 import { FinalIntegrationSuite } from '@/components/testing/FinalIntegrationSuite';
 import { TestingSuite } from '@/components/testing/TestingSuite';
 
-export default function Testing() {
+export function Testing() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-teal-900 py-8">
       <div className="max-w-6xl mx-auto px-4">

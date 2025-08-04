@@ -4,7 +4,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { AuthModal } from "@/components/auth/AuthModal";
 import { useNavigate, useLocation } from "react-router-dom";
 
-export default function Auth() {
+export function Auth() {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();

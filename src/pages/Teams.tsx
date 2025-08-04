@@ -8,7 +8,7 @@ import { TeamForm } from "@/components/teams/TeamForm";
 import { TeamManagement } from "@/components/teams/TeamManagement";
 import { useAuth } from "@/hooks/useAuth";
 
-const Teams = () => {
+export const Teams = () => {
   const [showForm, setShowForm] = useState(false);
   const [selectedTeam, setSelectedTeam] = useState<{id: string, name: string} | null>(null);
   const [activeTab, setActiveTab] = useState("browse");
@@ -82,4 +82,4 @@ const Teams = () => {
   );
 };
 
-export default Teams;
+

@@ -37,4 +37,4 @@ export const Leaderboards = () => {
   );
 };
 
-export default Leaderboards;
+

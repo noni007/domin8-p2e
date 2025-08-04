@@ -6,7 +6,7 @@ import { TournamentForm } from "@/components/tournaments/TournamentForm";
 import { TournamentDiscovery } from "@/components/tournaments/TournamentDiscovery";
 import { useAuth } from "@/hooks/useAuth";
 
-const Tournaments = () => {
+export const Tournaments = () => {
   const [showForm, setShowForm] = useState(false);
   const { user } = useAuth();
 
@@ -48,4 +48,4 @@ const Tournaments = () => {
   );
 };
 
-export default Tournaments;
+

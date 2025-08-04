@@ -14,7 +14,7 @@ import type { Tables } from "@/integrations/supabase/types";
 type Tournament = Tables<'tournaments'>;
 type TournamentParticipant = Tables<'tournament_participants'>;
 
-const TournamentDetails = () => {
+export const TournamentDetails = () => {
   const { id } = useParams<{ id: string }>();
   const { toast } = useSimpleToast();
   const [tournament, setTournament] = useState<Tournament | null>(null);
@@ -222,4 +222,4 @@ const TournamentDetails = () => {
   );
 };
 
-export default TournamentDetails;
+

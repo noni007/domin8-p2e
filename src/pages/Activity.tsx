@@ -4,7 +4,7 @@ import { EnhancedActivityFeed } from "@/components/activity/EnhancedActivityFeed
 import { Card, CardContent } from "@/components/ui/card";
 import { User } from "lucide-react";
 
-const Activity = () => {
+export const Activity = () => {
   const { user } = useAuth();
 
   if (!user) {
@@ -40,4 +40,4 @@ const Activity = () => {
   );
 };
 
-export default Activity;
+

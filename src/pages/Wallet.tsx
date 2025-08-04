@@ -1,7 +1,7 @@
 
 import { ResponsiveWalletDashboard } from "@/components/wallet/ResponsiveWalletDashboard";
 
-const Wallet = () => {
+export const Wallet = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-teal-900">
       <div className="container mx-auto py-4 sm:py-6 lg:py-8 px-3 sm:px-4 lg:px-6">
@@ -19,4 +19,4 @@ const Wallet = () => {
   );
 };
 
-export default Wallet;
+

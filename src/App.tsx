@@ -9,23 +9,23 @@ import { SimpleToaster } from "@/components/ui/simple-toaster";
 
 // Import pages
 import { Index } from "@/pages/Index";
-import Tournaments from "@/pages/Tournaments";
-import Leaderboards from "@/pages/Leaderboards";
-import Rankings from "@/pages/Rankings";
-import Teams from "@/pages/Teams";
-import Friends from "@/pages/Friends";
-import Wallet from "@/pages/Wallet";
-import Activity from "@/pages/Activity";
-import Profile from "@/pages/Profile";
-import UserProfile from "@/pages/UserProfile";
-import Admin from "@/pages/Admin";
-import Web3Admin from "@/pages/Web3Admin";
-import Auth from "@/pages/Auth";
-import Testing from "@/pages/Testing";
-import TournamentDetails from "@/pages/TournamentDetails";
-import MatchSpectatingDemo from "@/pages/MatchSpectatingDemo";
-import MobileDevelopmentGuide from "@/pages/MobileDevelopmentGuide";
-import ResetPassword from "@/pages/ResetPassword";
+import { Tournaments } from "@/pages/Tournaments";
+import { Leaderboards } from "@/pages/Leaderboards";
+import { Rankings } from "@/pages/Rankings";
+import { Teams } from "@/pages/Teams";
+import { Friends } from "@/pages/Friends";
+import { Wallet } from "@/pages/Wallet";
+import { Activity } from "@/pages/Activity";
+import { Profile } from "@/pages/Profile";
+import { UserProfile } from "@/pages/UserProfile";
+import { Admin } from "@/pages/Admin";
+import { Web3Admin } from "@/pages/Web3Admin";
+import { Auth } from "@/pages/Auth";
+import { Testing } from "@/pages/Testing";
+import { TournamentDetails } from "@/pages/TournamentDetails";
+import { MatchSpectatingDemo } from "@/pages/MatchSpectatingDemo";
+import { MobileDevelopmentGuide } from "@/pages/MobileDevelopmentGuide";
+import { ResetPassword } from "@/pages/ResetPassword";
 
 // Create a client
 const queryClient = new QueryClient({

@@ -8,7 +8,7 @@ import { RankingsList } from "@/components/rankings/RankingsList";
 import { TierDistribution } from "@/components/rankings/TierDistribution";
 import { Search, Filter } from "lucide-react";
 
-const Rankings = () => {
+export const Rankings = () => {
   const [gameFilter, setGameFilter] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -72,4 +72,4 @@ const Rankings = () => {
   );
 };
 
-export default Rankings;
+
