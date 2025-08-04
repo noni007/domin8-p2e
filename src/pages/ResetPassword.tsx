@@ -51,7 +51,7 @@ export function ResetPassword() {
       });
       navigate("/auth");
     }
-  }, [searchParams, navigate, toast]);
+  }, [searchParams, navigate]);
 
   const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
