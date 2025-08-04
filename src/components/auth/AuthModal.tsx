@@ -15,6 +15,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { Loader2, Mail, Lock, User, Trophy, ArrowLeft } from "lucide-react";
 import { SocialLoginButtons } from "@/components/social/SocialLoginButtons";
+import { WelcomeModal } from "./WelcomeModal";
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -29,6 +30,8 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
   const [userType, setUserType] = React.useState<"player" | "creator" | "organizer">("player");
   const [showForgotPassword, setShowForgotPassword] = React.useState(false);
   const [resetEmail, setResetEmail] = React.useState("");
+  const [showWelcome, setShowWelcome] = React.useState(false);
+  const [newUserData, setNewUserData] = React.useState<{username: string, userType: string} | null>(null);
   const { toast } = useToast();
   const { signIn, signUp, resetPassword, error: authError } = useAuth();
 
@@ -133,8 +136,12 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
 
       toast({
         title: "Account created successfully!",
-        description: "Please check your email to verify your account.",
+        description: "Welcome to Domin8! Let's get you started.",
       });
+      
+      // Show welcome modal after successful signup
+      setNewUserData({ username, userType });
+      setShowWelcome(true);
       resetForm();
       onClose();
     } catch (error: any) {
@@ -198,8 +205,9 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md bg-black/95 border-blue-800/30 text-white">
+    <>
+      <Dialog open={isOpen} onOpenChange={onClose}>
+        <DialogContent className="sm:max-w-md bg-black/95 border-blue-800/30 text-white">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-teal-400 bg-clip-text text-transparent">
             {showForgotPassword ? "Reset Password" : "Join Domin8"}
@@ -471,7 +479,16 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
              </TabsContent>
            </Tabs>
         )}
-      </DialogContent>
-    </Dialog>
+        </DialogContent>
+      </Dialog>
+
+      {/* Welcome Modal for new users */}
+      <WelcomeModal 
+        isOpen={showWelcome}
+        onClose={() => setShowWelcome(false)}
+        username={newUserData?.username}
+        userType={newUserData?.userType}
+      />
+    </>
   );
 };

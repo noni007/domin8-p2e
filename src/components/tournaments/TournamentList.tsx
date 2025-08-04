@@ -5,7 +5,12 @@ import { TournamentCard } from "./TournamentCard";
 import { TournamentCardSkeleton } from "./TournamentCardSkeleton";
 import { useAuth } from "@/hooks/useAuth";
 import { useSimpleToast } from "@/hooks/useSimpleToast";
+import { useErrorHandler } from "@/hooks/useErrorHandler";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { AlertTriangle, RefreshCw } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import type { Tables } from "@/integrations/supabase/types";
+import type { SearchFilters } from "./TournamentSearch";
 
 type Tournament = Tables<'tournaments'>;
 type TournamentParticipant = Tables<'tournament_participants'>;
@@ -15,28 +20,53 @@ interface TournamentWithData extends Tournament {
   isRegistered: boolean;
 }
 
-export const TournamentList = () => {
+interface TournamentListProps {
+  filters?: SearchFilters;
+}
+
+export const TournamentList = ({ filters }: TournamentListProps) => {
   const { user } = useAuth();
   const { toast } = useSimpleToast();
+  const { error, isError, handleError, clearError, retryWithErrorHandling } = useErrorHandler();
   const [tournaments, setTournaments] = React.useState<TournamentWithData[]>([]);
   const [loading, setLoading] = React.useState(true);
 
   const fetchTournaments = async () => {
     try {
       setLoading(true);
+      clearError();
       
-      // Fetch tournaments with participant counts
-      const { data: tournamentsData, error: tournamentsError } = await supabase
+      // Build query with filters
+      let query = supabase
         .from('tournaments')
         .select(`
           *,
           tournament_participants(id, user_id, status)
-        `)
-        .order('created_at', { ascending: false });
+        `);
+
+      // Apply filters
+      if (filters?.query) {
+        query = query.or(`title.ilike.%${filters.query}%,description.ilike.%${filters.query}%`);
+      }
+      
+      if (filters?.game) {
+        query = query.eq('game', filters.game);
+      }
+      
+      if (filters?.status) {
+        query = query.eq('status', filters.status);
+      }
+
+      // Apply sorting
+      const sortField = filters?.sortBy || 'created_at';
+      const ascending = sortField === 'start_date' || sortField === 'registration_deadline';
+      query = query.order(sortField, { ascending });
+
+      const { data: tournamentsData, error: tournamentsError } = await query;
 
       if (tournamentsError) throw tournamentsError;
 
-      const enrichedTournaments: TournamentWithData[] = (tournamentsData || []).map(tournament => {
+      let enrichedTournaments: TournamentWithData[] = (tournamentsData || []).map(tournament => {
         const participants = tournament.tournament_participants || [];
         const participantCount = participants.filter(p => p.status === 'registered' || p.status === 'winner').length;
         const isRegistered = user ? participants.some(p => p.user_id === user.id && (p.status === 'registered' || p.status === 'winner')) : false;
@@ -48,14 +78,18 @@ export const TournamentList = () => {
         };
       });
 
+      // Apply prize range filter (post-query filtering for complex ranges)
+      if (filters?.prizeRange) {
+        const [min, max] = filters.prizeRange.split('-').map(s => s === '+' ? Infinity : parseInt(s));
+        enrichedTournaments = enrichedTournaments.filter(t => {
+          const prizeInDollars = t.prize_pool / 100;
+          return prizeInDollars >= min && (max === Infinity || prizeInDollars <= max);
+        });
+      }
+
       setTournaments(enrichedTournaments);
     } catch (error) {
-      console.error('Error fetching tournaments:', error);
-      toast({
-        title: "Error",
-        description: "Failed to load tournaments",
-        variant: "destructive"
-      });
+      handleError(error, "Failed to load tournaments. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -63,11 +97,31 @@ export const TournamentList = () => {
 
   React.useEffect(() => {
     fetchTournaments();
-  }, [user]);
+  }, [user, filters]);
 
   const handleRegistrationChange = () => {
     fetchTournaments(); // Refresh the tournament list
   };
+
+  if (isError) {
+    return (
+      <Alert className="border-red-500/50 bg-red-500/10">
+        <AlertTriangle className="h-4 w-4" />
+        <AlertDescription className="flex items-center justify-between">
+          <span className="text-red-400">{error}</span>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={() => retryWithErrorHandling(fetchTournaments)}
+            className="border-red-400 text-red-400 hover:bg-red-400 hover:text-black"
+          >
+            <RefreshCw className="h-3 w-3 mr-1" />
+            Retry
+          </Button>
+        </AlertDescription>
+      </Alert>
+    );
+  }
 
   if (loading) {
     return (
@@ -80,11 +134,17 @@ export const TournamentList = () => {
   }
 
   if (tournaments.length === 0) {
+    const hasFilters = filters && (filters.query || filters.game || filters.status || filters.prizeRange);
     return (
       <div className="text-center py-12">
-        <div className="text-gray-400 text-lg mb-4">No tournaments available</div>
+        <div className="text-gray-400 text-lg mb-4">
+          {hasFilters ? "No tournaments match your search" : "No tournaments available"}
+        </div>
         <p className="text-gray-500">
-          Check back later for upcoming tournaments or create your own!
+          {hasFilters 
+            ? "Try adjusting your search filters or check back later"
+            : "Check back later for upcoming tournaments or create your own!"
+          }
         </p>
       </div>
     );
