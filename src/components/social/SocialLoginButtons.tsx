@@ -35,11 +35,18 @@ export const SocialLoginButtons = ({ onSuccess, mode = 'login' }: SocialLoginBut
 
       if (error) {
         console.error(`${provider} auth error:`, error);
-        toast({
-          title: "Authentication Error",
-          description: error.message,
-          variant: "destructive",
-        });
+        if (error.message.includes('provider is not enabled') || error.message.includes('Unsupported provider')) {
+          toast({
+            title: "Feature Coming Soon",
+            description: `${provider === 'discord' ? 'Discord' : 'Google'} login will be available soon. Use email/password for now.`,
+          });
+        } else {
+          toast({
+            title: "Authentication Error", 
+            description: error.message,
+            variant: "destructive",
+          });
+        }
       } else {
         toast({
           title: `${provider === 'discord' ? 'Discord' : 'Google'} Login`,

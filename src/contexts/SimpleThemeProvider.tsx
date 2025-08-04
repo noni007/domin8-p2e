@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback, useEffect, useMemo, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useCallback, useEffect, useMemo, ReactNode } from 'react';
 
 interface ThemeContextType {
   theme: 'dark' | 'light';
@@ -10,7 +10,7 @@ const ThemeContext = createContext<ThemeContextType>({
   toggleTheme: () => {},
 });
 
-export function SimpleThemeProvider({ children }: { children: ReactNode }) {
+export const SimpleThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
 
   const toggleTheme = useCallback(() => {
@@ -32,7 +32,7 @@ export function SimpleThemeProvider({ children }: { children: ReactNode }) {
       {children}
     </ThemeContext.Provider>
   );
-}
+};
 
 export const useSimpleTheme = () => {
   const context = useContext(ThemeContext);
