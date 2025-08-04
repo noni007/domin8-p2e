@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 import { SimpleThemeProvider } from "@/contexts/SimpleThemeProvider";
 import { AuthProvider } from "@/hooks/useAuth";
+import { Web3Provider } from "@/contexts/Web3Provider";
 import { Navigation } from "@/components/layout/Navigation";
 import { SimpleToaster } from "@/components/ui/simple-toaster";
 
@@ -46,6 +47,7 @@ function App() {
     }}>
       <QueryClientProvider client={queryClient}>
         <SimpleThemeProvider>
+        <Web3Provider>
         <AuthProvider>
           <BrowserRouter>
             <div className="min-h-screen bg-slate-900 text-white">
@@ -79,6 +81,7 @@ function App() {
             </div>
           </BrowserRouter>
         </AuthProvider>
+        </Web3Provider>
       </SimpleThemeProvider>
       </QueryClientProvider>
     </ErrorBoundary>
