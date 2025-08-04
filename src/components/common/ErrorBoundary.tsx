@@ -15,7 +15,7 @@ interface State {
   error?: Error;
 }
 
-export class ErrorBoundary extends Component<Props, State> {
+class ErrorBoundaryClass extends Component<Props, State> {
   public state: State = {
     hasError: false
   };
@@ -70,4 +70,4 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 }
 
-export default ErrorBoundary;
+export const ErrorBoundary = ErrorBoundaryClass;

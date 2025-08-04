@@ -15,7 +15,7 @@ import { CTASection } from "@/components/home/CTASection";
 import { ComplianceSection } from "@/components/home/ComplianceSection";
 import { ToastTest } from "@/components/common/ToastTest";
 
-const Index = () => {
+export const Index = () => {
   const { user, loading } = useAuth();
   const { shouldShowOnboarding, markOnboardingComplete, isLoading: onboardingLoading } = useOnboarding();
 
@@ -59,4 +59,4 @@ const Index = () => {
   );
 };
 
-export default Index;
+

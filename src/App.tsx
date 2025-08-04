@@ -1,14 +1,14 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import ErrorBoundary from "@/components/common/ErrorBoundary";
+import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 import { SimpleThemeProvider } from "@/contexts/SimpleThemeProvider";
 import { AuthProvider } from "@/hooks/useAuth";
 import { Navigation } from "@/components/layout/Navigation";
 import { SimpleToaster } from "@/components/ui/simple-toaster";
 
 // Import pages
-import Index from "@/pages/Index";
+import { Index } from "@/pages/Index";
 import Tournaments from "@/pages/Tournaments";
 import Leaderboards from "@/pages/Leaderboards";
 import Rankings from "@/pages/Rankings";
@@ -38,8 +38,12 @@ const queryClient = new QueryClient({
 });
 
 function App() {
+  console.log('[App] Starting app initialization...');
+  
   return (
-    <ErrorBoundary>
+    <ErrorBoundary onError={(error, errorInfo) => {
+      console.error('[App] Error caught by boundary:', error, errorInfo);
+    }}>
       <QueryClientProvider client={queryClient}>
         <SimpleThemeProvider>
         <AuthProvider>
