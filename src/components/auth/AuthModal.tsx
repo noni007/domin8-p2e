@@ -77,8 +77,8 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
       }
 
       toast({
-        title: "Password reset email sent!",
-        description: "Check your email for instructions to reset your password.",
+        title: "Reset email sent successfully!",
+        description: `We've sent password reset instructions to ${resetEmail}. Check your email and click the link to reset your password.`,
       });
       
       setShowForgotPassword(false);
@@ -87,8 +87,8 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
       console.error('Password reset error:', error);
       toast({
         variant: "destructive",
-        title: "Error sending reset email",
-        description: error.message || "An unexpected error occurred.",
+        title: "Failed to send reset email",
+        description: error.message || "Please check the email address and try again.",
       });
     } finally {
       setLoading(false);

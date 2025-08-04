@@ -16,23 +16,42 @@ export function ResetPassword() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Handle the auth callback from the email link
-    const handleAuthCallback = async () => {
-      const { data, error } = await supabase.auth.getSession();
-      
-      if (error) {
-        console.error("Error getting session:", error);
-        toast({
-          title: "Error",
-          description: "Invalid or expired reset link. Please request a new password reset.",
-          variant: "destructive",
-        });
-        navigate("/auth");
-      }
-    };
+    // Check URL params for error or access token
+    const error = searchParams.get('error');
+    const errorDescription = searchParams.get('error_description');
+    const accessToken = searchParams.get('access_token');
+    const refreshToken = searchParams.get('refresh_token');
+    
+    if (error) {
+      console.error("Password reset error:", error, errorDescription);
+      toast({
+        title: "Invalid Reset Link",
+        description: errorDescription || "The password reset link is invalid or has expired. Please request a new one.",
+        variant: "destructive",
+      });
+      // Redirect after showing error
+      setTimeout(() => navigate("/auth"), 3000);
+      return;
+    }
 
-    handleAuthCallback();
-  }, [navigate]);
+    // If we have tokens, wait for auth state to update
+    if (accessToken && refreshToken) {
+      console.log("Password reset tokens found, waiting for auth state...");
+      // The auth context will handle the session establishment
+      return;
+    }
+
+    // If no tokens and no error, this might be a direct access - redirect to auth
+    if (!accessToken && !refreshToken) {
+      console.log("No reset tokens found, redirecting to auth");
+      toast({
+        title: "Access Denied",
+        description: "Please use a valid password reset link from your email.",
+        variant: "destructive",
+      });
+      navigate("/auth");
+    }
+  }, [searchParams, navigate, toast]);
 
   const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
