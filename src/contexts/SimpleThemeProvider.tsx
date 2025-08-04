@@ -10,7 +10,7 @@ const ThemeContext = createContext<ThemeContextType>({
   toggleTheme: () => {},
 });
 
-export const SimpleThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+export const SimpleThemeProvider = ({ children }: { children: ReactNode }) => {
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
 
   const toggleTheme = useCallback(() => {
