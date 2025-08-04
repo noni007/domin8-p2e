@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { toast } from "@/hooks/use-toast";
+import { useSimpleToast } from "@/hooks/useSimpleToast";
 import { Eye, EyeOff } from "lucide-react";
 
 export function ResetPassword() {
@@ -14,6 +14,7 @@ export function ResetPassword() {
   const [showPassword, setShowPassword] = useState(false);
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const { toast } = useSimpleToast();
 
   useEffect(() => {
     // Check URL params for error or access token
@@ -51,7 +52,7 @@ export function ResetPassword() {
       });
       navigate("/auth");
     }
-  }, [searchParams, navigate]);
+  }, [searchParams, navigate, toast]);
 
   const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
