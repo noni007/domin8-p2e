@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import { User, Session } from '@supabase/supabase-js'
 import { supabase } from '@/integrations/supabase/client'
 import type { Tables } from '@/integrations/supabase/types'
+import { getPasswordResetRedirectUrl, getEmailConfirmationRedirectUrl } from '@/utils/environment'
 
 type Profile = Tables<'profiles'>
 
@@ -102,7 +103,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const signUp = async (email: string, password: string, username: string, userType: string) => {
     try {
       setError(null)
-      const redirectUrl = `${window.location.origin}/`
+      const redirectUrl = getEmailConfirmationRedirectUrl()
       
       const { error } = await supabase.auth.signUp({
         email,
@@ -131,19 +132,24 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const resetPassword = async (email: string) => {
     try {
       setError(null)
-      const redirectUrl = `${window.location.origin}/reset-password`
+      const redirectUrl = getPasswordResetRedirectUrl()
+      
+      console.log('Sending password reset email with redirect URL:', redirectUrl)
       
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: redirectUrl,
       })
 
       if (error) {
+        console.error('Password reset error:', error)
         setError(error.message)
         return { error }
       }
 
+      console.log('Password reset email sent successfully')
       return { error: null }
     } catch (error: any) {
+      console.error('Password reset exception:', error)
       setError(error.message || 'An unexpected error occurred')
       return { error }
     }
