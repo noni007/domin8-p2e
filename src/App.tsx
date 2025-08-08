@@ -19,7 +19,7 @@ import { Teams } from "@/pages/Teams";
 import { Friends } from "@/pages/Friends";
 import { Wallet } from "@/pages/Wallet";
 import { Activity } from "@/pages/Activity";
-import { Profile } from "@/pages/Profile";
+import { ProfilePage } from "@/pages/Profile";
 import { UserProfile } from "@/pages/UserProfile";
 import { Admin } from "@/pages/Admin";
 import { Web3Admin } from "@/pages/Web3Admin";
@@ -65,7 +65,7 @@ function App() {
                   <Route path="/friends" element={<ProtectedRoute><Friends /></ProtectedRoute>} />
                   <Route path="/wallet" element={<ProtectedRoute><Wallet /></ProtectedRoute>} />
                   <Route path="/activity" element={<ProtectedRoute><Activity /></ProtectedRoute>} />
-                  <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+                  <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
                   <Route path="/profile/:userId" element={<UserProfile />} />
                   <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
                   <Route path="/web3-admin" element={<ProtectedRoute><Web3Admin /></ProtectedRoute>} />

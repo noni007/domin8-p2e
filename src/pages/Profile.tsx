@@ -8,7 +8,7 @@ import { ProfileNavigation } from "@/components/profile/ProfileNavigation";
 import { ProfileCard } from "@/components/profile/ProfileCard";
 import { ProfileForm } from "@/components/profile/ProfileForm";
 
-export const Profile = () => {
+export const ProfilePage = () => {
   const { user, profile, refreshProfile } = useAuth();
   const navigate = useNavigate();
   const [editing, setEditing] = useState(false);
@@ -69,5 +69,5 @@ export const Profile = () => {
     </div>
   );
 };
-
+export { ProfilePage as Profile };
 
