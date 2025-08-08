@@ -9,6 +9,7 @@ import { Navigation } from "@/components/layout/Navigation";
 import { Toaster } from "@/components/ui/toaster";
 import { SimpleToaster } from "@/components/ui/simple-toaster";
 import { AuthHashHandler } from "@/components/auth/AuthHashHandler";
+import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 // Import pages
 import { Index } from "@/pages/Index";
 import { Tournaments } from "@/pages/Tournaments";
@@ -54,25 +55,25 @@ function App() {
             <div className="min-h-screen bg-slate-900 text-white">
               <AuthHashHandler />
               <Navigation />
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/tournaments" element={<Tournaments />} />
-                <Route path="/tournaments/:id" element={<TournamentDetails />} />
-                <Route path="/leaderboards" element={<Leaderboards />} />
-                <Route path="/rankings" element={<Rankings />} />
-                <Route path="/teams" element={<Teams />} />
-                <Route path="/friends" element={<Friends />} />
-                <Route path="/wallet" element={<Wallet />} />
-                <Route path="/activity" element={<Activity />} />
-                <Route path="/profile" element={<Profile />} />
-                <Route path="/profile/:userId" element={<UserProfile />} />
-                <Route path="/admin" element={<Admin />} />
-                <Route path="/web3-admin" element={<Web3Admin />} />
-                <Route path="/auth" element={<Auth />} />
-                <Route path="/testing" element={<Testing />} />
-                <Route path="/match-spectating" element={<MatchSpectatingDemo />} />
-                <Route path="/mobile-guide" element={<MobileDevelopmentGuide />} />
-                <Route path="/reset-password" element={<ResetPassword />} />
+                <Routes>
+                  <Route path="/" element={<Index />} />
+                  <Route path="/tournaments" element={<Tournaments />} />
+                  <Route path="/tournaments/:id" element={<TournamentDetails />} />
+                  <Route path="/leaderboards" element={<Leaderboards />} />
+                  <Route path="/rankings" element={<Rankings />} />
+                  <Route path="/teams" element={<Teams />} />
+                  <Route path="/friends" element={<ProtectedRoute><Friends /></ProtectedRoute>} />
+                  <Route path="/wallet" element={<ProtectedRoute><Wallet /></ProtectedRoute>} />
+                  <Route path="/activity" element={<ProtectedRoute><Activity /></ProtectedRoute>} />
+                  <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+                  <Route path="/profile/:userId" element={<UserProfile />} />
+                  <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
+                  <Route path="/web3-admin" element={<ProtectedRoute><Web3Admin /></ProtectedRoute>} />
+                  <Route path="/auth" element={<ProtectedRoute requireAuth={false}><Auth /></ProtectedRoute>} />
+                  <Route path="/testing" element={<Testing />} />
+                  <Route path="/match-spectating" element={<MatchSpectatingDemo />} />
+                  <Route path="/mobile-guide" element={<MobileDevelopmentGuide />} />
+                  <Route path="/reset-password" element={<ResetPassword />} />
                 <Route path="*" element={
                   <div className="flex items-center justify-center min-h-screen">
                     <h1 className="text-4xl font-bold">Page Not Found</h1>
