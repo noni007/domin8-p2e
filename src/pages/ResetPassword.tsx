@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { useSimpleToast } from "@/hooks/useSimpleToast";
+import { useToast } from "@/hooks/use-toast";
 import { Eye, EyeOff } from "lucide-react";
 
 export function ResetPassword() {
@@ -14,14 +14,20 @@ export function ResetPassword() {
   const [showPassword, setShowPassword] = useState(false);
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { toast } = useSimpleToast();
+  const { toast } = useToast();
 
   useEffect(() => {
-    // Check URL params for error or access token
+    // Check URL params and hash for error or access token
     const error = searchParams.get('error');
     const errorDescription = searchParams.get('error_description');
-    const accessToken = searchParams.get('access_token');
-    const refreshToken = searchParams.get('refresh_token');
+
+    // Prefer query params; fallback to hash params
+    const hash = window.location.hash?.startsWith('#') ? window.location.hash.slice(1) : '';
+    const hashParams = new URLSearchParams(hash);
+
+    const accessToken = searchParams.get('access_token') || hashParams.get('access_token');
+    const refreshToken = searchParams.get('refresh_token') || hashParams.get('refresh_token');
+    const type = searchParams.get('type') || hashParams.get('type');
     
     if (error) {
       console.error("Password reset error:", error, errorDescription);
@@ -35,10 +41,23 @@ export function ResetPassword() {
       return;
     }
 
-    // If we have tokens, wait for auth state to update
-    if (accessToken && refreshToken) {
-      console.log("Password reset tokens found, waiting for auth state...");
-      // The auth context will handle the session establishment
+    // Only allow reset when we have tokens and the correct type
+    if (accessToken && refreshToken && type === 'recovery') {
+      console.log("Password reset tokens found, setting session...");
+      (async () => {
+        try {
+          const { error } = await supabase.auth.setSession({
+            access_token: accessToken!,
+            refresh_token: refreshToken!,
+          });
+          if (error) {
+            console.error('Error setting session for recovery:', error);
+            toast({ title: 'Session Error', description: 'Could not establish session from the reset link.', variant: 'destructive' });
+          }
+        } catch (e) {
+          console.error('Unexpected error setting session:', e);
+        }
+      })();
       return;
     }
 

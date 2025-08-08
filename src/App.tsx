@@ -6,8 +6,9 @@ import { SimpleThemeProvider } from "@/contexts/SimpleThemeProvider";
 import { AuthProvider } from "@/hooks/useAuth";
 import { Web3Provider } from "@/contexts/Web3Provider";
 import { Navigation } from "@/components/layout/Navigation";
+import { Toaster } from "@/components/ui/toaster";
 import { SimpleToaster } from "@/components/ui/simple-toaster";
-
+import { AuthHashHandler } from "@/components/auth/AuthHashHandler";
 // Import pages
 import { Index } from "@/pages/Index";
 import { Tournaments } from "@/pages/Tournaments";
@@ -51,6 +52,7 @@ function App() {
         <AuthProvider>
           <BrowserRouter>
             <div className="min-h-screen bg-slate-900 text-white">
+              <AuthHashHandler />
               <Navigation />
               <Routes>
                 <Route path="/" element={<Index />} />
@@ -77,6 +79,7 @@ function App() {
                   </div>
                 } />
               </Routes>
+              <Toaster />
               <SimpleToaster />
             </div>
           </BrowserRouter>
