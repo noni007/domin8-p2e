@@ -1570,6 +1570,21 @@ export type Database = {
         Args: { tournament_id_param: string }
         Returns: undefined
       }
+      get_public_profiles: {
+        Args: { search_term?: string }
+        Returns: {
+          id: string
+          username: string
+          user_type: string
+          avatar_url: string
+          skill_rating: number
+          win_rate: number
+          games_played: number
+          current_streak: number
+          best_streak: number
+          created_at: string
+        }[]
+      }
       get_waitlist_position: {
         Args: { user_email: string; feature?: string }
         Returns: number

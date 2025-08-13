@@ -8,15 +8,25 @@ import { supabase } from "@/integrations/supabase/client";
 import { useFriends } from "@/hooks/useFriends";
 import { useAuth } from "@/hooks/useAuth";
 import { Search, UserPlus, Users } from "lucide-react";
-import type { Tables } from "@/integrations/supabase/types";
-
-type Profile = Tables<'profiles'>;
+// Using a minimal public profile shape returned by RPC
+interface PublicProfile {
+  id: string;
+  username: string | null;
+  user_type: string | null;
+  avatar_url: string | null;
+  skill_rating: number | null;
+  win_rate: number | null;
+  games_played: number | null;
+  current_streak: number | null;
+  best_streak: number | null;
+  created_at: string;
+}
 
 export const UserDiscovery = () => {
   const { user } = useAuth();
   const { friends, sentRequests, sendFriendRequest } = useFriends();
   const [searchTerm, setSearchTerm] = React.useState("");
-  const [searchResults, setSearchResults] = React.useState<Profile[]>([]);
+  const [searchResults, setSearchResults] = React.useState<PublicProfile[]>([]);
   const [searching, setSearching] = React.useState(false);
 
   const searchUsers = async () => {
@@ -25,14 +35,11 @@ export const UserDiscovery = () => {
     setSearching(true);
     try {
       const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .or(`username.ilike.%${searchTerm}%,email.ilike.%${searchTerm}%`)
-        .neq('id', user.id)
-        .limit(20);
+        .rpc('get_public_profiles', { search_term: searchTerm });
 
+      const filtered = (data || []).filter((p: any) => p.id !== user.id).slice(0, 20);
       if (error) throw error;
-      setSearchResults(data || []);
+      setSearchResults(filtered);
     } catch (error) {
       console.error('Error searching users:', error);
       setSearchResults([]);
@@ -64,7 +71,7 @@ export const UserDiscovery = () => {
       <CardContent className="space-y-4">
         <div className="flex space-x-2">
           <Input
-            placeholder="Search by username or email..."
+            placeholder="Search by username..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             onKeyPress={handleKeyPress}

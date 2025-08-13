@@ -35,10 +35,8 @@ export const TierDistribution = () => {
 
   const fetchTierDistribution = async () => {
     try {
-      // Fetch all profiles
       const { data: profiles, error: profilesError } = await supabase
-        .from('profiles')
-        .select('*');
+        .rpc('get_public_profiles');
 
       if (profilesError) throw profilesError;
 

@@ -9,7 +9,7 @@ import type { Tables } from "@/integrations/supabase/types";
 import { LeaderboardSkeleton } from "./LeaderboardSkeleton";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 
-type Profile = Tables<'profiles'>;
+type Profile = any;
 
 interface PlayerRanking {
   profile: Profile;
@@ -52,10 +52,9 @@ export const GlobalLeaderboard = () => {
     }
     
     try {
-      // Fetch all profiles
+      // Fetch public, non-sensitive profiles via RPC (no emails/bios)
       const { data: profiles, error: profilesError } = await supabase
-        .from('profiles')
-        .select('*');
+        .rpc('get_public_profiles');
 
       if (profilesError) throw profilesError;
 
