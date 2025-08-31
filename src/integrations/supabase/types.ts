@@ -1551,7 +1551,51 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      user_social_integrations: {
+        Row: {
+          access_token: string | null
+          created_at: string | null
+          expires_at: string | null
+          id: string | null
+          integration_data: Json | null
+          is_active: boolean | null
+          platform: string | null
+          platform_user_id: string | null
+          platform_username: string | null
+          refresh_token: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          access_token?: never
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string | null
+          integration_data?: Json | null
+          is_active?: boolean | null
+          platform?: string | null
+          platform_user_id?: string | null
+          platform_username?: string | null
+          refresh_token?: never
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          access_token?: never
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string | null
+          integration_data?: Json | null
+          is_active?: boolean | null
+          platform?: string | null
+          platform_user_id?: string | null
+          platform_username?: string | null
+          refresh_token?: never
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       check_admin_role: {
@@ -1566,9 +1610,17 @@ export type Database = {
         Args: { match_id: string }
         Returns: undefined
       }
+      decrypt_social_token: {
+        Args: { encrypted_token: string; user_id: string }
+        Returns: string
+      }
       distribute_tournament_prizes: {
         Args: { tournament_id_param: string }
         Returns: undefined
+      }
+      encrypt_social_token: {
+        Args: { token_value: string; user_id: string }
+        Returns: string
       }
       get_public_profiles: {
         Args: { search_term?: string }
@@ -1613,6 +1665,20 @@ export type Database = {
       update_tournament_prize_pool: {
         Args: { amount: number; tournament_id: string }
         Returns: undefined
+      }
+      upsert_social_integration: {
+        Args: {
+          p_access_token?: string
+          p_expires_at?: string
+          p_integration_data?: Json
+          p_is_active?: boolean
+          p_platform: string
+          p_platform_user_id?: string
+          p_platform_username?: string
+          p_refresh_token?: string
+          p_user_id: string
+        }
+        Returns: string
       }
     }
     Enums: {
