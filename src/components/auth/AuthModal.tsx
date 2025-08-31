@@ -13,16 +13,18 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
-import { Loader2, Mail, Lock, User, Trophy, ArrowLeft } from "lucide-react";
+import { Loader2, Mail, Lock, User, Trophy, ArrowLeft, AlertCircle } from "lucide-react";
 import { SocialLoginButtons } from "@/components/social/SocialLoginButtons";
 import { WelcomeModal } from "./WelcomeModal";
+import { validatePasswordSecurity } from "@/utils/passwordSecurity";
+import { useRateLimiter } from "@/hooks/useRateLimiter";
 
 interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
+const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
   const [loading, setLoading] = React.useState(false);
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
@@ -32,8 +34,19 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
   const [resetEmail, setResetEmail] = React.useState("");
   const [showWelcome, setShowWelcome] = React.useState(false);
   const [newUserData, setNewUserData] = React.useState<{username: string, userType: string} | null>(null);
+  const [passwordValidation, setPasswordValidation] = React.useState<{
+    isValid: boolean;
+    errors: string[];
+  } | null>(null);
   const { toast } = useToast();
   const { signIn, signUp, resetPassword, error: authError } = useAuth();
+  
+  // Rate limiter for sign-in attempts (5 attempts per 15 minutes)
+  const rateLimiter = useRateLimiter({
+    maxAttempts: 5,
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    blockDurationMs: 15 * 60 * 1000 // 15 minutes block
+  });
 
   // Show auth errors as toasts
   React.useEffect(() => {
@@ -95,6 +108,23 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
     }
   };
 
+  const handlePasswordChange = async (newPassword: string) => {
+    setPassword(newPassword);
+    
+    // Only validate if password is not empty
+    if (newPassword.length > 0) {
+      try {
+        const validation = await validatePasswordSecurity(newPassword);
+        setPasswordValidation(validation);
+      } catch (error) {
+        console.warn('Password validation error:', error);
+        setPasswordValidation(null);
+      }
+    } else {
+      setPasswordValidation(null);
+    }
+  };
+
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -107,11 +137,12 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
       return;
     }
 
-    if (password.length < 6) {
+    // Enhanced password validation
+    if (!passwordValidation || !passwordValidation.isValid) {
       toast({
         variant: "destructive",
-        title: "Password too short",
-        description: "Password must be at least 6 characters long.",
+        title: "Password security requirements not met",
+        description: passwordValidation?.errors[0] || "Please ensure your password meets all security requirements.",
       });
       return;
     }
@@ -159,6 +190,17 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    // Check rate limiting first
+    if (rateLimiter.isBlocked) {
+      const remainingTime = Math.ceil(rateLimiter.getRemainingTime() / 60000);
+      toast({
+        variant: "destructive",
+        title: "Too many attempts",
+        description: `Please wait ${remainingTime} minutes before trying again.`,
+      });
+      return;
+    }
+    
     if (!email || !password) {
       toast({
         variant: "destructive",
@@ -174,11 +216,14 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
       const { error } = await signIn(email, password);
 
       if (error) {
+        // Record failed attempt for rate limiting
+        rateLimiter.recordAttempt();
+        
         if (error.message.includes("Invalid login credentials")) {
           toast({
             variant: "destructive",
             title: "Invalid credentials",
-            description: "Please check your email and password and try again.",
+            description: `Please check your email and password. ${rateLimiter.attemptsRemaining} attempts remaining.`,
           });
         } else {
           throw error;
@@ -186,6 +231,8 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
         return;
       }
 
+      // Reset rate limiter on successful login
+      rateLimiter.reset();
       toast({
         title: "Welcome back!",
         description: "You have successfully signed in.",
@@ -193,6 +240,7 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
       resetForm();
       onClose();
     } catch (error: any) {
+      rateLimiter.recordAttempt();
       console.error('Signin error:', error);
       toast({
         variant: "destructive",
@@ -399,15 +447,32 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
                     <Input
                       id="signup-password"
                       type="password"
-                      placeholder="Create a password (min 6 characters)"
+                      placeholder="Create a secure password"
                       value={password}
-                      onChange={(e) => setPassword(e.target.value)}
+                      onChange={(e) => handlePasswordChange(e.target.value)}
                       className="pl-10 bg-gray-800/50 border-gray-600 text-white placeholder:text-gray-400"
                       required
-                      minLength={6}
                       disabled={loading}
                     />
                   </div>
+                  
+                  {/* Password validation feedback */}
+                  {password && passwordValidation && (
+                    <div className="mt-2 space-y-1">
+                      {passwordValidation.errors.map((error, index) => (
+                        <div key={index} className="flex items-center gap-2 text-sm text-red-400">
+                          <AlertCircle className="h-3 w-3" />
+                          <span>{error}</span>
+                        </div>
+                      ))}
+                      {passwordValidation.isValid && (
+                        <div className="flex items-center gap-2 text-sm text-green-400">
+                          <div className="h-3 w-3 rounded-full bg-green-400" />
+                          <span>Password meets security requirements</span>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
 
                 <div className="space-y-2">
@@ -492,3 +557,5 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
     </>
   );
 };
+
+export { AuthModal };
