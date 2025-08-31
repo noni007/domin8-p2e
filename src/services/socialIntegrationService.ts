@@ -180,20 +180,79 @@ export class SocialIntegrationService {
   // Track Social Shares
   static async trackSocialShare(userId: string, platform: string, contentType: string, contentId: string): Promise<void> {
     try {
-      await supabase.from('user_activities').insert({
-        user_id: userId,
-        activity_type: 'social_share',
-        title: `Shared on ${platform}`,
-        description: `Shared ${contentType} content`,
-        metadata: {
-          platform,
-          content_type: contentType,
-          content_id: contentId,
-          shared_at: new Date().toISOString(),
-        },
-      });
+      // Track social sharing activity as user activity
+      const { error } = await supabase
+        .from('social_posts')
+        .insert({
+          user_id: userId,
+          platform: platform,
+          post_type: contentType,
+          content_title: `Shared ${contentType}`,
+          content_description: `User shared ${contentType} on ${platform}`,
+          content_url: contentId,
+          post_status: 'completed'
+        });
+
+      if (error) {
+        console.error('Error tracking social share:', error);
+      }
     } catch (error) {
-      console.error('Failed to track social share:', error);
+      console.error('Error tracking social share:', error);
+    }
+  }
+
+  // Get user's social integrations with decrypted tokens
+  static async getUserSocialIntegrations(userId: string): Promise<any[]> {
+    try {
+      const { data, error } = await supabase
+        .rpc('get_user_social_integrations', { target_user_id: userId });
+
+      if (error) {
+        console.error('Error fetching social integrations:', error);
+        return [];
+      }
+
+      return data || [];
+    } catch (error) {
+      console.error('Error fetching social integrations:', error);
+      return [];
+    }
+  }
+
+  // Store or update social integration with encrypted tokens
+  static async storeSocialIntegration(
+    userId: string,
+    platform: string,
+    platformUserId?: string,
+    platformUsername?: string,
+    accessToken?: string,
+    refreshToken?: string,
+    expiresAt?: Date,
+    integrationData?: any
+  ): Promise<string | null> {
+    try {
+      const { data, error } = await supabase
+        .rpc('upsert_social_integration', {
+          p_user_id: userId,
+          p_platform: platform,
+          p_platform_user_id: platformUserId,
+          p_platform_username: platformUsername,
+          p_access_token: accessToken,
+          p_refresh_token: refreshToken,
+          p_expires_at: expiresAt?.toISOString(),
+          p_integration_data: integrationData || {},
+          p_is_active: true
+        });
+
+      if (error) {
+        console.error('Error storing social integration:', error);
+        return null;
+      }
+
+      return data;
+    } catch (error) {
+      console.error('Error storing social integration:', error);
+      return null;
     }
   }
 
@@ -211,7 +270,23 @@ export class SocialIntegrationService {
   // Influencer/Streamer Integration
   static async createStreamerIntegration(streamerId: string, platform: string, channelInfo: any): Promise<void> {
     try {
-      // Store streamer integration data
+      // Use secure function to store streamer integration with encrypted tokens if needed
+      const integrationId = await this.storeSocialIntegration(
+        streamerId,
+        platform,
+        channelInfo.channel_id || channelInfo.channel_name,
+        channelInfo.channel_name,
+        undefined, // No access token for basic integrations
+        undefined, // No refresh token for basic integrations
+        undefined, // No expiry for basic integrations
+        channelInfo
+      );
+
+      if (!integrationId) {
+        throw new Error('Failed to create streamer integration');
+      }
+
+      // Also track as activity for historical tracking
       await supabase.from('user_activities').insert({
         user_id: streamerId,
         activity_type: 'streamer_integration',
@@ -225,6 +300,7 @@ export class SocialIntegrationService {
       });
     } catch (error) {
       console.error('Failed to create streamer integration:', error);
+      throw error;
     }
   }
 }

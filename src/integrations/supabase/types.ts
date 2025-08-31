@@ -1551,51 +1551,7 @@ export type Database = {
       }
     }
     Views: {
-      user_social_integrations: {
-        Row: {
-          access_token: string | null
-          created_at: string | null
-          expires_at: string | null
-          id: string | null
-          integration_data: Json | null
-          is_active: boolean | null
-          platform: string | null
-          platform_user_id: string | null
-          platform_username: string | null
-          refresh_token: string | null
-          updated_at: string | null
-          user_id: string | null
-        }
-        Insert: {
-          access_token?: never
-          created_at?: string | null
-          expires_at?: string | null
-          id?: string | null
-          integration_data?: Json | null
-          is_active?: boolean | null
-          platform?: string | null
-          platform_user_id?: string | null
-          platform_username?: string | null
-          refresh_token?: never
-          updated_at?: string | null
-          user_id?: string | null
-        }
-        Update: {
-          access_token?: never
-          created_at?: string | null
-          expires_at?: string | null
-          id?: string | null
-          integration_data?: Json | null
-          is_active?: boolean | null
-          platform?: string | null
-          platform_user_id?: string | null
-          platform_username?: string | null
-          refresh_token?: never
-          updated_at?: string | null
-          user_id?: string | null
-        }
-        Relationships: []
-      }
+      [_ in never]: never
     }
     Functions: {
       check_admin_role: {
@@ -1635,6 +1591,23 @@ export type Database = {
           user_type: string
           username: string
           win_rate: number
+        }[]
+      }
+      get_user_social_integrations: {
+        Args: { target_user_id?: string }
+        Returns: {
+          access_token: string
+          created_at: string
+          expires_at: string
+          id: string
+          integration_data: Json
+          is_active: boolean
+          platform: string
+          platform_user_id: string
+          platform_username: string
+          refresh_token: string
+          updated_at: string
+          user_id: string
         }[]
       }
       get_waitlist_position: {
