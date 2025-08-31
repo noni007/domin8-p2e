@@ -7,7 +7,7 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "12.2.3 (519615d)"
@@ -1555,7 +1555,7 @@ export type Database = {
     }
     Functions: {
       check_admin_role: {
-        Args: { user_id_param: string; required_role?: string }
+        Args: { required_role?: string; user_id_param: string }
         Returns: boolean
       }
       check_user_achievements: {
@@ -1573,29 +1573,29 @@ export type Database = {
       get_public_profiles: {
         Args: { search_term?: string }
         Returns: {
-          id: string
-          username: string
-          user_type: string
           avatar_url: string
-          skill_rating: number
-          win_rate: number
-          games_played: number
-          current_streak: number
           best_streak: number
           created_at: string
+          current_streak: number
+          games_played: number
+          id: string
+          skill_rating: number
+          user_type: string
+          username: string
+          win_rate: number
         }[]
       }
       get_waitlist_position: {
-        Args: { user_email: string; feature?: string }
+        Args: { feature?: string; user_email: string }
         Returns: number
       }
       get_waitlist_stats: {
         Args: { feature?: string }
         Returns: {
-          total_count: number
-          progress_to_next_milestone: number
           next_milestone_target: number
           next_milestone_title: string
+          progress_to_next_milestone: number
+          total_count: number
         }[]
       }
       increment_spectator_count: {
@@ -1607,11 +1607,11 @@ export type Database = {
         Returns: boolean
       }
       update_skill_rating: {
-        Args: { winner_id: string; loser_id: string; match_id: string }
+        Args: { loser_id: string; match_id: string; winner_id: string }
         Returns: undefined
       }
       update_tournament_prize_pool: {
-        Args: { tournament_id: string; amount: number }
+        Args: { amount: number; tournament_id: string }
         Returns: undefined
       }
     }

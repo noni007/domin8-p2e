@@ -13,12 +13,14 @@ import { useSimpleToast } from "@/hooks/useSimpleToast";
 interface UserProfile {
   id: string;
   username: string;
-  email: string;
-  avatar_url?: string;
   user_type: string;
+  avatar_url?: string;
+  skill_rating?: number;
+  win_rate?: number;
+  games_played?: number;
+  current_streak?: number;
+  best_streak?: number;
   created_at: string;
-  updated_at: string;
-  bio?: string;
 }
 
 interface Friendship {
@@ -57,11 +59,10 @@ export const FriendsList = () => {
       if (friendshipsError) throw friendshipsError;
 
       if (friendships && friendships.length > 0) {
-        // Get friend profiles
+        // Get friend profiles using the secure RPC
         const friendIds = friendships.map(f => f.friend_id);
         const { data: profiles, error: profilesError } = await supabase
-          .from('profiles')
-          .select('*')
+          .rpc('get_public_profiles')
           .in('id', friendIds);
 
         if (profilesError) throw profilesError;
@@ -92,16 +93,21 @@ export const FriendsList = () => {
 
     setSearching(true);
     try {
+      // Use the secure RPC function instead of direct profile queries
       const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .or(`username.ilike.%${searchQuery}%,email.ilike.%${searchQuery}%`)
-        .neq('id', user?.id)
-        .limit(10);
+        .rpc('get_public_profiles', { search_term: searchQuery });
 
       if (error) throw error;
 
-      setSearchResults(data || []);
+      // Filter out current user and existing friends
+      const friendIds = friends.map(f => f.friend_id);
+      const filtered = (data || [])
+        .filter((profile: UserProfile) => 
+          profile.id !== user?.id && !friendIds.includes(profile.id)
+        )
+        .slice(0, 10);
+
+      setSearchResults(filtered);
     } catch (error) {
       console.error('Error searching users:', error);
       toast({ title: "Error", description: "Failed to search users.", variant: "destructive" });
@@ -167,7 +173,7 @@ export const FriendsList = () => {
           <div className="relative">
             <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
             <Input
-              placeholder="Search by username or email..."
+              placeholder="Search by username..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-10 bg-gray-800/50 border-gray-600 text-white placeholder:text-gray-400"
@@ -190,8 +196,17 @@ export const FriendsList = () => {
                       </AvatarFallback>
                     </Avatar>
                     <div>
-                      <p className="text-white font-medium">{userProfile.username}</p>
-                      <p className="text-gray-400 text-sm">{userProfile.email}</p>
+                      <p className="text-white font-medium">{userProfile.username || "Unknown User"}</p>
+                      <div className="flex items-center gap-2">
+                        <Badge variant="outline" className="text-xs capitalize">
+                          {userProfile.user_type}
+                        </Badge>
+                        {userProfile.skill_rating && (
+                          <span className="text-gray-400 text-sm">
+                            Rating: {userProfile.skill_rating}
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
                   <Button
@@ -204,6 +219,12 @@ export const FriendsList = () => {
                   </Button>
                 </div>
               ))}
+            </div>
+          )}
+
+          {searchQuery && !searching && searchResults.length === 0 && (
+            <div className="text-center py-4">
+              <div className="text-gray-400">No users found matching "{searchQuery}"</div>
             </div>
           )}
         </CardContent>
@@ -239,15 +260,26 @@ export const FriendsList = () => {
                         </AvatarFallback>
                       </Avatar>
                       <div>
-                        <p className="text-white font-medium">{friend.username}</p>
+                        <p className="text-white font-medium">{friend.username || "Unknown User"}</p>
                         <div className="flex items-center gap-2">
-                          <Badge variant="outline" className="text-xs">
+                          <Badge variant="outline" className="text-xs capitalize">
                             {friend.user_type}
                           </Badge>
                           <span className="text-gray-400 text-sm">
                             Friends since {new Date(friendship.created_at).toLocaleDateString()}
                           </span>
                         </div>
+                        {friend.skill_rating && (
+                          <div className="flex items-center gap-4 mt-1">
+                            <span className="text-gray-400 text-sm">Rating: {friend.skill_rating}</span>
+                            {friend.games_played && (
+                              <span className="text-gray-400 text-sm">Games: {friend.games_played}</span>
+                            )}
+                            {friend.win_rate && (
+                              <span className="text-gray-400 text-sm">Win Rate: {(friend.win_rate * 100).toFixed(1)}%</span>
+                            )}
+                          </div>
+                        )}
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
