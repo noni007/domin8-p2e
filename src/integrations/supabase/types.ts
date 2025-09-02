@@ -1578,6 +1578,21 @@ export type Database = {
         Args: { token_value: string; user_id: string }
         Returns: string
       }
+      get_friend_profiles: {
+        Args: { target_user_id?: string }
+        Returns: {
+          avatar_url: string
+          best_streak: number
+          created_at: string
+          current_streak: number
+          games_played: number
+          id: string
+          skill_rating: number
+          user_type: string
+          username: string
+          win_rate: number
+        }[]
+      }
       get_public_profiles: {
         Args: { search_term?: string }
         Returns: {
