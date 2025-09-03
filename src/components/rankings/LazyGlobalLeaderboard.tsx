@@ -4,16 +4,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Trophy } from 'lucide-react';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import { LeaderboardSkeleton } from './LeaderboardSkeleton';
-import { withLazyLoad } from '@/components/performance/LazyLoadOptimizer';
 import { VirtualizedLeaderboard } from './VirtualizedLeaderboard';
 import { usePerformanceOptimization } from '@/hooks/usePerformanceOptimization';
 import { supabase } from '@/integrations/supabase/client';
-
-// Lazy load the heavy computation components
-const LazyVirtualizedLeaderboard = withLazyLoad(
-  () => import('./VirtualizedLeaderboard').then(m => ({ default: m.VirtualizedLeaderboard })),
-  { delay: 100 }
-);
 
 interface PlayerRanking {
   profile: {
@@ -218,13 +211,11 @@ export const LazyGlobalLeaderboard = () => {
                 <LoadingSpinner text="Updating rankings..." />
               </div>
             ) : (
-              <Suspense fallback={<LeaderboardSkeleton />}>
-                <LazyVirtualizedLeaderboard 
-                  rankings={rankings}
-                  selectedCategory={selectedCategory}
-                  height={isLowPerformanceDevice ? 400 : 600}
-                />
-              </Suspense>
+              <VirtualizedLeaderboard 
+                rankings={rankings}
+                selectedCategory={selectedCategory}
+                height={isLowPerformanceDevice ? 400 : 600}
+              />
             )}
           </TabsContent>
         </Tabs>
