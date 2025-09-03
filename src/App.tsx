@@ -29,6 +29,7 @@ import { TournamentDetails } from "@/pages/TournamentDetails";
 import { MatchSpectatingDemo } from "@/pages/MatchSpectatingDemo";
 import { MobileDevelopmentGuide } from "@/pages/MobileDevelopmentGuide";
 import { ResetPassword } from "@/pages/ResetPassword";
+import { ProductionPerformanceMonitor, DevPerformanceOverlay } from "@/components/performance/ProductionPerformanceMonitor";
 
 // Create a client
 const queryClient = new QueryClient({
@@ -53,6 +54,8 @@ function App() {
         <AuthProvider>
           <BrowserRouter>
             <div className="min-h-screen bg-slate-900 text-white">
+              <ProductionPerformanceMonitor />
+              <DevPerformanceOverlay />
               <AuthHashHandler />
               <Navigation />
                 <Routes>
