@@ -1,21 +1,9 @@
 
-import React, { Suspense } from 'react';
+import React from 'react';
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
-import { LazyImage, withLazyLoad } from "@/components/performance/LazyLoadOptimizer";
 import { PerformanceOptimizedLayout } from "@/components/performance/PerformanceOptimizedLayout";
-import { LeaderboardSkeleton } from "@/components/rankings/LeaderboardSkeleton";
-import { Skeleton } from "@/components/ui/skeleton";
-
-// Lazy load components for better performance
-const LazyGlobalLeaderboard = withLazyLoad(
-  () => import("@/components/rankings/LazyGlobalLeaderboard").then(m => ({ default: m.LazyGlobalLeaderboard })),
-  { delay: 150 }
-);
-
-const MobileOptimizedTierDistribution = withLazyLoad(
-  () => import("@/components/rankings/MobileOptimizedTierDistribution").then(m => ({ default: m.MobileOptimizedTierDistribution })),
-  { delay: 100 }
-);
+import { LazyGlobalLeaderboard } from "@/components/rankings/LazyGlobalLeaderboard";
+import { MobileOptimizedTierDistribution } from "@/components/rankings/MobileOptimizedTierDistribution";
 
 export const Leaderboards = () => {
   return (
@@ -34,9 +22,7 @@ export const Leaderboards = () => {
                   <p className="text-destructive">Unable to load leaderboard data</p>
                 </div>
               }>
-                <Suspense fallback={<LeaderboardSkeleton />}>
-                  <LazyGlobalLeaderboard />
-                </Suspense>
+            <LazyGlobalLeaderboard />
               </ErrorBoundary>
             </div>
             <div>
@@ -45,14 +31,7 @@ export const Leaderboards = () => {
                   <p className="text-destructive">Unable to load tier distribution</p>
                 </div>
               }>
-                <Suspense fallback={
-                  <div className="space-y-4">
-                    <Skeleton className="h-8 w-3/4" />
-                    <Skeleton className="h-32 w-full" />
-                  </div>
-                }>
-                  <MobileOptimizedTierDistribution />
-                </Suspense>
+            <MobileOptimizedTierDistribution />
               </ErrorBoundary>
             </div>
           </div>
