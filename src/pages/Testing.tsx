@@ -1,9 +1,10 @@
 import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { TestingSuite } from '@/components/testing/TestingSuite';
 import { MobileTestingSuite } from '@/components/testing/MobileTestingSuite';
 import { PerformanceOptimizer } from '@/components/testing/PerformanceOptimizer';
 import { FinalIntegrationSuite } from '@/components/testing/FinalIntegrationSuite';
-import { TestingSuite } from '@/components/testing/TestingSuite';
+import { ProductionReadinessChecker } from '@/components/testing/ProductionReadinessChecker';
 
 export function Testing() {
   return (
@@ -14,13 +15,18 @@ export function Testing() {
           <p className="text-xl text-gray-300">Comprehensive testing suite for all platform features</p>
         </div>
 
-        <Tabs defaultValue="integration" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4 bg-black/20">
+        <Tabs defaultValue="readiness" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-5 bg-black/20">
+            <TabsTrigger value="readiness">Production</TabsTrigger>
             <TabsTrigger value="integration">Integration</TabsTrigger>
             <TabsTrigger value="mobile">Mobile</TabsTrigger>
             <TabsTrigger value="performance">Performance</TabsTrigger>
             <TabsTrigger value="functional">Functional</TabsTrigger>
           </TabsList>
+
+          <TabsContent value="readiness">
+            <ProductionReadinessChecker />
+          </TabsContent>
 
           <TabsContent value="integration">
             <FinalIntegrationSuite />
