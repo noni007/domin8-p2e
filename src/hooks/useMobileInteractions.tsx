@@ -10,18 +10,19 @@ export const useMobileInteractions = () => {
   const triggerHapticFeedback = useCallback((type: 'light' | 'medium' | 'heavy' = 'light') => {
     // Check if we're in a native environment (Capacitor)
     if (window.Capacitor) {
-      import('@capacitor/haptics').then(({ Haptics, ImpactStyle }) => {
+      const { Haptics, ImpactStyle } = require('@capacitor/haptics');
+      try {
         const hapticType = type === 'light' ? ImpactStyle.Light : 
                           type === 'medium' ? ImpactStyle.Medium : 
                           ImpactStyle.Heavy;
         Haptics.impact({ style: hapticType });
-      }).catch(() => {
+      } catch {
         // Fallback if haptics import fails
         if ('vibrate' in navigator) {
           const duration = type === 'light' ? 10 : type === 'medium' ? 20 : 30;
           navigator.vibrate(duration);
         }
-      });
+      }
     } else if ('vibrate' in navigator) {
       // Fallback for web browsers
       const duration = type === 'light' ? 10 : type === 'medium' ? 20 : 30;

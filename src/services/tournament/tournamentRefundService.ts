@@ -15,7 +15,7 @@ export class TournamentRefundService {
     if (error) throw error;
 
     // Reset bracket if it was generated
-    const { resetTournamentBracket } = await import('@/utils/bracketGenerator');
+    const { resetTournamentBracket } = require('@/utils/bracketGenerator');
     await resetTournamentBracket(tournamentId);
 
     // Process refunds if applicable
