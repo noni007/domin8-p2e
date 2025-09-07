@@ -37,8 +37,8 @@ export const Navigation = () => {
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
             <img 
-              src="/lovable-uploads/be31ac20-7045-4c65-bf6f-1dda987cd378.png" 
-              alt="Domin8 Logo" 
+              src="/lovable-uploads/9b0677e1-3020-42fd-bcbd-42aa1b324daf.png" 
+              alt="Domin8 Logo"
               className="h-10 w-auto"
             />
           </Link>

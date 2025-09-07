@@ -130,8 +130,8 @@ export function ResetPassword() {
         <CardHeader className="text-center">
           <div className="flex justify-center mb-4">
             <img 
-              src="/lovable-uploads/be31ac20-7045-4c65-bf6f-1dda987cd378.png" 
-              alt="Logo" 
+              src="/lovable-uploads/9b0677e1-3020-42fd-bcbd-42aa1b324daf.png" 
+              alt="Logo"
               className="h-12 w-auto"
             />
           </div>
