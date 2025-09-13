@@ -31,8 +31,8 @@ export function Auth() {
         <div className="max-w-md mx-auto">
           <div className="text-center mb-8">
             <img 
-              src="/lovable-uploads/9b0677e1-3020-42fd-bcbd-42aa1b324daf.png" 
-              alt="Logo"
+              src="/lovable-uploads/domin8-crown-logo.png" 
+              alt="Domin8 Logo"
               className="h-16 w-auto mx-auto mb-4"
             />
             <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-teal-400 bg-clip-text text-transparent">

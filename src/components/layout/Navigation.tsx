@@ -37,10 +37,11 @@ export const Navigation = () => {
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
             <img 
-              src="/lovable-uploads/9b0677e1-3020-42fd-bcbd-42aa1b324daf.png" 
+              src="/lovable-uploads/domin8-crown-logo.png" 
               alt="Domin8 Logo"
               className="h-10 w-auto"
             />
+            <span className="font-brand text-xl text-white hidden sm:block">Domin8</span>
           </Link>
 
           {/* Desktop Navigation */}

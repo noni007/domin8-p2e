@@ -20,8 +20,8 @@ export const Footer = () => {
           <div className="space-y-4 text-left">
             <div className="flex items-center">
               <img 
-                src="/lovable-uploads/9b0677e1-3020-42fd-bcbd-42aa1b324daf.png" 
-                alt="Logo"
+                src="/lovable-uploads/domin8-crown-logo.png" 
+                alt="Domin8 Logo"
                 className="h-10 w-auto"
               />
             </div>

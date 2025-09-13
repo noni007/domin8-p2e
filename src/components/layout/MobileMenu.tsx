@@ -51,11 +51,11 @@ export const MobileMenu = ({ isOpen, onClose, onAuthClick }: MobileMenuProps) =>
           <SheetTitle className="text-white flex items-center justify-between">
             <div className="flex items-center">
               <img 
-                src="/lovable-uploads/9b0677e1-3020-42fd-bcbd-42aa1b324daf.png" 
+                src="/lovable-uploads/domin8-crown-logo.png" 
                 alt="Domin8 Logo"
                 className="h-6 w-auto mr-2"
               />
-              Domin8
+              <span className="font-brand">Domin8</span>
             </div>
             <span className="text-xs text-gray-400">Swipe right to close</span>
           </SheetTitle>

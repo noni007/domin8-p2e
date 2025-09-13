@@ -10,6 +10,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { SimpleToaster } from "@/components/ui/simple-toaster";
 import { AuthHashHandler } from "@/components/auth/AuthHashHandler";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
+import { Footer } from "@/components/layout/Footer";
+import { BottomNavigation } from "@/components/layout/BottomNavigation";
 // Import pages
 import { Index } from "@/pages/Index";
 import { Tournaments } from "@/pages/Tournaments";
@@ -83,6 +85,8 @@ function App() {
                   </div>
                 } />
               </Routes>
+              <Footer />
+              <BottomNavigation />
               <Toaster />
               <SimpleToaster />
             </div>
