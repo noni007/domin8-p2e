@@ -19,8 +19,8 @@ export default {
 		},
 		extend: {
 			fontFamily: {
-				'azonix': ['Azonix', 'sans-serif'],
-				'heiti': ['Heiti TC', 'system-ui', 'sans-serif'],
+				'orbitron': ['Orbitron', 'sans-serif'],
+				'inter': ['Inter', 'system-ui', 'sans-serif'],
 			},
 			spacing: {
 				'safe-top': 'env(safe-area-inset-top)',
