@@ -97,14 +97,14 @@
 
   /* Typography system */
   h1, h2, h3, h4, h5, h6 {
-    font-family: system-ui, -apple-system, sans-serif;
+    font-family: 'Inter', system-ui, sans-serif;
     font-weight: 700;
-    letter-spacing: 0.025em;
+    letter-spacing: -0.025em;
   }
 
   .font-brand {
-    font-family: system-ui, -apple-system, sans-serif;
-    font-weight: 700;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 800;
   }
 
   .font-body {
@@ -114,7 +114,7 @@
   /* Navigation and brand elements */
   nav .logo-text,
   .brand-text {
-    font-family: system-ui, -apple-system, sans-serif;
+    font-family: 'Inter', system-ui, sans-serif;
     font-weight: 700;
   }
 

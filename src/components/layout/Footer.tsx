@@ -22,7 +22,7 @@ export const Footer = () => {
               <img 
                 src="/lovable-uploads/domin8-crown-logo.png" 
                 alt="Domin8 Logo"
-                className="h-16 w-auto"
+                className="h-24 w-auto"
               />
             </div>
             <p className="text-gray-300 leading-relaxed">

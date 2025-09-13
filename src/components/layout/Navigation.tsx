@@ -33,13 +33,13 @@ export const Navigation = () => {
   return (
     <nav className="bg-black/80 backdrop-blur-md border-b border-white/10 sticky top-0 z-50">
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center">
             <img 
               src="/lovable-uploads/domin8-crown-logo.png" 
               alt="Domin8 Logo"
-              className="h-12 w-auto"
+              className="h-20 w-auto"
             />
           </Link>
 
