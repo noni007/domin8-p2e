@@ -21,8 +21,8 @@ export const Footer = () => {
             <div className="flex items-center">
               <img 
                 src="/lovable-uploads/domin8-crown-logo.png" 
-                alt="Domin8 Logo"
-                className="h-24 w-auto"
+                alt="Domin8"
+                className="h-20 w-20 object-contain"
               />
             </div>
             <p className="text-gray-300 leading-relaxed">
