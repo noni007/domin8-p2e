@@ -1140,7 +1140,7 @@ export type Database = {
       }
       tournament_analytics: {
         Row: {
-          average_match_duration: unknown | null
+          average_match_duration: unknown
           completion_rate: number | null
           created_at: string
           id: string
@@ -1151,7 +1151,7 @@ export type Database = {
           tournament_id: string
         }
         Insert: {
-          average_match_duration?: unknown | null
+          average_match_duration?: unknown
           completion_rate?: number | null
           created_at?: string
           id?: string
@@ -1162,7 +1162,7 @@ export type Database = {
           tournament_id: string
         }
         Update: {
-          average_match_duration?: unknown | null
+          average_match_duration?: unknown
           completion_rate?: number | null
           created_at?: string
           id?: string
@@ -1642,10 +1642,7 @@ export type Database = {
         Args: { match_id: string }
         Returns: undefined
       }
-      is_admin: {
-        Args: { user_id: string }
-        Returns: boolean
-      }
+      is_admin: { Args: { user_id: string }; Returns: boolean }
       update_skill_rating: {
         Args: { loser_id: string; match_id: string; winner_id: string }
         Returns: undefined
