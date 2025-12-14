@@ -1608,6 +1608,60 @@ export type Database = {
           win_rate: number
         }[]
       }
+      get_public_tournaments: {
+        Args: { p_game?: string; p_limit?: number; p_status?: string }
+        Returns: {
+          bracket_generated: boolean
+          created_at: string
+          description: string
+          end_date: string
+          entry_fee: number
+          game: string
+          id: string
+          max_participants: number
+          organizer_username: string
+          participant_count: number
+          prize_pool: number
+          registration_deadline: string
+          start_date: string
+          status: string
+          title: string
+          tournament_type: string
+        }[]
+      }
+      get_safe_profile: {
+        Args: { target_user_id: string }
+        Returns: {
+          avatar_url: string
+          best_streak: number
+          bio: string
+          created_at: string
+          current_streak: number
+          email: string
+          games_played: number
+          id: string
+          skill_rating: number
+          user_type: string
+          username: string
+          win_rate: number
+        }[]
+      }
+      get_safe_transactions: {
+        Args: { p_user_id?: string }
+        Returns: {
+          amount: number
+          created_at: string
+          description: string
+          id: string
+          reference_id: string
+          safe_metadata: Json
+          status: string
+          transaction_type: string
+          updated_at: string
+          user_id: string
+          wallet_id: string
+        }[]
+      }
       get_user_social_integrations: {
         Args: { target_user_id?: string }
         Returns: {
@@ -1621,6 +1675,21 @@ export type Database = {
           platform_user_id: string
           platform_username: string
           refresh_token: string
+          updated_at: string
+          user_id: string
+        }[]
+      }
+      get_user_social_integrations_safe: {
+        Args: { target_user_id?: string }
+        Returns: {
+          created_at: string
+          expires_at: string
+          id: string
+          integration_data: Json
+          is_active: boolean
+          platform: string
+          platform_user_id: string
+          platform_username: string
           updated_at: string
           user_id: string
         }[]

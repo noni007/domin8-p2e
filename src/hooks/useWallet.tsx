@@ -48,19 +48,22 @@ export const useWallet = () => {
     if (!user) return;
 
     try {
+      // Use secure RPC function that filters sensitive metadata
       const { data, error } = await supabase
-        .from('wallet_transactions')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false })
-        .limit(50);
+        .rpc('get_safe_transactions', { p_user_id: user.id });
 
       if (error) {
         console.error('Error fetching transactions:', error);
         return;
       }
 
-      setTransactions(data || []);
+      // Map safe_metadata back to metadata for compatibility
+      const mappedTransactions = (data || []).map((t: any) => ({
+        ...t,
+        metadata: t.safe_metadata
+      }));
+
+      setTransactions(mappedTransactions);
     } catch (error) {
       console.error('Error fetching transactions:', error);
     }

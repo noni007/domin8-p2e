@@ -201,11 +201,12 @@ export class SocialIntegrationService {
     }
   }
 
-  // Get user's social integrations with decrypted tokens
+  // Get user's social integrations WITHOUT sensitive tokens (safe for client-side)
   static async getUserSocialIntegrations(userId: string): Promise<any[]> {
     try {
+      // Use the safe function that doesn't return access_token or refresh_token
       const { data, error } = await supabase
-        .rpc('get_user_social_integrations', { target_user_id: userId });
+        .rpc('get_user_social_integrations_safe', { target_user_id: userId });
 
       if (error) {
         console.error('Error fetching social integrations:', error);
