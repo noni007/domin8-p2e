@@ -1551,7 +1551,45 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      social_integrations_safe: {
+        Row: {
+          created_at: string | null
+          expires_at: string | null
+          id: string | null
+          integration_data: Json | null
+          is_active: boolean | null
+          platform: string | null
+          platform_user_id: string | null
+          platform_username: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string | null
+          integration_data?: Json | null
+          is_active?: boolean | null
+          platform?: string | null
+          platform_user_id?: string | null
+          platform_username?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string | null
+          integration_data?: Json | null
+          is_active?: boolean | null
+          platform?: string | null
+          platform_user_id?: string | null
+          platform_username?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       check_admin_role: {
