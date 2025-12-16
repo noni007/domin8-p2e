@@ -3,12 +3,27 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Users, ExternalLink } from "lucide-react";
-import type { Tables } from "@/integrations/supabase/types";
 
-type Tournament = Tables<'tournaments'>;
+// Flexible tournament type that works with both direct queries and RPC results
+interface TournamentBase {
+  id: string;
+  title: string;
+  description: string;
+  game: string;
+  status: string;
+  prize_pool: number;
+  entry_fee: number | null;
+  max_participants: number;
+  start_date: string;
+  end_date: string;
+  registration_deadline: string;
+  tournament_type: string;
+  bracket_generated: boolean;
+  created_at: string;
+}
 
 interface TournamentHistoryProps {
-  tournaments: Tournament[];
+  tournaments: TournamentBase[];
   onViewTournament?: (tournamentId: string) => void;
 }
 

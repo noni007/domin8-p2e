@@ -7,15 +7,28 @@ import { useAuth } from "@/hooks/useAuth";
 import { UserProfileHeader } from "@/components/profile/UserProfileHeader";
 import { UserProfileContent } from "@/components/profile/UserProfileContent";
 import { useEnhancedUserStats } from "@/hooks/useEnhancedUserStats";
-import type { Tables } from "@/integrations/supabase/types";
 
-type Profile = Tables<'profiles'>;
+// Safe profile type returned by get_safe_profile RPC
+interface SafeProfile {
+  id: string;
+  username: string | null;
+  user_type: string;
+  avatar_url: string | null;
+  bio: string | null;
+  skill_rating: number | null;
+  win_rate: number | null;
+  games_played: number | null;
+  current_streak: number | null;
+  best_streak: number | null;
+  created_at: string;
+  email: string | null;
+}
 
 export const UserProfile = () => {
   const { userId } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [profile, setProfile] = useState<Profile | null>(null);
+  const [profile, setProfile] = useState<SafeProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const { stats, tournaments, loading: statsLoading } = useEnhancedUserStats(userId);
   const isOwnProfile = user?.id === userId;
@@ -28,14 +41,13 @@ export const UserProfile = () => {
 
   const fetchProfile = async () => {
     try {
+      // Use secure RPC function to fetch profile data
       const { data: profileData, error: profileError } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', userId)
-        .single();
+        .rpc('get_safe_profile', { target_user_id: userId });
 
       if (profileError) throw profileError;
-      setProfile(profileData);
+      // RPC returns an array, get the first item
+      setProfile(profileData?.[0] || null);
     } catch (error) {
       console.error('Error fetching profile:', error);
     } finally {

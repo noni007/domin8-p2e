@@ -4,9 +4,21 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Calendar, Trophy, TrendingUp, Settings } from "lucide-react";
-import type { Tables } from "@/integrations/supabase/types";
 
-type Profile = Tables<'profiles'>;
+// Flexible profile type that works with both direct queries and RPC results
+interface ProfileBase {
+  id: string;
+  username: string | null;
+  user_type: string;
+  avatar_url: string | null;
+  bio: string | null;
+  skill_rating: number | null;
+  win_rate: number | null;
+  games_played: number | null;
+  current_streak: number | null;
+  best_streak: number | null;
+  created_at: string;
+}
 
 interface UserStats {
   tournamentsPlayed: number;
@@ -18,7 +30,7 @@ interface UserStats {
 }
 
 interface ProfileHeaderProps {
-  profile: Profile;
+  profile: ProfileBase;
   stats: UserStats | null;
   isOwnProfile: boolean;
   onEditProfile?: () => void;

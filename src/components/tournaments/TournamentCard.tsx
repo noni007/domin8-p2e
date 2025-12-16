@@ -7,12 +7,33 @@ import { Calendar, Users, Trophy, DollarSign, Clock } from "lucide-react";
 import { TournamentRegistrationButton } from "./TournamentRegistrationButton";
 import { useAuth } from "@/hooks/useAuth";
 import { AuthModal } from "@/components/auth/AuthModal";
-import type { Tables } from "@/integrations/supabase/types";
-
-type Tournament = Tables<'tournaments'>;
+// Flexible tournament type that works with both direct table queries and RPC results
+interface TournamentBase {
+  id: string;
+  title: string;
+  description: string;
+  game: string;
+  status: string;
+  prize_pool: number;
+  entry_fee: number | null;
+  max_participants: number;
+  start_date: string;
+  end_date: string;
+  registration_deadline: string;
+  tournament_type: string;
+  bracket_generated: boolean;
+  created_at: string;
+  // Optional fields that may come from direct queries but not RPC
+  organizer_id?: string;
+  team_id?: string | null;
+  updated_at?: string;
+  // Optional field from RPC
+  organizer_username?: string | null;
+  participant_count?: number;
+}
 
 interface TournamentCardProps {
-  tournament: Tournament;
+  tournament: TournamentBase;
   participantCount?: number;
   isRegistered?: boolean;
   onRegistrationChange?: () => void;

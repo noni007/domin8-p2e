@@ -1,21 +1,37 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import type { Tables } from '@/integrations/supabase/types';
 
-type Tournament = Tables<'tournaments'>;
+// Type matching the RPC return structure
+interface PublicTournament {
+  id: string;
+  title: string;
+  description: string;
+  game: string;
+  status: string;
+  prize_pool: number;
+  entry_fee: number | null;
+  max_participants: number;
+  start_date: string;
+  end_date: string;
+  registration_deadline: string;
+  tournament_type: string;
+  bracket_generated: boolean;
+  created_at: string;
+  organizer_username: string | null;
+  participant_count: number;
+}
 
 export const useTournaments = () => {
-  const [tournaments, setTournaments] = useState<Tournament[]>([]);
+  const [tournaments, setTournaments] = useState<PublicTournament[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchTournaments = async () => {
       try {
+        // Use secure RPC function to fetch tournaments
         const { data, error } = await supabase
-          .from('tournaments')
-          .select('*')
-          .order('created_at', { ascending: false });
+          .rpc('get_public_tournaments', { p_limit: 50 });
 
         if (error) throw error;
         setTournaments(data || []);

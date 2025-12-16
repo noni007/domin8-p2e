@@ -61,11 +61,13 @@ export const FriendsList = () => {
       if (friendships && friendships.length > 0) {
         // Get friend profiles using the secure RPC
         const friendIds = friendships.map(f => f.friend_id);
-        const { data: profiles, error: profilesError } = await supabase
-          .rpc('get_public_profiles')
-          .in('id', friendIds);
+        const { data: allProfiles, error: profilesError } = await supabase
+          .rpc('get_public_profiles');
 
         if (profilesError) throw profilesError;
+        
+        // Filter to only include friend profiles
+        const profiles = (allProfiles || []).filter((p: any) => friendIds.includes(p.id));
 
         // Combine friendships with profiles
         const friendsWithProfiles = friendships.map(friendship => ({

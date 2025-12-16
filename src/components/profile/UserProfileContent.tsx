@@ -9,10 +9,39 @@ import { MatchHistory } from "@/components/profile/MatchHistory";
 import { Achievements } from "@/components/profile/Achievements";
 import { RecentActivities } from "@/components/activity/RecentActivities";
 import { RealTimeUpdates } from "@/components/notifications/RealTimeUpdates";
-import type { Tables } from "@/integrations/supabase/types";
+// Safe profile type returned by get_safe_profile RPC
+interface SafeProfile {
+  id: string;
+  username: string | null;
+  user_type: string;
+  avatar_url: string | null;
+  bio: string | null;
+  skill_rating: number | null;
+  win_rate: number | null;
+  games_played: number | null;
+  current_streak: number | null;
+  best_streak: number | null;
+  created_at: string;
+  email: string | null;
+}
 
-type Profile = Tables<'profiles'>;
-type Tournament = Tables<'tournaments'>;
+// Tournament type that works with RPC results
+interface TournamentBase {
+  id: string;
+  title: string;
+  description: string;
+  game: string;
+  status: string;
+  prize_pool: number;
+  entry_fee: number | null;
+  max_participants: number;
+  start_date: string;
+  end_date: string;
+  registration_deadline: string;
+  tournament_type: string;
+  bracket_generated: boolean;
+  created_at: string;
+}
 
 interface EnhancedUserStats {
   tournamentsPlayed: number;
@@ -34,9 +63,9 @@ interface EnhancedUserStats {
 
 interface UserProfileContentProps {
   userId: string;
-  profile: Profile;
+  profile: SafeProfile;
   stats: EnhancedUserStats;
-  tournaments: Tournament[];
+  tournaments: TournamentBase[];
   isOwnProfile: boolean;
 }
 
