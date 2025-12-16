@@ -7,15 +7,28 @@ import type { Tables } from '@/integrations/supabase/types';
 
 type Friendship = Tables<'friendships'>;
 type FriendRequest = Tables<'friend_requests'>;
-type Profile = Tables<'profiles'>;
+
+// Public profile shape returned by get_public_profiles RPC (no email, bio, updated_at)
+interface PublicProfile {
+  id: string;
+  username: string | null;
+  user_type: string;
+  avatar_url: string | null;
+  skill_rating: number | null;
+  win_rate: number | null;
+  games_played: number | null;
+  current_streak: number | null;
+  best_streak: number | null;
+  created_at: string;
+}
 
 interface FriendWithProfile extends Friendship {
-  friend_profile?: Profile;
+  friend_profile?: PublicProfile;
 }
 
 interface FriendRequestWithProfile extends FriendRequest {
-  sender_profile?: Profile;
-  receiver_profile?: Profile;
+  sender_profile?: PublicProfile;
+  receiver_profile?: PublicProfile;
 }
 
 export const useFriends = () => {
@@ -38,20 +51,22 @@ export const useFriends = () => {
 
       if (friendshipsError) throw friendshipsError;
 
-      // Then get profiles for friends
+      // Then get profiles for friends using secure RPC
       if (friendships && friendships.length > 0) {
         const friendIds = friendships.map(f => f.friend_id);
+        // Use get_public_profiles RPC and filter by friend IDs
         const { data: profiles, error: profilesError } = await supabase
-          .from('profiles')
-          .select('*')
-          .in('id', friendIds);
+          .rpc('get_public_profiles');
 
         if (profilesError) throw profilesError;
+
+        // Filter to only include friend profiles
+        const friendProfiles = (profiles || []).filter((p: any) => friendIds.includes(p.id));
 
         // Combine friendships with profiles
         const friendsWithProfiles = friendships.map(friendship => ({
           ...friendship,
-          friend_profile: profiles?.find(p => p.id === friendship.friend_id)
+          friend_profile: friendProfiles?.find((p: any) => p.id === friendship.friend_id)
         }));
 
         setFriends(friendsWithProfiles);
@@ -77,19 +92,20 @@ export const useFriends = () => {
 
       if (sentError) throw sentError;
 
+      // Get all public profiles once for efficiency
+      const { data: allProfiles, error: profilesError } = await supabase
+        .rpc('get_public_profiles');
+
+      if (profilesError) throw profilesError;
+
       // Get receiver profiles for sent requests
       if (sent && sent.length > 0) {
         const receiverIds = sent.map(r => r.receiver_id);
-        const { data: receiverProfiles, error: receiverProfilesError } = await supabase
-          .from('profiles')
-          .select('*')
-          .in('id', receiverIds);
-
-        if (receiverProfilesError) throw receiverProfilesError;
+        const receiverProfiles = (allProfiles || []).filter((p: any) => receiverIds.includes(p.id));
 
         const sentWithProfiles = sent.map(request => ({
           ...request,
-          receiver_profile: receiverProfiles?.find(p => p.id === request.receiver_id)
+          receiver_profile: receiverProfiles?.find((p: any) => p.id === request.receiver_id)
         }));
 
         setSentRequests(sentWithProfiles);
@@ -109,16 +125,11 @@ export const useFriends = () => {
       // Get sender profiles for received requests
       if (received && received.length > 0) {
         const senderIds = received.map(r => r.sender_id);
-        const { data: senderProfiles, error: senderProfilesError } = await supabase
-          .from('profiles')
-          .select('*')
-          .in('id', senderIds);
-
-        if (senderProfilesError) throw senderProfilesError;
+        const senderProfiles = (allProfiles || []).filter((p: any) => senderIds.includes(p.id));
 
         const receivedWithProfiles = received.map(request => ({
           ...request,
-          sender_profile: senderProfiles?.find(p => p.id === request.sender_id)
+          sender_profile: senderProfiles?.find((p: any) => p.id === request.sender_id)
         }));
 
         setReceivedRequests(receivedWithProfiles);
@@ -179,14 +190,12 @@ export const useFriends = () => {
 
       if (friendshipError) throw friendshipError;
 
-      // Get friend's profile for activity logging
-      const { data: friendProfile } = await supabase
-        .from('profiles')
-        .select('username')
-        .eq('id', senderId)
-        .single();
+      // Get friend's profile for activity logging using secure RPC
+      const { data: friendProfiles } = await supabase
+        .rpc('get_safe_profile', { target_user_id: senderId });
 
       // Log activity for both users
+      const friendProfile = friendProfiles?.[0];
       if (friendProfile) {
         await Promise.all([
           logFriendAdded(user.id, friendProfile.username || 'Unknown', senderId),
