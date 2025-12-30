@@ -39,7 +39,7 @@ export const Navigation = () => {
             <img 
               src="/lovable-uploads/domin8-crown-logo.png" 
               alt="Domin8"
-              className="h-16 w-16 object-contain"
+              className="h-24 w-24 object-contain"
             />
           </Link>
 

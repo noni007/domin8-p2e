@@ -53,7 +53,7 @@ export const MobileMenu = ({ isOpen, onClose, onAuthClick }: MobileMenuProps) =>
               <img 
                 src="/lovable-uploads/domin8-crown-logo.png" 
                 alt="Domin8 Logo"
-                className="h-8 w-auto"
+                className="h-12 w-auto"
               />
             </div>
             <span className="text-xs text-gray-400">Swipe right to close</span>
