@@ -3,15 +3,26 @@ import React from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import type { Tables } from '@/integrations/supabase/types';
 
-type Profile = Tables<'profiles'>;
 type Tournament = Tables<'tournaments'>;
 
-interface EnhancedUserStats extends Profile {
+interface PublicProfile {
+  id: string;
+  username: string;
+  user_type: string;
+  avatar_url: string | null;
+  skill_rating: number | null;
+  games_played: number | null;
+  win_rate: number | null;
+  current_streak: number | null;
+  best_streak: number | null;
+  created_at: string;
+}
+
+interface EnhancedUserStats extends PublicProfile {
   rank: number;
   recentMatches: any[];
   achievements: any[];
   ratingHistory: any[];
-  // Add missing properties for compatibility
   tournamentsPlayed: number;
   tournamentsWon: number;
   matchesPlayed: number;
@@ -38,23 +49,24 @@ export const useEnhancedUserStats = (userId?: string) => {
 
     const fetchEnhancedStats = async () => {
       try {
-        // Get user profile with enhanced stats
-        const { data: profile, error: profileError } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', userId)
-          .single();
+        // Get user profile using secure RPC
+        const { data: allProfiles, error: profileError } = await supabase
+          .rpc('get_public_profiles');
 
         if (profileError) throw profileError;
 
-        // Get user's rank based on skill rating
-        const { data: rankData, error: rankError } = await supabase
-          .from('profiles')
-          .select('id')
-          .gt('skill_rating', profile.skill_rating || 0)
-          .order('skill_rating', { ascending: false });
+        const profile = (allProfiles || []).find((p: PublicProfile) => p.id === userId);
+        
+        if (!profile) {
+          console.error('Profile not found for user:', userId);
+          setLoading(false);
+          return;
+        }
 
-        if (rankError) throw rankError;
+        // Get user's rank based on skill rating (count users with higher rating)
+        const rank = (allProfiles || []).filter(
+          (p: PublicProfile) => (p.skill_rating || 0) > (profile.skill_rating || 0)
+        ).length + 1;
 
         // Get recent matches
         const { data: recentMatches, error: matchesError } = await supabase
@@ -106,7 +118,7 @@ export const useEnhancedUserStats = (userId?: string) => {
         // Calculate enhanced stats
         const totalMatches = recentMatches?.length || 0;
         const wonMatches = recentMatches?.filter(match => match.winner_id === userId).length || 0;
-        const winRate = totalMatches > 0 ? wonMatches / totalMatches : 0;
+        const calculatedWinRate = totalMatches > 0 ? wonMatches / totalMatches : 0;
         const tournamentsPlayed = userTournaments?.length || 0;
         const tournamentsWon = userTournaments?.filter(t => t.status === 'winner').length || 0;
 
@@ -122,7 +134,7 @@ export const useEnhancedUserStats = (userId?: string) => {
 
         const enhancedStats: EnhancedUserStats = {
           ...profile,
-          rank: (rankData?.length || 0) + 1,
+          rank,
           recentMatches: recentMatches || [],
           achievements: achievements || [],
           ratingHistory: ratingHistory || [],
@@ -130,20 +142,20 @@ export const useEnhancedUserStats = (userId?: string) => {
           tournamentsWon,
           matchesPlayed: totalMatches,
           matchesWon: wonMatches,
-          winRate: winRate * 100, // Convert to percentage
+          winRate: calculatedWinRate * 100,
           currentStreak: profile.current_streak || 0,
           longestStreak: profile.best_streak || 0,
-          averageRoundsReached: 0, // Calculate based on tournament data
-          favoriteGame: 'N/A', // Determine from most played game
-          recentPerformance: winRate * 100,
+          averageRoundsReached: 0,
+          favoriteGame: 'N/A',
+          recentPerformance: calculatedWinRate * 100,
           tier: getTier(profile.skill_rating || 1000),
-          averageMatchesPerDay: 0, // Calculate based on match history
-          totalPlayTime: 0, // Calculate based on session data
+          averageMatchesPerDay: 0,
+          totalPlayTime: 0,
           lastActiveDate: new Date().toISOString()
         };
 
         setStats(enhancedStats);
-        setTournaments(userTournaments?.map(t => t.tournaments).filter(Boolean) || []);
+        setTournaments(userTournaments?.map(t => t.tournaments).filter(Boolean) as Tournament[] || []);
       } catch (error) {
         console.error('Error fetching enhanced user stats:', error);
       } finally {

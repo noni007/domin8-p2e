@@ -5,10 +5,22 @@ import { supabase } from '@/integrations/supabase/client';
 import type { Tables } from '@/integrations/supabase/types';
 
 type UserActivity = Tables<'user_activities'>;
-type Profile = Tables<'profiles'>;
+
+interface PublicProfile {
+  id: string;
+  username: string;
+  user_type: string;
+  avatar_url: string | null;
+  skill_rating: number | null;
+  games_played: number | null;
+  win_rate: number | null;
+  current_streak: number | null;
+  best_streak: number | null;
+  created_at: string;
+}
 
 interface ActivityWithProfile extends UserActivity {
-  profile?: Profile;
+  profile?: PublicProfile;
 }
 
 interface UsePersonalActivitiesProps {
@@ -51,14 +63,13 @@ export const usePersonalActivities = ({
 
       if (activitiesError) throw activitiesError;
 
-      // Get user profile
-      const { data: profile, error: profileError } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', targetUserId)
-        .single();
+      // Get user profile using secure RPC
+      const { data: allProfiles, error: profileError } = await supabase
+        .rpc('get_public_profiles');
 
       if (profileError) throw profileError;
+
+      const profile = (allProfiles || []).find((p: PublicProfile) => p.id === targetUserId);
 
       const activitiesWithProfile = activitiesData?.map(activity => ({
         ...activity,
