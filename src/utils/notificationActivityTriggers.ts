@@ -2,6 +2,19 @@
 import { supabase } from '@/integrations/supabase/client';
 import type { ActivityType } from '@/utils/activityHelpers';
 
+interface PublicProfile {
+  id: string;
+  username: string;
+  user_type: string;
+  avatar_url: string | null;
+  skill_rating: number | null;
+  games_played: number | null;
+  win_rate: number | null;
+  current_streak: number | null;
+  best_streak: number | null;
+  created_at: string;
+}
+
 interface ActivityNotificationParams {
   activityUserId: string;
   activityType: ActivityType;
@@ -33,18 +46,16 @@ export const createActivityBasedNotifications = async ({
       return; // No friends to notify
     }
 
-    // Get the activity user's profile for notification content
-    const { data: activityUserProfile, error: profileError } = await supabase
-      .from('profiles')
-      .select('username')
-      .eq('id', activityUserId)
-      .single();
+    // Get the activity user's profile using secure RPC
+    const { data: allProfiles, error: profileError } = await supabase
+      .rpc('get_public_profiles');
 
     if (profileError) {
-      console.error('Error fetching activity user profile:', profileError);
+      console.error('Error fetching profiles:', profileError);
       return;
     }
 
+    const activityUserProfile = (allProfiles || []).find((p: PublicProfile) => p.id === activityUserId);
     const username = activityUserProfile?.username || 'A friend';
 
     // Create notifications for friends based on activity type

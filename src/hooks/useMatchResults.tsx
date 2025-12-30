@@ -8,6 +8,19 @@ import type { Tables } from '@/integrations/supabase/types';
 
 type Match = Tables<'matches'>;
 
+interface PublicProfile {
+  id: string;
+  username: string;
+  user_type: string;
+  avatar_url: string | null;
+  skill_rating: number | null;
+  games_played: number | null;
+  win_rate: number | null;
+  current_streak: number | null;
+  best_streak: number | null;
+  created_at: string;
+}
+
 export const useMatchResults = () => {
   const { user } = useAuth();
   const { toast } = useToast();
@@ -48,24 +61,17 @@ export const useMatchResults = () => {
 
       if (updateError) throw updateError;
 
-      // Get winner's profile for activity logging
-      const { data: winnerProfile, error: profileError } = await supabase
-        .from('profiles')
-        .select('username')
-        .eq('id', winnerId)
-        .single();
+      // Get profiles using secure RPC
+      const { data: allProfiles, error: profileError } = await supabase
+        .rpc('get_public_profiles');
 
       if (profileError) {
-        console.error('Error fetching winner profile:', profileError);
+        console.error('Error fetching profiles:', profileError);
       }
 
-      // Get loser's username
+      const winnerProfile = (allProfiles || []).find((p: PublicProfile) => p.id === winnerId);
       const loserId = match.player1_id === winnerId ? match.player2_id : match.player1_id;
-      const { data: loserProfile } = await supabase
-        .from('profiles')
-        .select('username')
-        .eq('id', loserId)
-        .single();
+      const loserProfile = (allProfiles || []).find((p: PublicProfile) => p.id === loserId);
 
       const loserName = loserProfile?.username || 'Opponent';
       const score = `${scorePlayer1}-${scorePlayer2}`;

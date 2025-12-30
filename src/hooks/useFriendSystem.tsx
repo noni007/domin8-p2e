@@ -5,6 +5,19 @@ import { supabase } from '@/integrations/supabase/client';
 import { logFriendAdded } from '@/utils/activityHelpers';
 import { useToast } from '@/hooks/use-toast';
 
+interface PublicProfile {
+  id: string;
+  username: string;
+  user_type: string;
+  avatar_url: string | null;
+  skill_rating: number | null;
+  games_played: number | null;
+  win_rate: number | null;
+  current_streak: number | null;
+  best_streak: number | null;
+  created_at: string;
+}
+
 export const useFriendSystem = () => {
   const { user, profile } = useAuth();
   const { toast } = useToast();
@@ -20,9 +33,9 @@ export const useFriendSystem = () => {
         .from('friendships')
         .select('id')
         .or(`and(user_id.eq.${user.id},friend_id.eq.${receiverId}),and(user_id.eq.${receiverId},friend_id.eq.${user.id})`)
-        .single();
+        .maybeSingle();
 
-      if (checkError && checkError.code !== 'PGRST116') {
+      if (checkError) {
         throw checkError;
       }
 
@@ -87,16 +100,15 @@ export const useFriendSystem = () => {
 
       if (friendshipError) throw friendshipError;
 
-      // Get friend's profile for activity logging
-      const { data: friendProfile, error: profileError } = await supabase
-        .from('profiles')
-        .select('username')
-        .eq('id', senderId)
-        .single();
+      // Get friend's profile using secure RPC
+      const { data: allProfiles, error: profileError } = await supabase
+        .rpc('get_public_profiles');
 
       if (profileError) {
         console.error('Error fetching friend profile:', profileError);
       }
+
+      const friendProfile = (allProfiles || []).find((p: PublicProfile) => p.id === senderId);
 
       // Log activity for both users
       const friendName = friendProfile?.username || 'Unknown User';
