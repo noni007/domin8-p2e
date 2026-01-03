@@ -1,9 +1,9 @@
 
 import React from 'react'
-import { useAccount, useWriteContract, useEstimateGas } from 'wagmi'
-import { parseEther, formatEther } from 'viem'
+import { parseEther } from 'viem'
 import { supabase } from '@/integrations/supabase/client'
 import { useAuth } from './useAuth'
+import { useWeb3Wallet } from './useWeb3Wallet'
 import { toast } from 'sonner'
 
 interface SendPaymentParams {
@@ -23,33 +23,32 @@ interface PaymentResult {
 
 export const useCryptoTransactions = () => {
   const { user } = useAuth()
-  const { address, chainId } = useAccount()
-  const { writeContractAsync } = useWriteContract()
+  const { address, chainId, isWeb3Enabled } = useWeb3Wallet()
   const [isProcessing, setIsProcessing] = React.useState(false)
 
-  const estimateGas = async (params: { to: string; amount: string }) => {
+  const estimateGas = async (_params: { to: string; amount: string }) => {
     try {
-      // This is a simplified gas estimation
-      // In production, you'd use the actual contract call
-      return '0.001' // 0.001 MATIC estimated gas
+      return '0.001'
     } catch (error) {
       console.error('Gas estimation failed:', error)
-      return '0.002' // Fallback estimate
+      return '0.002'
     }
   }
 
   const sendPayment = async (params: SendPaymentParams): Promise<PaymentResult> => {
+    if (!isWeb3Enabled) {
+      return { success: false, transactionHash: '', error: 'Web3 is disabled' }
+    }
+
     if (!user || !address) {
       return { success: false, transactionHash: '', error: 'Wallet not connected' }
     }
 
     setIsProcessing(true)
     try {
-      // For demo purposes, we'll simulate a transaction
-      // In production, this would call the actual smart contract
+      // For demo purposes, simulate a transaction hash and store it.
       const mockTransactionHash = `0x${Math.random().toString(16).substring(2, 66)}`
-      
-      // Record the transaction in our database
+
       const { error } = await supabase
         .from('crypto_transactions')
         .insert({
@@ -61,10 +60,10 @@ export const useCryptoTransactions = () => {
           amount_wei: parseEther(params.amount).toString(),
           amount_formatted: parseFloat(params.amount),
           token_symbol: params.token,
-          status: 'confirmed', // For demo, mark as confirmed immediately
+          status: 'confirmed',
           related_tournament_id: params.tournamentId,
           related_match_id: params.matchId,
-          metadata: params.metadata || {}
+          metadata: params.metadata || {},
         })
 
       if (error) throw error
@@ -103,6 +102,7 @@ export const useCryptoTransactions = () => {
     sendPayment,
     getUserTransactions,
     estimateGas,
-    isProcessing
+    isProcessing,
   }
 }
+
