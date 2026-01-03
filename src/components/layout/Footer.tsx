@@ -42,8 +42,8 @@ export const Footer = () => {
           </div>
 
           {/* Quick Links */}
-          <div className="space-y-4 text-left">
-            <h3 className="text-lg font-semibold text-white">Platform</h3>
+          <div className="space-y-4 text-left pt-2">
+            <h3 className="text-lg font-semibold text-white leading-none">Platform</h3>
             <div className="space-y-2">
               <a href="/tournaments" className="block text-gray-300 hover:text-lime-400 transition-colors">
                 Tournaments
@@ -64,8 +64,8 @@ export const Footer = () => {
           </div>
 
           {/* Support */}
-          <div className="space-y-4 text-left">
-            <h3 className="text-lg font-semibold text-white">Support</h3>
+          <div className="space-y-4 text-left pt-2">
+            <h3 className="text-lg font-semibold text-white leading-none">Support</h3>
             <div className="space-y-2">
               <a href="#" className="block text-gray-300 hover:text-lime-400 transition-colors">
                 Help Center
@@ -86,8 +86,8 @@ export const Footer = () => {
           </div>
 
           {/* Contact Info */}
-          <div className="space-y-4 text-left">
-            <h3 className="text-lg font-semibold text-white">Get in Touch</h3>
+          <div className="space-y-4 text-left pt-2">
+            <h3 className="text-lg font-semibold text-white leading-none">Get in Touch</h3>
             <div className="space-y-3">
               <div className="flex items-center space-x-3 text-gray-300">
                 <Mail className="h-4 w-4 text-lime-400" />
