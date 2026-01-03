@@ -4,12 +4,16 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useWeb3Wallet } from '@/hooks/useWeb3Wallet';
-import { parseEther } from 'viem';
-import { useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
 
 interface ContractTemplate {
   name: string;
@@ -24,39 +28,44 @@ const contractTemplates: ContractTemplate[] = [
     name: 'Tournament Prize Pool',
     type: 'tournament_pool',
     description: 'Smart contract for managing tournament prize pools',
-    bytecode: '0x608060405234801561001057600080fd5b50336000806101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff160217905550610c8b806100606000396000f3fe',
+    bytecode:
+      '0x608060405234801561001057600080fd5b50336000806101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff160217905550610c8b806100606000396000f3fe',
     abi: [
       {
-        "inputs": [],
-        "name": "deposit",
-        "outputs": [],
-        "stateMutability": "payable",
-        "type": "function"
+        inputs: [],
+        name: 'deposit',
+        outputs: [],
+        stateMutability: 'payable',
+        type: 'function',
       },
       {
-        "inputs": [{"name": "winner", "type": "address"}],
-        "name": "distributePrize",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-      }
-    ]
+        inputs: [{ name: 'winner', type: 'address' }],
+        name: 'distributePrize',
+        outputs: [],
+        stateMutability: 'nonpayable',
+        type: 'function',
+      },
+    ],
   },
   {
     name: 'Gaming Token',
     type: 'erc20_token',
     description: 'ERC-20 token for in-game rewards',
-    bytecode: '0x608060405234801561001057600080fd5b50336000806101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff160217905550610d8b806100606000396000f3fe',
+    bytecode:
+      '0x608060405234801561001057600080fd5b50336000806101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff160217905550610d8b806100606000396000f3fe',
     abi: [
       {
-        "inputs": [{"name": "to", "type": "address"}, {"name": "amount", "type": "uint256"}],
-        "name": "mint",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-      }
-    ]
-  }
+        inputs: [
+          { name: 'to', type: 'address' },
+          { name: 'amount', type: 'uint256' },
+        ],
+        name: 'mint',
+        outputs: [],
+        stateMutability: 'nonpayable',
+        type: 'function',
+      },
+    ],
+  },
 ];
 
 export const SmartContractDeployment = () => {
@@ -66,28 +75,32 @@ export const SmartContractDeployment = () => {
   const [customAbi, setCustomAbi] = useState('');
   const [isDeploying, setIsDeploying] = useState(false);
   const { toast } = useToast();
-  const { address, isConnected } = useWeb3Wallet();
-  
-  const { writeContract, data: deployHash } = useWriteContract();
-  const { isLoading: isConfirming } = useWaitForTransactionReceipt({
-    hash: deployHash,
-  });
+  const { address, isConnected, isWeb3Enabled } = useWeb3Wallet();
 
   const deployContract = async () => {
+    if (!isWeb3Enabled) {
+      toast({
+        title: 'Web3 Disabled',
+        description: 'Enable Web3 features to deploy contracts.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
     if (!isConnected || !address) {
       toast({
-        title: "Wallet Not Connected",
-        description: "Please connect your Web3 wallet first",
-        variant: "destructive"
+        title: 'Wallet Not Connected',
+        description: 'Please connect your Web3 wallet first',
+        variant: 'destructive',
       });
       return;
     }
 
     if (!contractName) {
       toast({
-        title: "Missing Contract Name",
-        description: "Please enter a contract name",
-        variant: "destructive"
+        title: 'Missing Contract Name',
+        description: 'Please enter a contract name',
+        variant: 'destructive',
       });
       return;
     }
@@ -95,48 +108,43 @@ export const SmartContractDeployment = () => {
     setIsDeploying(true);
 
     try {
-      let template = contractTemplates.find(t => t.name === selectedTemplate);
-      let bytecode = template?.bytecode || customBytecode;
-      let abi = template?.abi || JSON.parse(customAbi);
+      const template = contractTemplates.find((t) => t.name === selectedTemplate);
+      const bytecode = template?.bytecode || customBytecode;
+      const abi = template?.abi || JSON.parse(customAbi);
 
       if (!bytecode) {
         throw new Error('No bytecode provided');
       }
 
-      // For now, simulate deployment since actual contract deployment needs more setup
-      // In production, this would use writeContract with proper contract factory
-      const mockTxHash = `0x${Math.random().toString(16).substr(2, 64)}`;
+      // Simulate a deployment tx hash; actual deployment requires a configured Web3 stack.
+      const mockTxHash = `0x${Math.random().toString(16).slice(2).padEnd(64, '0').slice(0, 64)}`;
 
-      // Save to database
-      const { error } = await supabase
-        .from('smart_contracts')
-        .insert({
-          contract_name: contractName,
-          contract_type: template?.type || 'custom',
-          contract_address: '0x0000000000000000000000000000000000000000', // Will be updated when confirmed
-          bytecode: bytecode,
-          abi_json: abi,
-          deployment_transaction_hash: deployHash || '0x',
-          deployer_address: address,
-          deployed_by_user_id: (await supabase.auth.getUser()).data.user?.id,
-          network_id: 137, // Polygon
-          is_active: true,
-          is_verified: false
-        });
+      const { error } = await supabase.from('smart_contracts').insert({
+        contract_name: contractName,
+        contract_type: template?.type || 'custom',
+        contract_address: '0x0000000000000000000000000000000000000000',
+        bytecode: bytecode,
+        abi_json: abi,
+        deployment_transaction_hash: mockTxHash,
+        deployer_address: address,
+        deployed_by_user_id: (await supabase.auth.getUser()).data.user?.id,
+        network_id: 137,
+        is_active: true,
+        is_verified: false,
+      });
 
       if (error) throw error;
 
       toast({
-        title: "Contract Deployment Initiated",
-        description: "Your smart contract is being deployed. Please wait for confirmation."
+        title: 'Contract Deployment Saved',
+        description: 'Deployment request recorded. Configure Web3 to deploy on-chain.',
       });
-
     } catch (error) {
       console.error('Contract deployment error:', error);
       toast({
-        title: "Deployment Failed",
-        description: error instanceof Error ? error.message : "Failed to deploy contract",
-        variant: "destructive"
+        title: 'Deployment Failed',
+        description: error instanceof Error ? error.message : 'Failed to deploy contract',
+        variant: 'destructive',
       });
     } finally {
       setIsDeploying(false);
@@ -203,12 +211,12 @@ export const SmartContractDeployment = () => {
         )}
 
         <div className="flex gap-2">
-          <Button 
+          <Button
             onClick={deployContract}
-            disabled={isDeploying || isConfirming || !isConnected}
+            disabled={isDeploying || !isConnected}
             className="flex-1"
           >
-            {isDeploying || isConfirming ? 'Deploying...' : 'Deploy Contract'}
+            {isDeploying ? 'Deploying...' : 'Deploy Contract'}
           </Button>
         </div>
 
