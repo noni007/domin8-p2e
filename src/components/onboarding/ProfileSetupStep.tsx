@@ -10,6 +10,7 @@ import { Gamepad2, User, Star, MessageSquare } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "@/hooks/use-toast";
+import { HelpTooltip } from "@/components/common/HelpTooltip";
 
 interface ProfileSetupStepProps {
   profileData: {
@@ -101,6 +102,7 @@ export const ProfileSetupStep = ({ profileData, setProfileData, userEmail }: Pro
             <div className="flex items-center space-x-2 text-blue-400">
               <User className="h-5 w-5" />
               <Label className="text-base font-medium">Choose Your Gaming Handle</Label>
+              <HelpTooltip content="Choose a unique name that represents you - this will appear on all leaderboards" side="right" />
             </div>
             <Input
               placeholder="Enter your username (e.g., ProGamer123)"
@@ -121,6 +123,7 @@ export const ProfileSetupStep = ({ profileData, setProfileData, userEmail }: Pro
             <div className="flex items-center space-x-2 text-green-400">
               <Gamepad2 className="h-5 w-5" />
               <Label className="text-base font-medium">Favorite Games (up to 5)</Label>
+              <HelpTooltip content="Select games you're most interested in competing in - we'll show you relevant tournaments" side="right" />
             </div>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
               {popularGames.map((game) => (
@@ -152,6 +155,7 @@ export const ProfileSetupStep = ({ profileData, setProfileData, userEmail }: Pro
             <div className="flex items-center space-x-2 text-yellow-400">
               <Star className="h-5 w-5" />
               <Label className="text-base font-medium">Experience Level</Label>
+              <HelpTooltip content="This helps us match you with appropriate tournaments and opponents" side="right" />
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {experienceLevels.map((level) => (
@@ -179,6 +183,7 @@ export const ProfileSetupStep = ({ profileData, setProfileData, userEmail }: Pro
             <div className="flex items-center space-x-2 text-purple-400">
               <MessageSquare className="h-5 w-5" />
               <Label className="text-base font-medium">Tell Us About Yourself (Optional)</Label>
+              <HelpTooltip content="Share your gaming journey - this appears on your public profile and helps others get to know you" side="right" />
             </div>
             <Textarea
               placeholder="Share your gaming journey, favorite moments, or what drives you to compete..."

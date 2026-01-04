@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Crown, Users, AlertCircle } from "lucide-react";
 import type { Tables } from "@/integrations/supabase/types";
+import { HelpTooltip } from "@/components/common/HelpTooltip";
 
 type Tournament = Tables<'tournaments'>;
 type TournamentParticipant = Tables<'tournament_participants'>;
@@ -64,13 +65,22 @@ export const RegistrationStatus = ({
           </div>
         )}
         <div>
-          <p className="text-white font-medium">{getRegistrationMessage()}</p>
+          <div className="flex items-center gap-1">
+            <p className="text-white font-medium">{getRegistrationMessage()}</p>
+            {canRegister && (
+              <HelpTooltip content="Register now to compete against other players and win prizes!" side="right" />
+            )}
+          </div>
           {spotsRemaining > 0 && spotsRemaining <= 5 && !isRegistered && (
-            <p className="text-orange-400 text-sm">Only {spotsRemaining} spots remaining!</p>
+            <p className="text-orange-400 text-sm flex items-center gap-1">
+              Only {spotsRemaining} spots remaining!
+              <HelpTooltip content="Limited spots fill up fast - register early to secure your place" side="right" />
+            </p>
           )}
           {canRegister && (
-            <p className="text-gray-400 text-sm">
+            <p className="text-gray-400 text-sm flex items-center gap-1">
               Registration closes on {new Date(tournament.registration_deadline).toLocaleDateString()}
+              <HelpTooltip content="Make sure to register before the deadline to participate" side="right" />
             </p>
           )}
         </div>
