@@ -12,6 +12,7 @@ import { AuthHashHandler } from "@/components/auth/AuthHashHandler";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { Footer } from "@/components/layout/Footer";
 import { BottomNavigation } from "@/components/layout/BottomNavigation";
+import { TooltipProvider } from "@/components/ui/tooltip";
 // Import pages
 import { Index } from "@/pages/Index";
 import { Tournaments } from "@/pages/Tournaments";
@@ -52,6 +53,7 @@ function App() {
     }}>
       <QueryClientProvider client={queryClient}>
         <SimpleThemeProvider>
+        <TooltipProvider delayDuration={300}>
         <Web3Provider>
         <AuthProvider>
           <BrowserRouter>
@@ -93,6 +95,7 @@ function App() {
           </BrowserRouter>
         </AuthProvider>
         </Web3Provider>
+        </TooltipProvider>
       </SimpleThemeProvider>
       </QueryClientProvider>
     </ErrorBoundary>

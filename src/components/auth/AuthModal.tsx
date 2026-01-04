@@ -18,6 +18,7 @@ import { SocialLoginButtons } from "@/components/social/SocialLoginButtons";
 import { WelcomeModal } from "./WelcomeModal";
 import { validatePasswordSecurity } from "@/utils/passwordSecurity";
 import { useRateLimiter } from "@/hooks/useRateLimiter";
+import { HelpTooltip } from "@/components/common/HelpTooltip";
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -327,7 +328,10 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
             <TabsContent value="signin" className="space-y-4">
               <form onSubmit={handleSignIn} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="signin-email" className="text-white">Email</Label>
+                  <div className="flex items-center gap-1">
+                    <Label htmlFor="signin-email" className="text-white">Email</Label>
+                    <HelpTooltip content="Use the email address you registered with" side="right" />
+                  </div>
                   <div className="relative">
                     <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                     <Input
@@ -344,7 +348,10 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="signin-password" className="text-white">Password</Label>
+                  <div className="flex items-center gap-1">
+                    <Label htmlFor="signin-password" className="text-white">Password</Label>
+                    <HelpTooltip content="Your password is case-sensitive" side="right" />
+                  </div>
                   <div className="relative">
                     <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                     <Input
@@ -407,7 +414,10 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
             <TabsContent value="signup" className="space-y-4">
               <form onSubmit={handleSignUp} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="signup-username" className="text-white">Username</Label>
+                  <div className="flex items-center gap-1">
+                    <Label htmlFor="signup-username" className="text-white">Username</Label>
+                    <HelpTooltip content="This will be your public display name on leaderboards and tournaments" side="right" />
+                  </div>
                   <div className="relative">
                     <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                     <Input
@@ -424,7 +434,10 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="signup-email" className="text-white">Email</Label>
+                  <div className="flex items-center gap-1">
+                    <Label htmlFor="signup-email" className="text-white">Email</Label>
+                    <HelpTooltip content="We'll send tournament updates and notifications here" side="right" />
+                  </div>
                   <div className="relative">
                     <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                     <Input
@@ -441,7 +454,10 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="signup-password" className="text-white">Password</Label>
+                  <div className="flex items-center gap-1">
+                    <Label htmlFor="signup-password" className="text-white">Password</Label>
+                    <HelpTooltip content="Strong passwords help protect your gaming account and wallet" side="right" />
+                  </div>
                   <div className="relative">
                     <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                     <Input
@@ -476,7 +492,10 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-white">Account Type</Label>
+                  <div className="flex items-center gap-1">
+                    <Label className="text-white">Account Type</Label>
+                    <HelpTooltip content="Choose based on how you'll use the platform - you can change this later" side="right" />
+                  </div>
                   <div className="grid grid-cols-3 gap-2">
                     <Button
                       type="button"
