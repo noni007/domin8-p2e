@@ -1720,6 +1720,12 @@ export type Database = {
         Args: { amount: number; tournament_id: string }
         Returns: undefined
       }
+      update_wallet_balance_atomic: {
+        Args: { p_amount: number; p_wallet_id: string }
+        Returns: {
+          new_balance: number
+        }[]
+      }
       upsert_social_integration: {
         Args: {
           p_access_token?: string
