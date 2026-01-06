@@ -13,6 +13,8 @@ import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { Footer } from "@/components/layout/Footer";
 import { BottomNavigation } from "@/components/layout/BottomNavigation";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { TourProvider } from "@/hooks/useTour";
+import { GuidedTour } from "@/components/tour/GuidedTour";
 // Import pages
 import { Index } from "@/pages/Index";
 import { Tournaments } from "@/pages/Tournaments";
@@ -56,11 +58,13 @@ function App() {
         <TooltipProvider delayDuration={300}>
         <Web3Provider>
         <AuthProvider>
+          <TourProvider>
           <BrowserRouter>
             <div className="min-h-screen bg-slate-900 text-white">
               <ProductionPerformanceMonitor />
               <DevPerformanceOverlay />
               <AuthHashHandler />
+              <GuidedTour />
               <Navigation />
                 <Routes>
                   <Route path="/" element={<Index />} />
@@ -93,6 +97,7 @@ function App() {
               <SimpleToaster />
             </div>
           </BrowserRouter>
+          </TourProvider>
         </AuthProvider>
         </Web3Provider>
         </TooltipProvider>

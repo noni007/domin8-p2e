@@ -99,11 +99,13 @@ export const UserDashboard = () => {
       <RealTimeUpdates userId={user?.id || ''} />
 
       {/* Personalized Welcome Section */}
-      <PersonalizedWelcome />
+      <div data-tour="welcome">
+        <PersonalizedWelcome />
+      </div>
 
       {/* Enhanced Quick Stats */}
       {stats && (
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div data-tour="stats" className="grid grid-cols-1 md:grid-cols-4 gap-6">
           <Card className="bg-black/40 border-blue-800/30 backdrop-blur-sm">
             <CardContent className="p-4">
               <div className="flex items-center space-x-2">
@@ -157,7 +159,7 @@ export const UserDashboard = () => {
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Left Column - Tournaments */}
-        <div className="lg:col-span-2 space-y-6">
+        <div className="lg:col-span-2 space-y-6" data-tour="tournaments">
           {/* Active Tournaments */}
           {activeTournaments.length > 0 && (
             <Card className="bg-black/40 border-blue-800/30 backdrop-blur-sm">
@@ -213,15 +215,17 @@ export const UserDashboard = () => {
           </Card>
 
           {/* Enhanced Personal Activity Feed */}
-          <EnhancedActivityFeed 
-            title="Your Recent Activity"
-            maxItems={8}
-            showFilters={true}
-          />
+          <div data-tour="activity">
+            <EnhancedActivityFeed 
+              title="Your Recent Activity"
+              maxItems={8}
+              showFilters={true}
+            />
+          </div>
         </div>
 
         {/* Right Column - Social Feed */}
-        <div className="space-y-6">
+        <div className="space-y-6" data-tour="social">
           <SocialActivityFeed />
         </div>
       </div>
