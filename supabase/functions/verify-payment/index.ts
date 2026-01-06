@@ -116,21 +116,20 @@ serve(async (req) => {
 
     logStep("Transaction created", { transactionId: transaction.id });
 
-    // Update wallet balance
-    const newBalance = wallet.balance + transactionAmount;
-    const { error: updateError } = await supabaseClient
-      .from('user_wallets')
-      .update({ 
-        balance: newBalance,
-        updated_at: new Date().toISOString(),
-      })
-      .eq('id', wallet.id);
+    // Update wallet balance atomically using RPC function to prevent race conditions
+    const { data: balanceData, error: updateError } = await supabaseClient
+      .rpc('update_wallet_balance_atomic', {
+        p_wallet_id: wallet.id,
+        p_amount: transactionAmount
+      });
 
     if (updateError) {
-      throw new Error(`Failed to update wallet balance: ${updateError.message}`);
+      logStep("ERROR updating wallet balance", { error: updateError.message });
+      throw new Error("Failed to update wallet balance");
     }
 
-    logStep("Wallet updated", { newBalance });
+    const newBalance = balanceData?.[0]?.new_balance ?? (wallet.balance + transactionAmount);
+    logStep("Wallet updated atomically", { newBalance });
 
     return new Response(
       JSON.stringify({

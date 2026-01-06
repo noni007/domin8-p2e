@@ -35,14 +35,13 @@ export class WalletTransactionService {
     if (error) throw error;
   }
 
-  static async updateWalletBalance(walletId: string, newBalance: number) {
+  static async updateWalletBalance(walletId: string, amount: number) {
+    // Use atomic RPC function to prevent race conditions
     const { error } = await supabase
-      .from('user_wallets')
-      .update({ 
-        balance: newBalance,
-        updated_at: new Date().toISOString()
-      })
-      .eq('id', walletId);
+      .rpc('update_wallet_balance_atomic', { 
+        p_wallet_id: walletId,
+        p_amount: amount
+      });
 
     if (error) throw error;
   }
